@@ -1,0 +1,67 @@
+html, body {
+  display: block;
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+  font-family: 'Helvetica Neue', 'Source Sans Pro', Arial, sans-serif;
+  font-weight: 300;
+  background-color: #e1e1e1;
+  color: #111;
+}
+
+canvas {
+  display: block;
+}
+
+#main-button {
+  background-color: #dddddd;
+  color: #111111;
+  font-family: 'Helvetica Neue', 'Source Sans Pro',  sans-serif;
+  font-size: 18px;
+  padding: 8px 20px 8px 20px;
+  text-align: center;
+  border: #111111 2px solid;
+  width: 180px;
+  cursor: pointer;
+  transition-delay: 1s;
+  -webkit-transition: all ease 0.8s;
+	-moz-transition: all ease 0.8s;
+  transition: all ease 0.8s;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+#main-button:hover {
+  background-color: #111111;
+  color: #dddddd;
+  box-shadow: inset 90px 0 0 0 #1f1f1f;
+}
+
+#main-button-link {
+  text-decoration: none;
+}
+
+.gamemode-button {
+  background-color: #dddddd;
+  color: #111111;
+  font-family: 'Helvetica Neue', 'Source Sans Pro',  sans-serif;
+  font-size: 18px;
+  padding: 8px 20px 8px 20px;
+  text-align: center;
+  border: #111111 2px solid;
+  width: 200px;
+  height: 200px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+#recoil {
+  background-image: url();
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+
+.gamemode-button:hover {
+  box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.3);
+}

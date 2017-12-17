@@ -1,0 +1,28 @@
+{
+  "name": "recoil-training",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "babel": "babel --presets es2015 js/main.js -o build/bundle.js",
+    "start": "http-server",
+    "start:dev": "webpack-dev-server",
+    "webpack": "webpack --watch"
+  },
+  "author": "Robin Park",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "http-server": "^0.10.0",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.9.7"
+  },
+  "dependencies": {
+    "gsap": "^1.20.3",
+    "jquery": "^3.2.1",
+    "three": "^0.88.0"
+  }
+}
