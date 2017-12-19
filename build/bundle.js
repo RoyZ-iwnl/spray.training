@@ -21519,6 +21519,10 @@ var _movement = __webpack_require__(8);
 
 var _movement2 = _interopRequireDefault(_movement);
 
+var _utils = __webpack_require__(10);
+
+var utils = _interopRequireWildcard(_utils);
+
 var _player = __webpack_require__(9);
 
 var _player2 = _interopRequireDefault(_player);
@@ -21550,6 +21554,7 @@ var Game = function () {
       this.pointerlock();
       this.init3JS();
       this.drawWorld();
+      this.initControls();
       this.animate();
     }
   }, {
@@ -21619,6 +21624,17 @@ var Game = function () {
       this.scene.add(this.player.mesh);
     }
   }, {
+    key: 'initControls',
+    value: function initControls() {
+      var _this2 = this;
+
+      $(document).mouseup(function () {
+        _this2.player.shoot = false;
+      }).mousedown(function () {
+        _this2.player.shoot = true;
+      });
+    }
+  }, {
     key: 'animate',
     value: function animate() {
       this.render();
@@ -21636,11 +21652,19 @@ var Game = function () {
     value: function update(delta) {
       this.setCmd();
       this.player.mesh.rotateY(-this.cursorXY.x * 0.3 * delta);
-      this.camera.rotateX(-this.cursorXY.y * 0.3 * delta);
-      this.camera.rotation.y = Math.max(0, this.camera.rotation.y);
+      this.player.camera.rotateX(-this.cursorXY.y * 0.3 * delta);
+      this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
 
       var dv = (0, _movement2.default)(this.player, this.cmd, delta);
       this.player.mesh.position.add(dv.multiplyScalar(delta));
+
+      if (this.player.shoot) {
+        var dotGeometry = new THREE.Geometry();
+        dotGeometry.vertices.push(utils.projection(this.player));
+        var dotMaterial = new THREE.PointsMaterial({ size: 1, sizeAttenuation: true });
+        var dot = new THREE.Points(dotGeometry, dotMaterial);
+        this.scene.add(dot);
+      }
 
       this.reset();
     }
@@ -21691,11 +21715,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 exports.default = function (player, cmd, delta) {
-  var position = player.position;
+  var position = player.mesh.position;
   var velocity = player.velocity;
-  var rotation = player.rotation;
-  var cRotation = player.rotation;
-  var direction = player.direction;
+  var rotation = player.mesh.rotation;
+  var cRotation = player.camera.rotation;
 
   var accelerate = function accelerate(wishDir, wishSpeed, accel) {
     var currentSpeed = velocity.dot(wishDir);
@@ -21788,14 +21811,44 @@ var Player = function Player(camera) {
 
   this.camera = camera;
   this.mesh = new THREE.Mesh(new THREE.SphereGeometry(2, 32, 32), new THREE.MeshBasicMaterial({ color: 0x00aaff, visible: true })).add(camera);
-  this.position = this.mesh.position;
   this.velocity = new THREE.Vector3(0, 0, 0);
-  this.rotation = this.mesh.rotation;
-  this.cRotation = this.camera.rotation;
-  this.direction = this.camera.getWorldDirection();
+  this.shoot = false;
 };
 
 exports.default = Player;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _three = __webpack_require__(1);
+
+var THREE = _interopRequireWildcard(_three);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+exports.projection = function (player) {
+  var position = player.mesh.position.clone();
+  var direction = player.camera.getWorldDirection().clone();
+  var MAP_SIZE = 100;
+
+  var t1 = (MAP_SIZE / 2 - position.x) / direction.x;
+  var t2 = (-MAP_SIZE / 2 - position.x) / direction.x;
+  var t3 = (MAP_SIZE / 2 - position.z) / direction.z;
+  var t4 = (-MAP_SIZE / 2 - position.z) / direction.z;
+
+  var pos = [t1, t2, t3, t4].filter(function (t) {
+    return t >= 0;
+  });
+  var t = Math.min.apply(Math, _toConsumableArray(pos));
+
+  return position.add(direction.multiplyScalar(t));
+};
 
 /***/ })
 /******/ ]);

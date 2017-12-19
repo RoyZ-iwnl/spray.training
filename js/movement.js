@@ -1,11 +1,10 @@
 import * as THREE from 'three';
 
 export default function(player, cmd, delta) {
-  let position = player.position;
+  let position = player.mesh.position;
   let velocity = player.velocity;
-  let rotation = player.rotation;
-  let cRotation = player.rotation;
-  let direction = player.direction;
+  let rotation = player.mesh.rotation;
+  let cRotation = player.camera.rotation;
 
   const accelerate = (wishDir, wishSpeed, accel) => {
     let currentSpeed = velocity.dot(wishDir);

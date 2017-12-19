@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import movement from './movement.js';
+import * as utils from './utils.js';
 import Player from './player.js';
 
 export default class Game {
@@ -19,6 +20,7 @@ export default class Game {
     this.pointerlock();
     this.init3JS();
     this.drawWorld();
+    this.initControls();
     this.animate();
   }
 
@@ -83,6 +85,14 @@ export default class Game {
     this.scene.add(this.player.mesh);
   }
 
+  initControls() {
+    $(document).mouseup(() => {
+      this.player.shoot = false;
+    }).mousedown(() => {
+      this.player.shoot = true;
+    });
+  }
+
   animate() {
     this.render();
     this.delta = this.clock.getDelta();
@@ -97,11 +107,19 @@ export default class Game {
   update(delta) {
     this.setCmd();
     this.player.mesh.rotateY(-this.cursorXY.x * 0.3 * delta);
-    this.camera.rotateX(-this.cursorXY.y * 0.3 * delta);
-    this.camera.rotation.y = Math.max(0, this.camera.rotation.y);
+    this.player.camera.rotateX(-this.cursorXY.y * 0.3 * delta);
+    this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
     
     const dv = movement(this.player, this.cmd, delta);
     this.player.mesh.position.add(dv.multiplyScalar(delta));
+
+    if (this.player.shoot) {
+      const dotGeometry = new THREE.Geometry();
+      dotGeometry.vertices.push(utils.projection(this.player));
+      const dotMaterial = new THREE.PointsMaterial({size: 1, sizeAttenuation: true});
+      const dot = new THREE.Points(dotGeometry, dotMaterial);
+      this.scene.add(dot);
+    }
 
     this.reset();
   }
