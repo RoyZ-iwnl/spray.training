@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import movement from './movement.js';
+import Player from './player.js';
 
 export default class Game {
   constructor() {
@@ -61,7 +62,7 @@ export default class Game {
     this.renderer = new THREE.WebGLRenderer({antialias: true});
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     $('#game-page')[0].append(this.renderer.domElement);
-    this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 100);
+    this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
     this.camera.position.set(0, 2, 0);
     this.camera.rotation.y = 0.5 * Math.PI;
     this.clock = new THREE.Clock();
@@ -78,12 +79,8 @@ export default class Game {
     
     this.scene.add(map);
 
-    const playerMaterial = new THREE.MeshBasicMaterial({color: 0x00aaff, visible: true});
-    const playerGeometry = new THREE.SphereGeometry(2, 32, 32);
-    const playerMesh = new THREE.Mesh(playerGeometry, playerMaterial);
-    playerMesh.add(this.camera);
-    this.playerMesh = playerMesh;
-    this.scene.add(playerMesh);
+    this.player = new Player(this.camera);
+    this.scene.add(this.player.mesh);
   }
 
   animate() {
@@ -99,15 +96,13 @@ export default class Game {
 
   update(delta) {
     this.setCmd();
-    this.playerMesh.rotateY(-this.cursorXY.x * 0.3 * delta);
+    this.player.mesh.rotateY(-this.cursorXY.x * 0.3 * delta);
     this.camera.rotateX(-this.cursorXY.y * 0.3 * delta);
     this.camera.rotation.y = Math.max(0, this.camera.rotation.y);
-
-    const df = movement(this.playerMesh.position, this.cmd);
-    this.playerMesh.translateX(df.x * delta);
-    this.playerMesh.translateY(df.y * delta);
-    this.playerMesh.translateZ(df.z * delta);
     
+    const dv = movement(this.player, this.cmd, delta);
+    this.player.mesh.position.add(dv.multiplyScalar(delta));
+
     this.reset();
   }
 

@@ -21519,6 +21519,10 @@ var _movement = __webpack_require__(8);
 
 var _movement2 = _interopRequireDefault(_movement);
 
+var _player = __webpack_require__(9);
+
+var _player2 = _interopRequireDefault(_player);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -21593,7 +21597,7 @@ var Game = function () {
       this.renderer = new THREE.WebGLRenderer({ antialias: true });
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       $('#game-page')[0].append(this.renderer.domElement);
-      this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 100);
+      this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
       this.camera.position.set(0, 2, 0);
       this.camera.rotation.y = 0.5 * Math.PI;
       this.clock = new THREE.Clock();
@@ -21611,12 +21615,8 @@ var Game = function () {
 
       this.scene.add(map);
 
-      var playerMaterial = new THREE.MeshBasicMaterial({ color: 0x00aaff, visible: true });
-      var playerGeometry = new THREE.SphereGeometry(2, 32, 32);
-      var playerMesh = new THREE.Mesh(playerGeometry, playerMaterial);
-      playerMesh.add(this.camera);
-      this.playerMesh = playerMesh;
-      this.scene.add(playerMesh);
+      this.player = new _player2.default(this.camera);
+      this.scene.add(this.player.mesh);
     }
   }, {
     key: 'animate',
@@ -21635,14 +21635,12 @@ var Game = function () {
     key: 'update',
     value: function update(delta) {
       this.setCmd();
-      this.playerMesh.rotateY(-this.cursorXY.x * 0.3 * delta);
+      this.player.mesh.rotateY(-this.cursorXY.x * 0.3 * delta);
       this.camera.rotateX(-this.cursorXY.y * 0.3 * delta);
       this.camera.rotation.y = Math.max(0, this.camera.rotation.y);
 
-      var df = (0, _movement2.default)(this.playerMesh.position, this.cmd);
-      this.playerMesh.translateX(df.x * delta);
-      this.playerMesh.translateY(df.y * delta);
-      this.playerMesh.translateZ(df.z * delta);
+      var dv = (0, _movement2.default)(this.player, this.cmd, delta);
+      this.player.mesh.position.add(dv.multiplyScalar(delta));
 
       this.reset();
     }
@@ -21692,8 +21690,70 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports.default = function (position, cmd) {
-  return { x: 0, y: 0, z: 0 };
+exports.default = function (player, cmd, delta) {
+  var position = player.position;
+  var velocity = player.velocity;
+  var rotation = player.rotation;
+  var cRotation = player.rotation;
+  var direction = player.direction;
+
+  var accelerate = function accelerate(wishDir, wishSpeed, accel) {
+    var currentSpeed = velocity.dot(wishDir);
+    var addSpeed = wishSpeed - currentSpeed;
+    if (addSpeed <= 0) return;
+
+    var accelSpeed = accel * delta * wishSpeed;
+    accelSpeed = Math.min(accelSpeed, addSpeed);
+
+    velocity.x += accelSpeed * wishDir.x;
+    velocity.z += accelSpeed * wishDir.z;
+  };
+
+  var applyFriction = function applyFriction(t) {
+    var copy = velocity.clone();
+    copy.y = 0;
+
+    var speedF = copy.length();
+    var controlF = void 0;
+    var dropF = 0;
+
+    if (position.y <= 2) {
+      controlF = Math.max(speedF, 10);
+      dropF = controlF * 10 * delta * t;
+    }
+
+    var newSpeedF = speedF - dropF;
+    var playerF = newSpeedF;
+    newSpeedF = Math.max(newSpeedF, 0);
+    if (speedF > 0) {
+      newSpeedF /= speedF;
+    }
+    velocity.multiplyScalar(newSpeedF);
+  };
+
+  var groundMove = function groundMove() {
+    applyFriction(1);
+
+    var wishDir = new THREE.Vector3(-cmd.forward, 0, -cmd.right);
+    wishDir.normalize();
+    var wishSpeed = wishDir.length() * 50;
+
+    accelerate(wishDir, wishSpeed, 10);
+    velocity.y = 0;
+  };
+
+  groundMove();
+
+  var v1 = new THREE.Vector3(1, 0, 0);
+  var v2 = new THREE.Vector3(0, 1, 0);
+  var v3 = new THREE.Vector3(0, 0, 1);
+  var quat = new THREE.Quaternion().setFromEuler(rotation);
+
+  v1.applyQuaternion(quat);
+  v2.applyQuaternion(quat);
+  v3.applyQuaternion(quat);
+
+  return new THREE.Vector3().add(v1.multiplyScalar(velocity.x)).add(v2.multiplyScalar(velocity.y)).add(v3.multiplyScalar(velocity.z));
 };
 
 var _three = __webpack_require__(1);
@@ -21703,6 +21763,39 @@ var THREE = _interopRequireWildcard(_three);
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 ;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _three = __webpack_require__(1);
+
+var THREE = _interopRequireWildcard(_three);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Player = function Player(camera) {
+  _classCallCheck(this, Player);
+
+  this.camera = camera;
+  this.mesh = new THREE.Mesh(new THREE.SphereGeometry(2, 32, 32), new THREE.MeshBasicMaterial({ color: 0x00aaff, visible: true })).add(camera);
+  this.position = this.mesh.position;
+  this.velocity = new THREE.Vector3(0, 0, 0);
+  this.rotation = this.mesh.rotation;
+  this.cRotation = this.camera.rotation;
+  this.direction = this.camera.getWorldDirection();
+};
+
+exports.default = Player;
 
 /***/ })
 /******/ ]);
