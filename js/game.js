@@ -3,6 +3,7 @@ import { Howl } from 'howler';
 import movement from './movement.js';
 import * as utils from './utils.js';
 import Player from './player.js';
+import { spray } from './spray.js';
 
 export default class Game {
   constructor() {
@@ -78,8 +79,20 @@ export default class Game {
   }
 
   initAudio() {
-    this.sound = new Howl({
+    this.weaponSound = new Howl({
       src: ['audio/ak47_01.wav'],
+      volume: 0.2,
+    });
+    this.reloadSound1 = new Howl({
+      src: ['audio/ak47_clipout.wav'],
+      volume: 0.2,
+    });
+    this.reloadSound2 = new Howl({
+      src: ['audio/ak47_clipin.wav'],
+      volume: 0.2,
+    });
+    this.reloadSound3 = new Howl({
+      src: ['audio/ak47_boltpull.wav'],
       volume: 0.2,
     });
   }
@@ -95,6 +108,13 @@ export default class Game {
 
     this.player = new Player(this.camera);
     this.scene.add(this.player.mesh);
+
+    const targetGeometry = new THREE.Geometry();
+    targetGeometry.vertices.push(new THREE.Vector3(-49.9, 12.5, 0));
+    const targetMaterial = new THREE.PointsMaterial({color: 0xff0000, size: 1, sizeAttenuation: true});
+    const target = new THREE.Points(targetGeometry, targetMaterial);
+    target.name = 'target';
+    this.scene.add(target);
   }
 
   initControls() {
@@ -126,19 +146,42 @@ export default class Game {
     this.player.mesh.position.add(dv.multiplyScalar(delta));
 
     if (this.player.shoot && !this.shot) {
-      const dotGeometry = new THREE.Geometry();
-      dotGeometry.vertices.push(utils.projection(this.player));
-      const dotMaterial = new THREE.PointsMaterial({size: 1, sizeAttenuation: true});
-      const dot = new THREE.Points(dotGeometry, dotMaterial);
+      const bulletGeometry = new THREE.Geometry();
+      bulletGeometry.vertices.push(utils.projection(this.player));
+      const bulletMaterial = new THREE.PointsMaterial({size: 1, sizeAttenuation: true});
+      const bullet = new THREE.Points(bulletGeometry, bulletMaterial);
 
-      this.sound.play();
-      
-      this.scene.add(dot);
-      setTimeout(() => this.scene.remove(dot), 3000);
+      this.scene.add(bullet);
+      setTimeout(() => this.scene.remove(bullet), 3000);
 
       this.shot = true;
-      setTimeout(() => this.shot = false, 100);
-      
+      if (this.count !== 29) {
+        setTimeout(() => this.shot = false, 100);
+      } else {
+        setTimeout(() => this.shot = false, 1000);
+
+        // terrible
+
+        this.reloadSound1.play();
+        this.reloadSound1.on('end', () => {
+          setTimeout(() => {
+            this.reloadSound2.play();
+            this.reloadSound2.on('end', () => {
+              setTimeout(() => {
+                this.reloadSound3.play();
+              }, 500);
+            });
+          }, 500);
+        });
+      }
+    
+      const target = this.scene.getObjectByName('target');
+
+      target.geometry.vertices.pop();
+      target.geometry.vertices.push(spray['ak47'][this.count].clone().multiplyScalar(-0.03).add(new THREE.Vector3(-49.9, 12.5, 0)));
+      target.geometry.verticesNeedUpdate = true;
+
+      this.weaponSound.play();
       this.count = (this.count + 1) % 30;
     }
 
@@ -170,3 +213,4 @@ export default class Game {
     };
   }
 }
+
