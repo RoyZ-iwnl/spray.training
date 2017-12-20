@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { Howl } from 'howler';
 import movement from './movement.js';
 import * as utils from './utils.js';
 import Player from './player.js';
@@ -14,11 +15,15 @@ export default class Game {
     
     this.MAP_SIZE = 100;
     this.MAP_HEIGHT = 25;
+
+    this.shot = false;
+    this.count = 0;
   }
 
   init() {
     this.pointerlock();
     this.init3JS();
+    this.initAudio();
     this.drawWorld();
     this.initControls();
     this.animate();
@@ -72,6 +77,13 @@ export default class Game {
     this.keyboard = new THREEx.KeyboardState();
   }
 
+  initAudio() {
+    this.sound = new Howl({
+      src: ['audio/ak47_01.wav'],
+      volume: 0.2,
+    });
+  }
+
   drawWorld() {
     const mapMaterial = new THREE.LineDashedMaterial({color: 0xffaa00, dashSize: 2, gapSize: 1, linewidth: 5});
     const mapGeometry = new THREE.Geometry().fromBufferGeometry(new THREE.EdgesGeometry(new THREE.BoxGeometry(this.MAP_SIZE, this.MAP_HEIGHT, this.MAP_SIZE)));
@@ -113,12 +125,21 @@ export default class Game {
     const dv = movement(this.player, this.cmd, delta);
     this.player.mesh.position.add(dv.multiplyScalar(delta));
 
-    if (this.player.shoot) {
+    if (this.player.shoot && !this.shot) {
       const dotGeometry = new THREE.Geometry();
       dotGeometry.vertices.push(utils.projection(this.player));
       const dotMaterial = new THREE.PointsMaterial({size: 1, sizeAttenuation: true});
       const dot = new THREE.Points(dotGeometry, dotMaterial);
+
+      this.sound.play();
+      
       this.scene.add(dot);
+      setTimeout(() => this.scene.remove(dot), 3000);
+
+      this.shot = true;
+      setTimeout(() => this.shot = false, 100);
+      
+      this.count = (this.count + 1) % 30;
     }
 
     this.reset();
