@@ -13044,6 +13044,18 @@ $('#main-button').on('click', function () {
   ui.fadeFromTo($('#main-page'), $('#game-page'), 0.5);
   var game = new _game2.default();
   game.init();
+
+  var ctx = $('#xhair')[0].getContext('2d');
+  ctx.strokeStyle = 'green';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(15, 0);
+  ctx.lineTo(15, 30);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(0, 15);
+  ctx.lineTo(30, 15);
+  ctx.stroke();
 });
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
@@ -21611,7 +21623,7 @@ var Game = function () {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       $('#game-page')[0].append(this.renderer.domElement);
       this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-      this.camera.position.set(0, 2, 0);
+      this.camera.position.set(0, 0, 0);
       this.camera.rotation.y = 0.5 * Math.PI;
       this.clock = new THREE.Clock();
       THREEx.WindowResize(this.renderer, this.camera);
@@ -21683,10 +21695,22 @@ var Game = function () {
       this.renderer.render(this.scene, this.camera);
     }
   }, {
+    key: 'updateHud',
+    value: function updateHud() {
+      $('#player-position').html('pos: ' + this.player.mesh.position.x.toFixed(2) + ', ' + this.player.mesh.position.z.toFixed(2));
+
+      $('#player-ammo').html(30 - this.count + '/30');
+
+      if (this.aFrame % 240 < 3) {
+        $('#player-fps').html('fps: ' + (1 / this.delta).toFixed(0));
+      }
+    }
+  }, {
     key: 'update',
     value: function update(delta) {
       var _this3 = this;
 
+      this.updateHud();
       this.setCmd();
       this.player.mesh.rotateY(-this.cursorXY.x * 0.3 * delta);
       this.player.camera.rotateX(-this.cursorXY.y * 0.3 * delta);
@@ -21714,7 +21738,7 @@ var Game = function () {
         } else {
           setTimeout(function () {
             return _this3.shot = false;
-          }, 1000);
+          }, 2500);
 
           // terrible
 
@@ -24703,7 +24727,7 @@ exports.default = function (player, cmd, delta) {
     var controlF = void 0;
     var dropF = 0;
 
-    if (position.y <= 2) {
+    if (position.y <= 5) {
       controlF = Math.max(speedF, 10);
       dropF = controlF * 10 * delta * t;
     }
@@ -24806,7 +24830,8 @@ var Player = function Player(camera) {
   _classCallCheck(this, Player);
 
   this.camera = camera;
-  this.mesh = new THREE.Mesh(new THREE.SphereGeometry(2, 32, 32), new THREE.MeshBasicMaterial({ color: 0x00aaff, visible: true })).add(camera);
+  this.mesh = new THREE.Mesh(new THREE.SphereGeometry(5, 32, 32), new THREE.MeshBasicMaterial({ color: 0x00aaff, visible: false })).add(camera);
+  this.mesh.position.y = 5;
   this.velocity = new THREE.Vector3(0, 0, 0);
   this.shoot = false;
 };

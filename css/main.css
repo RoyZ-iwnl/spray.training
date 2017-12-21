@@ -56,6 +56,22 @@ canvas {
   letter-spacing: 3px;
 }
 
+.player-hud {
+  position: absolute;
+  color: white;
+  text-shadow:
+  -1px -1px 0px #000,
+   0px -1px 0px #000,
+   1px -1px 0px #000,
+  -1px  0px 0px #000,
+   1px  0px 0px #000,
+  -1px  1px 0px #000,
+   0px  1px 0px #000,
+   1px  1px 0px #000;
+  font-family: Monaco, 'Inconsolata', monospace;
+  font-size: 24px;
+}
+
 #recoil {
   background-image: url();
   background-repeat: no-repeat;

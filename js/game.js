@@ -71,7 +71,7 @@ export default class Game {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     $('#game-page')[0].append(this.renderer.domElement);
     this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-    this.camera.position.set(0, 2, 0);
+    this.camera.position.set(0, 0, 0);
     this.camera.rotation.y = 0.5 * Math.PI;
     this.clock = new THREE.Clock();
     THREEx.WindowResize(this.renderer, this.camera);
@@ -136,7 +136,18 @@ export default class Game {
     this.renderer.render(this.scene, this.camera);
   }
 
+  updateHud() {
+    $('#player-position').html(`pos: ${this.player.mesh.position.x.toFixed(2)}, ${this.player.mesh.position.z.toFixed(2)}`);
+    
+    $('#player-ammo').html(`${30 - this.count}/30`);
+
+    if (this.aFrame % 240 < 3) {
+      $('#player-fps').html(`fps: ${(1/this.delta).toFixed(0)}`);
+    }
+  }
+
   update(delta) {
+    this.updateHud();
     this.setCmd();
     this.player.mesh.rotateY(-this.cursorXY.x * 0.3 * delta);
     this.player.camera.rotateX(-this.cursorXY.y * 0.3 * delta);
@@ -158,7 +169,7 @@ export default class Game {
       if (this.count !== 29) {
         setTimeout(() => this.shot = false, 100);
       } else {
-        setTimeout(() => this.shot = false, 1000);
+        setTimeout(() => this.shot = false, 2500);
 
         // terrible
 

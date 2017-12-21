@@ -26,7 +26,7 @@ export default function(player, cmd, delta) {
     let controlF;
     let dropF = 0;
 
-    if (position.y <= 2) {
+    if (position.y <= 5) {
       controlF = Math.max(speedF, 10);
       dropF = controlF * 10 * delta * t;
     }
