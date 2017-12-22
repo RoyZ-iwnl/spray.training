@@ -18,6 +18,7 @@ export default class Game {
     this.MAP_HEIGHT = 25;
 
     this.shot = false;
+    this.ammo = 0;
     this.count = 0;
   }
 
@@ -110,7 +111,7 @@ export default class Game {
     this.scene.add(this.player.mesh);
 
     const targetGeometry = new THREE.Geometry();
-    targetGeometry.vertices.push(new THREE.Vector3(-49.9, 12.5, 0));
+    targetGeometry.vertices.push(new THREE.Vector3(-49.9, 10, 0));
     const targetMaterial = new THREE.PointsMaterial({color: 0xff0000, size: 1, sizeAttenuation: true});
     const target = new THREE.Points(targetGeometry, targetMaterial);
     target.name = 'target';
@@ -120,9 +121,25 @@ export default class Game {
   initControls() {
     $(document).mouseup(() => {
       this.player.shoot = false;
+      this.count = 0;
     }).mousedown(() => {
       this.player.shoot = true;
     });
+
+    /* if (this.keyboard.pressed('R')) {
+      this.ammo = 0;
+      this.count = 0;
+      this.shot = true;
+      setTimeout(() => this.shot = false, 2500);
+      
+      this.reloadSound1.play();
+      setTimeout(() => {
+        this.reloadSound2.play();
+      }, 750);
+      setTimeout(() => {
+        this.reloadSound3.play();
+      }, 1500);
+    } */
   }
 
   animate() {
@@ -138,10 +155,12 @@ export default class Game {
 
   updateHud() {
     $('#player-position').html(`pos: ${this.player.mesh.position.x.toFixed(2)}, ${this.player.mesh.position.z.toFixed(2)}`);
-    
-    $('#player-ammo').html(`${30 - this.count}/30`);
 
-    if (this.aFrame % 240 < 3) {
+    $('#player-velocity').html(`speed: ${Math.hypot(this.player.velocity.x, this.player.velocity.z).toFixed(2)}`);
+    
+    $('#player-ammo').html(`${30 - this.ammo}/30`);
+
+    if (this.aFrame % 30 < 3) {
       $('#player-fps').html(`fps: ${(1/this.delta).toFixed(0)}`);
     }
   }
@@ -154,11 +173,14 @@ export default class Game {
     this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
     
     const dv = movement(this.player, this.cmd, delta);
+    //this.player.velocity = dv;
     this.player.mesh.position.add(dv.multiplyScalar(delta));
 
     if (this.player.shoot && !this.shot) {
       const bulletGeometry = new THREE.Geometry();
-      bulletGeometry.vertices.push(utils.projection(this.player));
+      bulletGeometry.vertices.push(utils.projection(this.player)
+                                        .add(spray['ak47'][this.count].clone().multiplyScalar(0.02))
+                                  );
       const bulletMaterial = new THREE.PointsMaterial({size: 1, sizeAttenuation: true});
       const bullet = new THREE.Points(bulletGeometry, bulletMaterial);
 
@@ -166,33 +188,29 @@ export default class Game {
       setTimeout(() => this.scene.remove(bullet), 3000);
 
       this.shot = true;
-      if (this.count !== 29) {
+      if (this.ammo !== 29) {
         setTimeout(() => this.shot = false, 100);
       } else {
         setTimeout(() => this.shot = false, 2500);
 
-        // terrible
-
         this.reloadSound1.play();
-        this.reloadSound1.on('end', () => {
-          setTimeout(() => {
-            this.reloadSound2.play();
-            this.reloadSound2.on('end', () => {
-              setTimeout(() => {
-                this.reloadSound3.play();
-              }, 500);
-            });
-          }, 500);
-        });
+        setTimeout(() => {
+          this.reloadSound2.play();
+        }, 750);
+        setTimeout(() => {
+          this.reloadSound3.play();
+        }, 1500);
       }
     
       const target = this.scene.getObjectByName('target');
 
       target.geometry.vertices.pop();
-      target.geometry.vertices.push(spray['ak47'][this.count].clone().multiplyScalar(-0.03).add(new THREE.Vector3(-49.9, 12.5, 0)));
+      target.geometry.vertices.push(spray['ak47'][this.ammo].clone().multiplyScalar(-0.02).add(new THREE.Vector3(-49.9, 10, 0)));
       target.geometry.verticesNeedUpdate = true;
 
       this.weaponSound.play();
+
+      this.ammo = (this.ammo + 1) % 30;
       this.count = (this.count + 1) % 30;
     }
 

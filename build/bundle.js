@@ -13029,24 +13029,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-// $('#main-button').on('click', () => {
-//   ui.fadeFromTo($('#main-page'), $('#menu-page'), 0.5);
-// });
-
-// $('#recoil').on('click', () => {
-//   ui.fadeFromTo($('#menu-page'), $('#game-page'), 0.5);
-//   const game = new Game();
-//   game.init();
-// });
-
-
 $('#main-button').on('click', function () {
   ui.fadeFromTo($('#main-page'), $('#game-page'), 0.5);
   var game = new _game2.default();
   game.init();
 
   var ctx = $('#xhair')[0].getContext('2d');
-  ctx.strokeStyle = 'green';
+  ctx.strokeStyle = '#39ff14';
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(15, 0);
@@ -21564,6 +21553,7 @@ var Game = function () {
     this.MAP_HEIGHT = 25;
 
     this.shot = false;
+    this.ammo = 0;
     this.count = 0;
   }
 
@@ -21664,7 +21654,7 @@ var Game = function () {
       this.scene.add(this.player.mesh);
 
       var targetGeometry = new THREE.Geometry();
-      targetGeometry.vertices.push(new THREE.Vector3(-49.9, 12.5, 0));
+      targetGeometry.vertices.push(new THREE.Vector3(-49.9, 10, 0));
       var targetMaterial = new THREE.PointsMaterial({ color: 0xff0000, size: 1, sizeAttenuation: true });
       var target = new THREE.Points(targetGeometry, targetMaterial);
       target.name = 'target';
@@ -21677,9 +21667,25 @@ var Game = function () {
 
       $(document).mouseup(function () {
         _this2.player.shoot = false;
+        _this2.count = 0;
       }).mousedown(function () {
         _this2.player.shoot = true;
       });
+
+      /* if (this.keyboard.pressed('R')) {
+        this.ammo = 0;
+        this.count = 0;
+        this.shot = true;
+        setTimeout(() => this.shot = false, 2500);
+        
+        this.reloadSound1.play();
+        setTimeout(() => {
+          this.reloadSound2.play();
+        }, 750);
+        setTimeout(() => {
+          this.reloadSound3.play();
+        }, 1500);
+      } */
     }
   }, {
     key: 'animate',
@@ -21699,9 +21705,11 @@ var Game = function () {
     value: function updateHud() {
       $('#player-position').html('pos: ' + this.player.mesh.position.x.toFixed(2) + ', ' + this.player.mesh.position.z.toFixed(2));
 
-      $('#player-ammo').html(30 - this.count + '/30');
+      $('#player-velocity').html('speed: ' + Math.hypot(this.player.velocity.x, this.player.velocity.z).toFixed(2));
 
-      if (this.aFrame % 240 < 3) {
+      $('#player-ammo').html(30 - this.ammo + '/30');
+
+      if (this.aFrame % 30 < 3) {
         $('#player-fps').html('fps: ' + (1 / this.delta).toFixed(0));
       }
     }
@@ -21717,11 +21725,12 @@ var Game = function () {
       this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
 
       var dv = (0, _movement2.default)(this.player, this.cmd, delta);
+      //this.player.velocity = dv;
       this.player.mesh.position.add(dv.multiplyScalar(delta));
 
       if (this.player.shoot && !this.shot) {
         var bulletGeometry = new THREE.Geometry();
-        bulletGeometry.vertices.push(utils.projection(this.player));
+        bulletGeometry.vertices.push(utils.projection(this.player).add(_spray.spray['ak47'][this.count].clone().multiplyScalar(0.02)));
         var bulletMaterial = new THREE.PointsMaterial({ size: 1, sizeAttenuation: true });
         var bullet = new THREE.Points(bulletGeometry, bulletMaterial);
 
@@ -21731,7 +21740,7 @@ var Game = function () {
         }, 3000);
 
         this.shot = true;
-        if (this.count !== 29) {
+        if (this.ammo !== 29) {
           setTimeout(function () {
             return _this3.shot = false;
           }, 100);
@@ -21740,28 +21749,24 @@ var Game = function () {
             return _this3.shot = false;
           }, 2500);
 
-          // terrible
-
           this.reloadSound1.play();
-          this.reloadSound1.on('end', function () {
-            setTimeout(function () {
-              _this3.reloadSound2.play();
-              _this3.reloadSound2.on('end', function () {
-                setTimeout(function () {
-                  _this3.reloadSound3.play();
-                }, 500);
-              });
-            }, 500);
-          });
+          setTimeout(function () {
+            _this3.reloadSound2.play();
+          }, 750);
+          setTimeout(function () {
+            _this3.reloadSound3.play();
+          }, 1500);
         }
 
         var target = this.scene.getObjectByName('target');
 
         target.geometry.vertices.pop();
-        target.geometry.vertices.push(_spray.spray['ak47'][this.count].clone().multiplyScalar(-0.03).add(new THREE.Vector3(-49.9, 12.5, 0)));
+        target.geometry.vertices.push(_spray.spray['ak47'][this.ammo].clone().multiplyScalar(-0.02).add(new THREE.Vector3(-49.9, 10, 0)));
         target.geometry.verticesNeedUpdate = true;
 
         this.weaponSound.play();
+
+        this.ammo = (this.ammo + 1) % 30;
         this.count = (this.count + 1) % 30;
       }
 
