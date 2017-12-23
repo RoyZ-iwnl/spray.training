@@ -126,20 +126,32 @@ export default class Game {
       this.player.shoot = true;
     });
 
-    /* if (this.keyboard.pressed('R')) {
-      this.ammo = 0;
-      this.count = 0;
-      this.shot = true;
-      setTimeout(() => this.shot = false, 2500);
-      
-      this.reloadSound1.play();
-      setTimeout(() => {
-        this.reloadSound2.play();
-      }, 750);
-      setTimeout(() => {
-        this.reloadSound3.play();
-      }, 1500);
-    } */
+    let locked = false;
+
+    $(document).keydown((e) => {
+      if (e.which === 82 && this.ammo !== 0) {
+        if (locked) {
+          return;
+        }
+
+        locked = true;
+
+        this.ammo = 0;
+        this.count = 0;
+        this.shot = true;
+        setTimeout(() => this.shot = false, 2500);
+        
+        this.reloadSound1.play();
+        setTimeout(() => {
+          this.reloadSound2.play();
+        }, 750);
+        setTimeout(() => {
+          this.reloadSound3.play();
+        }, 1500);
+      }
+
+      setTimeout(() => {locked = false;}, 2500);
+    });
   }
 
   animate() {

@@ -21672,20 +21672,36 @@ var Game = function () {
         _this2.player.shoot = true;
       });
 
-      /* if (this.keyboard.pressed('R')) {
-        this.ammo = 0;
-        this.count = 0;
-        this.shot = true;
-        setTimeout(() => this.shot = false, 2500);
-        
-        this.reloadSound1.play();
-        setTimeout(() => {
-          this.reloadSound2.play();
-        }, 750);
-        setTimeout(() => {
-          this.reloadSound3.play();
-        }, 1500);
-      } */
+      var locked = false;
+
+      $(document).keydown(function (e) {
+        if (e.which === 82 && _this2.ammo !== 0) {
+          if (locked) {
+            return;
+          }
+
+          locked = true;
+
+          _this2.ammo = 0;
+          _this2.count = 0;
+          _this2.shot = true;
+          setTimeout(function () {
+            return _this2.shot = false;
+          }, 2500);
+
+          _this2.reloadSound1.play();
+          setTimeout(function () {
+            _this2.reloadSound2.play();
+          }, 750);
+          setTimeout(function () {
+            _this2.reloadSound3.play();
+          }, 1500);
+        }
+
+        setTimeout(function () {
+          locked = false;
+        }, 2500);
+      });
     }
   }, {
     key: 'animate',
