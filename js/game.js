@@ -18,8 +18,13 @@ export default class Game {
     this.MAP_HEIGHT = 25;
 
     this.shot = false;
+
     this.ammo = 0;
     this.count = 0;
+    this.sprayCount = 0;
+
+    this.currentScore = 0;
+    this.highScore = 0;
   }
 
   init() {
@@ -94,6 +99,10 @@ export default class Game {
     });
     this.reloadSound3 = new Howl({
       src: ['audio/ak47_boltpull.wav'],
+      volume: 0.2,
+    });
+    this.doneSound = new Howl({
+      src: ['audio/bell1.wav'],
       volume: 0.2,
     });
   }
@@ -185,17 +194,14 @@ export default class Game {
     this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
     
     const dv = movement(this.player, this.cmd, delta);
-    //this.player.velocity = dv;
     this.player.mesh.position.add(dv.multiplyScalar(delta));
 
     if (this.player.shoot && !this.shot) {
       const bulletGeometry = new THREE.Geometry();
-      bulletGeometry.vertices.push(utils.projection(this.player)
-                                        .add(spray['ak47'][this.count].clone().multiplyScalar(0.02))
-                                  );
+      const projection = utils.projection(this.player, spray['ak47'][this.count]);
+      bulletGeometry.vertices.push(projection);
       const bulletMaterial = new THREE.PointsMaterial({size: 1, sizeAttenuation: true});
       const bullet = new THREE.Points(bulletGeometry, bulletMaterial);
-
       this.scene.add(bullet);
       setTimeout(() => this.scene.remove(bullet), 3000);
 
@@ -214,16 +220,23 @@ export default class Game {
         }, 1500);
       }
     
-      const target = this.scene.getObjectByName('target');
+      this.ammo = (this.ammo + 1) % 30;
+      this.count = (this.count + 1) % 30;
+      this.sprayCount = (this.sprayCount + 1) % 30;
 
+      const target = this.scene.getObjectByName('target');
+      const targetPosition = spray['ak47'][this.sprayCount].clone().multiplyScalar(-0.02).add(new THREE.Vector3(-49.9, 10, 0))
       target.geometry.vertices.pop();
-      target.geometry.vertices.push(spray['ak47'][this.ammo].clone().multiplyScalar(-0.02).add(new THREE.Vector3(-49.9, 10, 0)));
+      target.geometry.vertices.push(targetPosition);
       target.geometry.verticesNeedUpdate = true;
+
+      // console.log(projection.distanceTo(targetPosition));
 
       this.weaponSound.play();
 
-      this.ammo = (this.ammo + 1) % 30;
-      this.count = (this.count + 1) % 30;
+      if (this.sprayCount === 0) {
+        this.doneSound.play();
+      }
     }
 
     this.reset();

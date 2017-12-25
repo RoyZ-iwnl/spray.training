@@ -21553,8 +21553,13 @@ var Game = function () {
     this.MAP_HEIGHT = 25;
 
     this.shot = false;
+
     this.ammo = 0;
     this.count = 0;
+    this.sprayCount = 0;
+
+    this.currentScore = 0;
+    this.highScore = 0;
   }
 
   _createClass(Game, [{
@@ -21636,6 +21641,10 @@ var Game = function () {
       });
       this.reloadSound3 = new _howler.Howl({
         src: ['audio/ak47_boltpull.wav'],
+        volume: 0.2
+      });
+      this.doneSound = new _howler.Howl({
+        src: ['audio/bell1.wav'],
         volume: 0.2
       });
     }
@@ -21741,15 +21750,14 @@ var Game = function () {
       this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
 
       var dv = (0, _movement2.default)(this.player, this.cmd, delta);
-      //this.player.velocity = dv;
       this.player.mesh.position.add(dv.multiplyScalar(delta));
 
       if (this.player.shoot && !this.shot) {
         var bulletGeometry = new THREE.Geometry();
-        bulletGeometry.vertices.push(utils.projection(this.player).add(_spray.spray['ak47'][this.count].clone().multiplyScalar(0.02)));
+        var projection = utils.projection(this.player, _spray.spray['ak47'][this.count]);
+        bulletGeometry.vertices.push(projection);
         var bulletMaterial = new THREE.PointsMaterial({ size: 1, sizeAttenuation: true });
         var bullet = new THREE.Points(bulletGeometry, bulletMaterial);
-
         this.scene.add(bullet);
         setTimeout(function () {
           return _this3.scene.remove(bullet);
@@ -21774,16 +21782,23 @@ var Game = function () {
           }, 1500);
         }
 
-        var target = this.scene.getObjectByName('target');
+        this.ammo = (this.ammo + 1) % 30;
+        this.count = (this.count + 1) % 30;
+        this.sprayCount = (this.sprayCount + 1) % 30;
 
+        var target = this.scene.getObjectByName('target');
+        var targetPosition = _spray.spray['ak47'][this.sprayCount].clone().multiplyScalar(-0.02).add(new THREE.Vector3(-49.9, 10, 0));
         target.geometry.vertices.pop();
-        target.geometry.vertices.push(_spray.spray['ak47'][this.ammo].clone().multiplyScalar(-0.02).add(new THREE.Vector3(-49.9, 10, 0)));
+        target.geometry.vertices.push(targetPosition);
         target.geometry.verticesNeedUpdate = true;
+
+        // console.log(projection.distanceTo(targetPosition));
 
         this.weaponSound.play();
 
-        this.ammo = (this.ammo + 1) % 30;
-        this.count = (this.count + 1) % 30;
+        if (this.sprayCount === 0) {
+          this.doneSound.play();
+        }
       }
 
       this.reset();
@@ -24810,17 +24825,25 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-exports.projection = function (player) {
+exports.projection = function (player, s) {
+  var MAP_SIZE = 100;
+  var MAP_HEIGHT = 25;
+  var PLAYER_HEIGHT = 5;
+
   var position = player.mesh.position.clone();
   var direction = player.camera.getWorldDirection().clone();
-  var MAP_SIZE = 100;
+  var spray = s.clone();
+  spray.multiplyScalar(0.02 / (MAP_SIZE / 2));
+  direction.add(spray);
 
   var t1 = (MAP_SIZE / 2 - position.x) / direction.x;
   var t2 = (-MAP_SIZE / 2 - position.x) / direction.x;
-  var t3 = (MAP_SIZE / 2 - position.z) / direction.z;
-  var t4 = (-MAP_SIZE / 2 - position.z) / direction.z;
+  var t3 = (-PLAYER_HEIGHT + MAP_HEIGHT - position.y) / direction.y;
+  var t4 = (-PLAYER_HEIGHT - position.y) / direction.y;
+  var t5 = (MAP_SIZE / 2 - position.z) / direction.z;
+  var t6 = (-MAP_SIZE / 2 - position.z) / direction.z;
 
-  var pos = [t1, t2, t3, t4].filter(function (t) {
+  var pos = [t1, t2, t3, t4, t5, t6].filter(function (t) {
     return t >= 0;
   });
   var t = Math.min.apply(Math, _toConsumableArray(pos));
