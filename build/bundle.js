@@ -13039,10 +13039,18 @@ $('#main-button').on('click', function () {
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(15, 0);
+  ctx.lineTo(15, 10);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(15, 20);
   ctx.lineTo(15, 30);
   ctx.stroke();
   ctx.beginPath();
   ctx.moveTo(0, 15);
+  ctx.lineTo(10, 15);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(20, 15);
   ctx.lineTo(30, 15);
   ctx.stroke();
 });
@@ -21628,6 +21636,7 @@ var Game = function () {
       this.clock = new THREE.Clock();
       THREEx.WindowResize(this.renderer, this.camera);
       this.keyboard = new THREEx.KeyboardState();
+      this.fontLoader = new THREE.FontLoader();
     }
   }, {
     key: 'initAudio',
@@ -21660,6 +21669,8 @@ var Game = function () {
   }, {
     key: 'drawWorld',
     value: function drawWorld() {
+      var _this2 = this;
+
       var mapMaterial = new THREE.LineDashedMaterial({ color: 0xffaa00, dashSize: 2, gapSize: 1, linewidth: 1 });
       var mapGeometry = new THREE.Geometry().fromBufferGeometry(new THREE.EdgesGeometry(new THREE.BoxGeometry(this.MAP_SIZE, this.MAP_HEIGHT, this.MAP_SIZE)));
       mapGeometry.computeLineDistances();
@@ -21677,6 +21688,32 @@ var Game = function () {
 
       this.scene.add(line);
 
+      this.fontLoader.load('fonts/helvetiker_regular.typeface.json', function (font) {
+        var color = 0xecf0f1;
+
+        var messages = ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'];
+        messages.forEach(function (message, i) {
+          var material = new THREE.LineBasicMaterial({
+            color: color,
+            side: THREE.DoubleSide
+          });
+          var shape = new THREE.BufferGeometry();
+          var shapes = font.generateShapes(message, 100, 2);
+          var geometry = new THREE.ShapeGeometry(shapes);
+          geometry.computeBoundingBox();
+          geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
+          shape.fromGeometry(geometry);
+          var text = new THREE.Mesh(shape, material);
+          text.position.x = -_this2.MAP_SIZE / 2;
+          text.position.y = 20 - 3.5 * i;
+          text.position.z = -40;
+          text.rotation.y = Math.PI / 2;
+          text.name = message;
+          text.scale.set(0.015, 0.015, 0.015);
+          _this2.scene.add(text);
+        });
+      });
+
       this.player = new _player2.default(this.camera);
       this.scene.add(this.player.mesh);
 
@@ -21690,38 +21727,38 @@ var Game = function () {
   }, {
     key: 'initControls',
     value: function initControls() {
-      var _this2 = this;
+      var _this3 = this;
 
       $(document).mouseup(function () {
-        _this2.player.shoot = false;
-        _this2.count = 0;
+        _this3.player.shoot = false;
+        _this3.count = 0;
       }).mousedown(function () {
-        _this2.player.shoot = true;
+        _this3.player.shoot = true;
       });
 
       var locked = false;
 
       $(document).keydown(function (e) {
-        if (e.which === 82 && _this2.ammo !== 0) {
+        if (e.which === 82 && _this3.ammo !== 0) {
           if (locked) {
             return;
           }
 
           locked = true;
 
-          _this2.ammo = 0;
-          _this2.count = 0;
-          _this2.shot = true;
+          _this3.ammo = 0;
+          _this3.count = 0;
+          _this3.shot = true;
           setTimeout(function () {
-            return _this2.shot = false;
+            return _this3.shot = false;
           }, 2500);
 
-          _this2.reloadSound1.play();
+          _this3.reloadSound1.play();
           setTimeout(function () {
-            _this2.reloadSound2.play();
+            _this3.reloadSound2.play();
           }, 750);
           setTimeout(function () {
-            _this2.reloadSound3.play();
+            _this3.reloadSound3.play();
           }, 1500);
         }
 
@@ -21759,7 +21796,7 @@ var Game = function () {
   }, {
     key: 'update',
     value: function update(delta) {
-      var _this3 = this;
+      var _this4 = this;
 
       this.updateHud();
       this.setCmd();
@@ -21774,33 +21811,41 @@ var Game = function () {
         var bulletGeometry = new THREE.Geometry();
         var projection = utils.projection(this.player, _spray.spray['ak47'][this.count]);
         bulletGeometry.vertices.push(projection);
-        var bulletMaterial = new THREE.PointsMaterial({ size: 1, sizeAttenuation: true });
+        var bulletMaterial = new THREE.PointsMaterial({ color: 0xecf0f1, size: 1, sizeAttenuation: true });
         var bullet = new THREE.Points(bulletGeometry, bulletMaterial);
         this.scene.add(bullet);
         setTimeout(function () {
-          return _this3.scene.remove(bullet);
+          return _this4.scene.remove(bullet);
         }, 3000);
 
         if (projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0)) <= 1) {
           this.hsSound.play();
         }
 
+        if (projection.x === -this.MAP_SIZE / 2 && projection.y <= 21.75 && projection.y >= 18.25 && projection.z <= -35 && projection.z >= -45) {
+          _settings.settings.bulletTime = !_settings.settings.bulletTime;
+          this.scene.getObjectByName('bullet time').material.color.setHex(_settings.settings.bulletTime ? 0x00ff00 : 0xecf0f1);
+        } else if (projection.x === -this.MAP_SIZE / 2 && projection.y <= 18.25 && projection.y >= 15.25 && projection.z <= -35 && projection.z >= -45) {
+          _settings.settings.ghostHair = !_settings.settings.ghostHair;
+          this.scene.getObjectByName('ghosthair').material.color.setHex(_settings.settings.bulletTime ? 0x00ff00 : 0xecf0f1);
+        }
+
         this.shot = true;
         if (this.ammo !== 29) {
           setTimeout(function () {
-            return _this3.shot = false;
+            return _this4.shot = false;
           }, 100);
         } else {
           setTimeout(function () {
-            return _this3.shot = false;
+            return _this4.shot = false;
           }, 2500);
 
           this.reloadSound1.play();
           setTimeout(function () {
-            _this3.reloadSound2.play();
+            _this4.reloadSound2.play();
           }, 750);
           setTimeout(function () {
-            _this3.reloadSound3.play();
+            _this4.reloadSound3.play();
           }, 1500);
         }
 

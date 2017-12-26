@@ -85,6 +85,7 @@ export default class Game {
     this.clock = new THREE.Clock();
     THREEx.WindowResize(this.renderer, this.camera);
     this.keyboard = new THREEx.KeyboardState();
+    this.fontLoader = new THREE.FontLoader();
   }
 
   initAudio() {
@@ -137,6 +138,32 @@ export default class Game {
     line.position.y = this.SPRAY_HEIGHT;
 
     this.scene.add(line);
+
+    this.fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {     
+      const color = 0xecf0f1;
+
+      const messages = ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'];
+      messages.forEach((message, i) => {
+        const material = new THREE.LineBasicMaterial({
+          color: color,
+          side: THREE.DoubleSide,
+        });
+        const shape = new THREE.BufferGeometry();
+        const shapes = font.generateShapes(message, 100, 2);
+        const geometry = new THREE.ShapeGeometry(shapes);
+        geometry.computeBoundingBox();
+        geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
+        shape.fromGeometry(geometry);
+        const text = new THREE.Mesh(shape, material);
+        text.position.x = -this.MAP_SIZE / 2;
+        text.position.y = 20 - 3.5*i;
+        text.position.z = -40;
+        text.rotation.y = Math.PI / 2;
+        text.name = message;
+        text.scale.set(0.015, 0.015, 0.015);
+        this.scene.add(text);
+      });      
+    });
 
     this.player = new Player(this.camera);
     this.scene.add(this.player.mesh);
@@ -222,13 +249,21 @@ export default class Game {
       const bulletGeometry = new THREE.Geometry();
       const projection = utils.projection(this.player, spray['ak47'][this.count]);
       bulletGeometry.vertices.push(projection);
-      const bulletMaterial = new THREE.PointsMaterial({size: 1, sizeAttenuation: true});
+      const bulletMaterial = new THREE.PointsMaterial({color: 0xecf0f1, size: 1, sizeAttenuation: true});
       const bullet = new THREE.Points(bulletGeometry, bulletMaterial);
       this.scene.add(bullet);
       setTimeout(() => this.scene.remove(bullet), 3000);
 
       if (projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0)) <= 1) {
         this.hsSound.play();
+      }
+
+      if (projection.x === -this.MAP_SIZE / 2 && projection.y <= 21.75 && projection.y >= 18.25 && projection.z <= -35 && projection.z >= -45) {
+        settings.bulletTime = !settings.bulletTime;
+        this.scene.getObjectByName('bullet time').material.color.setHex(settings.bulletTime ? 0x00ff00 : 0xecf0f1);
+      } else if (projection.x === -this.MAP_SIZE / 2 && projection.y <= 18.25 && projection.y >= 15.25 && projection.z <= -35 && projection.z >= -45) {
+        settings.ghostHair = !settings.ghostHair;
+        this.scene.getObjectByName('ghosthair').material.color.setHex(settings.bulletTime ? 0x00ff00 : 0xecf0f1);
       }
 
       this.shot = true;
