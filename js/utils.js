@@ -15,6 +15,9 @@ exports.projection = (player, s) => {
   spray.multiplyScalar(scale / global.INITIAL_DISTANCE);
   // spray.multiplyScalar(scale / (position.distanceTo(new THREE.Vector3(-MAP_SIZE / 2 + 0.01, 5, 0))));
   direction.add(spray);
+  if (player.velocity.lengthSq() >= 500) {
+    direction.add(new THREE.Vector3(THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3)));
+  }
 
   const t1 = (MAP_SIZE / 2 - position.x) / direction.x;
   const t2 = (-MAP_SIZE / 2 - position.x) / direction.x;
@@ -26,5 +29,7 @@ exports.projection = (player, s) => {
   const pos = [t1, t2, t3, t4, t5, t6].filter(t => t >= 0);
   const t = Math.min(...pos);
 
-  return position.add(direction.multiplyScalar(t));
+  position.add(direction.multiplyScalar(t));
+
+  return position;
 };

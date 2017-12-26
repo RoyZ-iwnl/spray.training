@@ -5,6 +5,7 @@ import * as utils from './utils.js';
 import Player from './player.js';
 import { spray } from './spray.js';
 import { global } from './global.js';
+import { settings } from './settings.js';
 
 export default class Game {
   constructor() {

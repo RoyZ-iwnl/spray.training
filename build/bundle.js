@@ -21534,6 +21534,8 @@ var _spray = __webpack_require__(12);
 
 var _global = __webpack_require__(13);
 
+var _settings = __webpack_require__(14);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -24863,6 +24865,9 @@ exports.projection = function (player, s) {
   spray.multiplyScalar(scale / _global.global.INITIAL_DISTANCE);
   // spray.multiplyScalar(scale / (position.distanceTo(new THREE.Vector3(-MAP_SIZE / 2 + 0.01, 5, 0))));
   direction.add(spray);
+  if (player.velocity.lengthSq() >= 500) {
+    direction.add(new THREE.Vector3(THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3)));
+  }
 
   var t1 = (MAP_SIZE / 2 - position.x) / direction.x;
   var t2 = (-MAP_SIZE / 2 - position.x) / direction.x;
@@ -24876,7 +24881,9 @@ exports.projection = function (player, s) {
   });
   var t = Math.min.apply(Math, _toConsumableArray(pos));
 
-  return position.add(direction.multiplyScalar(t));
+  position.add(direction.multiplyScalar(t));
+
+  return position;
 };
 
 /***/ }),
@@ -24961,6 +24968,23 @@ var global = exports.global = {
   INITIAL_DISTANCE: 80,
   SPRAY_HEIGHT: 10,
   SPRAY_SCALE: 0.02
+};
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var settings = exports.settings = {
+  infiniteAmmo: false,
+  noSpread: false,
+  ghostHair: true,
+  bulletTime: false
 };
 
 /***/ })
