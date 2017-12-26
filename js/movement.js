@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { global } from './global.js';
 
 export default function(player, cmd, delta) {
   let position = player.mesh.position;
@@ -26,7 +27,7 @@ export default function(player, cmd, delta) {
     let controlF;
     let dropF = 0;
 
-    if (position.y <= 5) {
+    if (position.y <= global.PLAYER_HEIGHT) {
       controlF = Math.max(speedF, 10);
       dropF = controlF * 10 * delta * t;
     }

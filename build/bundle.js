@@ -21532,6 +21532,8 @@ var _player2 = _interopRequireDefault(_player);
 
 var _spray = __webpack_require__(12);
 
+var _global = __webpack_require__(13);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -21549,8 +21551,9 @@ var Game = function () {
       jump: false
     };
 
-    this.MAP_SIZE = 100;
-    this.MAP_HEIGHT = 25;
+    this.MAP_SIZE = _global.global.MAP_SIZE;
+    this.MAP_HEIGHT = _global.global.MAP_HEIGHT;
+    this.SPRAY_HEIGHT = _global.global.SPRAY_HEIGHT;
 
     this.shot = false;
 
@@ -21647,11 +21650,15 @@ var Game = function () {
         src: ['audio/bell1.wav'],
         volume: 0.2
       });
+      this.hsSound = new _howler.Howl({
+        src: ['audio/headshot1.wav'],
+        volume: 0.02
+      });
     }
   }, {
     key: 'drawWorld',
     value: function drawWorld() {
-      var mapMaterial = new THREE.LineDashedMaterial({ color: 0xffaa00, dashSize: 2, gapSize: 1, linewidth: 5 });
+      var mapMaterial = new THREE.LineDashedMaterial({ color: 0xffaa00, dashSize: 2, gapSize: 1, linewidth: 1 });
       var mapGeometry = new THREE.Geometry().fromBufferGeometry(new THREE.EdgesGeometry(new THREE.BoxGeometry(this.MAP_SIZE, this.MAP_HEIGHT, this.MAP_SIZE)));
       mapGeometry.computeLineDistances();
       var map = new THREE.LineSegments(mapGeometry, mapMaterial);
@@ -21659,11 +21666,20 @@ var Game = function () {
 
       this.scene.add(map);
 
+      var lineMaterial = new THREE.LineDashedMaterial({ color: 0xecf0f1, dashSize: 0.75, gapSize: 0.75, linewidth: 1 });
+      var lineGeometry = new THREE.Geometry();
+      lineGeometry.vertices.push(new THREE.Vector3(-this.MAP_SIZE / 2, 0, 8), new THREE.Vector3(-this.MAP_SIZE / 2, 0, -8), new THREE.Vector3(-this.MAP_SIZE / 2, 8, 0), new THREE.Vector3(-this.MAP_SIZE / 2, -8, 0));
+      lineGeometry.computeLineDistances();
+      var line = new THREE.LineSegments(lineGeometry, lineMaterial);
+      line.position.y = this.SPRAY_HEIGHT;
+
+      this.scene.add(line);
+
       this.player = new _player2.default(this.camera);
       this.scene.add(this.player.mesh);
 
       var targetGeometry = new THREE.Geometry();
-      targetGeometry.vertices.push(new THREE.Vector3(-49.9, 10, 0));
+      targetGeometry.vertices.push(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, _global.global.SPRAY_HEIGHT, 0));
       var targetMaterial = new THREE.PointsMaterial({ color: 0xff0000, size: 1, sizeAttenuation: true });
       var target = new THREE.Points(targetGeometry, targetMaterial);
       target.name = 'target';
@@ -21763,6 +21779,10 @@ var Game = function () {
           return _this3.scene.remove(bullet);
         }, 3000);
 
+        if (projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0)) <= 1) {
+          this.hsSound.play();
+        }
+
         this.shot = true;
         if (this.ammo !== 29) {
           setTimeout(function () {
@@ -21787,7 +21807,7 @@ var Game = function () {
         this.sprayCount = (this.sprayCount + 1) % 30;
 
         var target = this.scene.getObjectByName('target');
-        var targetPosition = _spray.spray['ak47'][this.sprayCount].clone().multiplyScalar(-0.02).add(new THREE.Vector3(-49.9, 10, 0));
+        var targetPosition = _spray.spray['ak47'][this.sprayCount].clone().multiplyScalar(-_global.global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0));
         target.geometry.vertices.pop();
         target.geometry.vertices.push(targetPosition);
         target.geometry.verticesNeedUpdate = true;
@@ -24763,7 +24783,7 @@ exports.default = function (player, cmd, delta) {
     var controlF = void 0;
     var dropF = 0;
 
-    if (position.y <= 5) {
+    if (position.y <= _global.global.PLAYER_HEIGHT) {
       controlF = Math.max(speedF, 10);
       dropF = controlF * 10 * delta * t;
     }
@@ -24806,6 +24826,8 @@ var _three = __webpack_require__(0);
 
 var THREE = _interopRequireWildcard(_three);
 
+var _global = __webpack_require__(13);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 ;
@@ -24821,25 +24843,31 @@ var _three = __webpack_require__(0);
 
 var THREE = _interopRequireWildcard(_three);
 
+var _global = __webpack_require__(13);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 exports.projection = function (player, s) {
-  var MAP_SIZE = 100;
-  var MAP_HEIGHT = 25;
-  var PLAYER_HEIGHT = 5;
+  var MAP_SIZE = _global.global.MAP_SIZE;
+  var MAP_HEIGHT = _global.global.MAP_HEIGHT;
+  var PLAYER_HEIGHT = _global.global.PLAYER_HEIGHT;
+  var SPRAY_HEIGHT = _global.global.SPRAY_HEIGHT;
+  var scale = _global.global.SPRAY_SCALE;
 
   var position = player.mesh.position.clone();
   var direction = player.camera.getWorldDirection().clone();
+
   var spray = s.clone();
-  spray.multiplyScalar(0.02 / (MAP_SIZE / 2));
+  spray.multiplyScalar(scale / _global.global.INITIAL_DISTANCE);
+  // spray.multiplyScalar(scale / (position.distanceTo(new THREE.Vector3(-MAP_SIZE / 2 + 0.01, 5, 0))));
   direction.add(spray);
 
   var t1 = (MAP_SIZE / 2 - position.x) / direction.x;
   var t2 = (-MAP_SIZE / 2 - position.x) / direction.x;
-  var t3 = (-PLAYER_HEIGHT + MAP_HEIGHT - position.y) / direction.y;
-  var t4 = (-PLAYER_HEIGHT - position.y) / direction.y;
+  var t3 = (-PLAYER_HEIGHT + MAP_HEIGHT) / direction.y;
+  var t4 = -PLAYER_HEIGHT / direction.y;
   var t5 = (MAP_SIZE / 2 - position.z) / direction.z;
   var t6 = (-MAP_SIZE / 2 - position.z) / direction.z;
 
@@ -24866,6 +24894,8 @@ var _three = __webpack_require__(0);
 
 var THREE = _interopRequireWildcard(_three);
 
+var _global = __webpack_require__(13);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24875,7 +24905,8 @@ var Player = function Player(camera) {
 
   this.camera = camera;
   this.mesh = new THREE.Mesh(new THREE.SphereGeometry(5, 32, 32), new THREE.MeshBasicMaterial({ color: 0x00aaff, visible: false })).add(camera);
-  this.mesh.position.y = 5;
+  this.mesh.position.x = -_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE;
+  this.mesh.position.y = _global.global.PLAYER_HEIGHT;
   this.velocity = new THREE.Vector3(0, 0, 0);
   this.shoot = false;
 };
@@ -24903,6 +24934,33 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 var spray = exports.spray = {
   'ak47': [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 11, 6), new THREE.Vector3(0, 40, 0), new THREE.Vector3(0, 87, 4), new THREE.Vector3(0, 135, 6), new THREE.Vector3(0, 187, -14), new THREE.Vector3(0, 231, -27), new THREE.Vector3(0, 262, -48), new THREE.Vector3(0, 285, -21), new THREE.Vector3(0, 278, 46), new THREE.Vector3(0, 282, 81), new THREE.Vector3(0, 300, 60), new THREE.Vector3(0, 309, 84), new THREE.Vector3(0, 296, 126), new THREE.Vector3(0, 304, 131), new THREE.Vector3(0, 306, 67), new THREE.Vector3(0, 317, 37), new THREE.Vector3(0, 334, 15), new THREE.Vector3(0, 332, -28), new THREE.Vector3(0, 317, -81), new THREE.Vector3(0, 313, -48), new THREE.Vector3(0, 318, -58), new THREE.Vector3(0, 333, -48), new THREE.Vector3(0, 339, -34), new THREE.Vector3(0, 334, -64), new THREE.Vector3(0, 342, -75), new THREE.Vector3(0, 341, -41), new THREE.Vector3(0, 336, 10), new THREE.Vector3(0, 303, 83), new THREE.Vector3(0, 303, 105)],
   'm4a4': []
+};
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.global = undefined;
+
+var _three = __webpack_require__(0);
+
+var THREE = _interopRequireWildcard(_three);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var global = exports.global = {
+  MAP_SIZE: 100,
+  MAP_HEIGHT: 25,
+  PLAYER_HEIGHT: 10,
+  INITIAL_DISTANCE: 80,
+  SPRAY_HEIGHT: 10,
+  SPRAY_SCALE: 0.02
 };
 
 /***/ })

@@ -4,6 +4,7 @@ import movement from './movement.js';
 import * as utils from './utils.js';
 import Player from './player.js';
 import { spray } from './spray.js';
+import { global } from './global.js';
 
 export default class Game {
   constructor() {
@@ -14,8 +15,9 @@ export default class Game {
       jump: false,
     };
     
-    this.MAP_SIZE = 100;
-    this.MAP_HEIGHT = 25;
+    this.MAP_SIZE = global.MAP_SIZE;
+    this.MAP_HEIGHT = global.MAP_HEIGHT;
+    this.SPRAY_HEIGHT = global.SPRAY_HEIGHT;
 
     this.shot = false;
 
@@ -105,10 +107,14 @@ export default class Game {
       src: ['audio/bell1.wav'],
       volume: 0.2,
     });
+    this.hsSound = new Howl({
+      src: ['audio/headshot1.wav'],
+      volume: 0.02,
+    });
   }
 
   drawWorld() {
-    const mapMaterial = new THREE.LineDashedMaterial({color: 0xffaa00, dashSize: 2, gapSize: 1, linewidth: 5});
+    const mapMaterial = new THREE.LineDashedMaterial({color: 0xffaa00, dashSize: 2, gapSize: 1, linewidth: 1});
     const mapGeometry = new THREE.Geometry().fromBufferGeometry(new THREE.EdgesGeometry(new THREE.BoxGeometry(this.MAP_SIZE, this.MAP_HEIGHT, this.MAP_SIZE)));
     mapGeometry.computeLineDistances();
     const map = new THREE.LineSegments(mapGeometry, mapMaterial);
@@ -116,11 +122,26 @@ export default class Game {
     
     this.scene.add(map);
 
+    const lineMaterial = new THREE.LineDashedMaterial({color: 0xecf0f1, dashSize: 0.75, gapSize: 0.75, linewidth: 1});
+    const lineGeometry = new THREE.Geometry();
+    lineGeometry.vertices.push(
+      new THREE.Vector3(-this.MAP_SIZE/2, 0, 8),
+      new THREE.Vector3(-this.MAP_SIZE/2, 0, -8),
+
+      new THREE.Vector3(-this.MAP_SIZE/2, 8, 0),
+      new THREE.Vector3(-this.MAP_SIZE/2, -8, 0),
+    );
+    lineGeometry.computeLineDistances();
+    const line = new THREE.LineSegments(lineGeometry, lineMaterial);
+    line.position.y = this.SPRAY_HEIGHT;
+
+    this.scene.add(line);
+
     this.player = new Player(this.camera);
     this.scene.add(this.player.mesh);
 
     const targetGeometry = new THREE.Geometry();
-    targetGeometry.vertices.push(new THREE.Vector3(-49.9, 10, 0));
+    targetGeometry.vertices.push(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, global.SPRAY_HEIGHT, 0));
     const targetMaterial = new THREE.PointsMaterial({color: 0xff0000, size: 1, sizeAttenuation: true});
     const target = new THREE.Points(targetGeometry, targetMaterial);
     target.name = 'target';
@@ -205,6 +226,10 @@ export default class Game {
       this.scene.add(bullet);
       setTimeout(() => this.scene.remove(bullet), 3000);
 
+      if (projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0)) <= 1) {
+        this.hsSound.play();
+      }
+
       this.shot = true;
       if (this.ammo !== 29) {
         setTimeout(() => this.shot = false, 100);
@@ -225,7 +250,7 @@ export default class Game {
       this.sprayCount = (this.sprayCount + 1) % 30;
 
       const target = this.scene.getObjectByName('target');
-      const targetPosition = spray['ak47'][this.sprayCount].clone().multiplyScalar(-0.02).add(new THREE.Vector3(-49.9, 10, 0))
+      const targetPosition = spray['ak47'][this.sprayCount].clone().multiplyScalar(-global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0))
       target.geometry.vertices.pop();
       target.geometry.vertices.push(targetPosition);
       target.geometry.verticesNeedUpdate = true;
