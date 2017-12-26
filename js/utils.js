@@ -33,3 +33,7 @@ exports.projection = (player, s) => {
 
   return position;
 };
+
+exports.accuracy = (shots) => {
+  return shots.reduce((acc, shot) => acc + shot, 0);
+};

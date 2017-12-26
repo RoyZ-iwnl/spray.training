@@ -21603,6 +21603,9 @@ var Game = function () {
 
     this.SETTINGS_MIN_Z = -47;
     this.SETTINGS_MAX_Z = -33;
+
+    this.shots = [];
+    this.highscore = 0;
   }
 
   _createClass(Game, [{
@@ -21854,7 +21857,10 @@ var Game = function () {
           return _this4.scene.remove(bullet);
         }, 3000);
 
-        if (projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0)) <= 1) {
+        var d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
+        this.shots.push(d);
+
+        if (d <= 1) {
           this.hsSound.play();
         }
 
@@ -21875,6 +21881,34 @@ var Game = function () {
           setTimeout(function () {
             _this4.reloadSound3.play();
           }, 1500);
+
+          var score = 100 / (utils.accuracy(this.shots) / 100 + 1);
+          this.highScore = Math.max(score, this.highScore);
+
+          this.scene.remove(this.scene.getObjectByName('score'));
+          this.fontLoader.load('fonts/helvetiker_regular.typeface.json', function (font) {
+            var color = 0xecf0f1;
+            var material = new THREE.LineBasicMaterial({
+              color: color,
+              side: THREE.DoubleSide
+            });
+            var shape = new THREE.BufferGeometry();
+            var shapes = font.generateShapes('score: ' + score.toFixed(2) + '%\nyour high score: ' + _this4.highScore.toFixed(2) + '%', 100, 2);
+            var geometry = new THREE.ShapeGeometry(shapes);
+            geometry.computeBoundingBox();
+            geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
+            shape.fromGeometry(geometry);
+            var text = new THREE.Mesh(shape, material);
+            text.position.x = -_this4.MAP_SIZE / 2;
+            text.position.y = 12.5;
+            text.position.z = 30;
+            text.rotation.y = Math.PI / 2;
+            text.name = 'score';
+            text.scale.set(0.015, 0.015, 0.015);
+            _this4.scene.add(text);
+          });
+
+          this.shots = [];
         }
 
         this.ammo = _settings.settings.infiniteAmmo ? 0 : (this.ammo + 1) % 30;
@@ -21916,6 +21950,7 @@ var Game = function () {
                   this.ammo = 0;
                   this.count = 0;
                   this.sprayCount = 0;
+                  this.shots = [];
                   this.player.mesh.position.set(-_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE, _global.global.PLAYER_HEIGHT, 0);
                   this.settingSound.play();
                 }
@@ -21927,7 +21962,6 @@ var Game = function () {
         target.geometry.verticesNeedUpdate = true;
         target.material.visible = _settings.settings.ghostHair;
       }
-
       this.refresh();
     }
   }, {
@@ -24989,6 +25023,12 @@ exports.projection = function (player, s) {
   position.add(direction.multiplyScalar(t));
 
   return position;
+};
+
+exports.accuracy = function (shots) {
+  return shots.reduce(function (acc, shot) {
+    return acc + shot;
+  }, 0);
 };
 
 /***/ }),

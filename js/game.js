@@ -31,6 +31,9 @@ export default class Game {
 
     this.SETTINGS_MIN_Z = -47;
     this.SETTINGS_MAX_Z = -33;
+
+    this.shots = [];
+    this.highscore = 0;
   }
 
   init() {
@@ -263,7 +266,10 @@ export default class Game {
       this.scene.add(bullet);
       setTimeout(() => this.scene.remove(bullet), 3000);
 
-      if (projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0)) <= 1) {
+      const d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
+      this.shots.push(d);
+
+      if (d <= 1) {
         this.hsSound.play();
       }
 
@@ -280,6 +286,34 @@ export default class Game {
         setTimeout(() => {
           this.reloadSound3.play();
         }, 1500);
+
+        const score = 100/(utils.accuracy(this.shots)/100+1);
+        this.highScore = Math.max(score, this.highScore);
+
+        this.scene.remove(this.scene.getObjectByName('score'))
+        this.fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {     
+          const color = 0xecf0f1;
+          const material = new THREE.LineBasicMaterial({
+            color: color,
+            side: THREE.DoubleSide,
+          });
+          const shape = new THREE.BufferGeometry();
+          const shapes = font.generateShapes(`score: ${score.toFixed(2)}%\nyour high score: ${this.highScore.toFixed(2)}%`, 100, 2);
+          const geometry = new THREE.ShapeGeometry(shapes);
+          geometry.computeBoundingBox();
+          geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
+          shape.fromGeometry(geometry);
+          const text = new THREE.Mesh(shape, material);
+          text.position.x = -this.MAP_SIZE / 2;
+          text.position.y = 12.5;
+          text.position.z = 30;
+          text.rotation.y = Math.PI / 2;
+          text.name = 'score';
+          text.scale.set(0.015, 0.015, 0.015);
+          this.scene.add(text);
+        });
+
+        this.shots = [];
       }
     
       this.ammo = settings.infiniteAmmo ? 0 : (this.ammo + 1) % 30;
@@ -321,6 +355,7 @@ export default class Game {
         this.ammo = 0;
         this.count = 0;
         this.sprayCount = 0;
+        this.shots = [];
         this.player.mesh.position.set(-global.MAP_SIZE / 2 + global.INITIAL_DISTANCE, global.PLAYER_HEIGHT, 0);
         this.settingSound.play();
       }
@@ -332,7 +367,6 @@ export default class Game {
       target.geometry.verticesNeedUpdate = true;
       target.material.visible = settings.ghostHair;
     }
-
     this.refresh();
   }
 
