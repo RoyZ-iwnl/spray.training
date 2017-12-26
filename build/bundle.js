@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -3146,6 +3146,33 @@ function CanvasRenderer(){console.error('THREE.CanvasRenderer has been moved to 
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.global = undefined;
+
+var _three = __webpack_require__(0);
+
+var THREE = _interopRequireWildcard(_three);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var global = exports.global = {
+  MAP_SIZE: 100,
+  MAP_HEIGHT: 25,
+  PLAYER_HEIGHT: 10,
+  INITIAL_DISTANCE: 80,
+  SPRAY_HEIGHT: 10,
+  SPRAY_SCALE: 0.02
+};
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12978,10 +13005,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)(module)))
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13011,17 +13038,17 @@ try {
 module.exports = g;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function($) {
 
-var _ui = __webpack_require__(5);
+var _ui = __webpack_require__(6);
 
 var ui = _interopRequireWildcard(_ui);
 
-var _game = __webpack_require__(7);
+var _game = __webpack_require__(8);
 
 var _game2 = _interopRequireDefault(_game);
 
@@ -13054,10 +13081,10 @@ $('#main-button').on('click', function () {
   ctx.lineTo(30, 15);
   ctx.stroke();
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13087,13 +13114,13 @@ module.exports = function (module) {
 };
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _gsap = __webpack_require__(6);
+var _gsap = __webpack_require__(7);
 
 var _gsap2 = _interopRequireDefault(_gsap);
 
@@ -13105,7 +13132,7 @@ exports.fadeFromTo = function (pageOne, pageTwo, t) {
 };
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21505,10 +21532,10 @@ if (_gsScope._gsDefine) {
 
 	_tickerActive = false; //ensures that the first official animation forces a ticker.tick() to update the time when it is instantiated
 })(typeof module !== "undefined" && module.exports && typeof global !== "undefined" ? global : undefined || window, "TweenMax");
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21524,23 +21551,23 @@ var _three = __webpack_require__(0);
 
 var THREE = _interopRequireWildcard(_three);
 
-var _howler = __webpack_require__(8);
+var _howler = __webpack_require__(9);
 
-var _movement = __webpack_require__(9);
+var _movement = __webpack_require__(10);
 
 var _movement2 = _interopRequireDefault(_movement);
 
-var _utils = __webpack_require__(10);
+var _utils = __webpack_require__(11);
 
 var utils = _interopRequireWildcard(_utils);
 
-var _player = __webpack_require__(11);
+var _player = __webpack_require__(12);
 
 var _player2 = _interopRequireDefault(_player);
 
-var _spray = __webpack_require__(12);
+var _spray = __webpack_require__(13);
 
-var _global = __webpack_require__(13);
+var _global = __webpack_require__(1);
 
 var _settings = __webpack_require__(14);
 
@@ -21573,6 +21600,9 @@ var Game = function () {
 
     this.currentScore = 0;
     this.highScore = 0;
+
+    this.SETTINGS_MIN_Z = -47;
+    this.SETTINGS_MAX_Z = -33;
   }
 
   _createClass(Game, [{
@@ -21665,6 +21695,14 @@ var Game = function () {
         src: ['audio/headshot1.wav'],
         volume: 0.02
       });
+      this.settingSound = new _howler.Howl({
+        src: ['audio/blip1.wav'],
+        volume: 0.2
+      });
+      this.errorSound = new _howler.Howl({
+        src: ['audio/button10.wav'],
+        volume: 0.2
+      });
     }
   }, {
     key: 'drawWorld',
@@ -21689,10 +21727,8 @@ var Game = function () {
       this.scene.add(line);
 
       this.fontLoader.load('fonts/helvetiker_regular.typeface.json', function (font) {
-        var color = 0xecf0f1;
-
-        var messages = ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'];
-        messages.forEach(function (message, i) {
+        ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'].forEach(function (message, i) {
+          var color = message === 'ghosthair' ? 0x00ff00 : 0xecf0f1;
           var material = new THREE.LineBasicMaterial({
             color: color,
             side: THREE.DoubleSide
@@ -21809,7 +21845,7 @@ var Game = function () {
 
       if (this.player.shoot && !this.shot) {
         var bulletGeometry = new THREE.Geometry();
-        var projection = utils.projection(this.player, _spray.spray['ak47'][this.count]);
+        var projection = utils.projection(this.player, _settings.settings.noSpread ? new THREE.Vector3(0, 0, 0) : _spray.spray['ak47'][this.count]);
         bulletGeometry.vertices.push(projection);
         var bulletMaterial = new THREE.PointsMaterial({ color: 0xecf0f1, size: 1, sizeAttenuation: true });
         var bullet = new THREE.Points(bulletGeometry, bulletMaterial);
@@ -21820,14 +21856,6 @@ var Game = function () {
 
         if (projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0)) <= 1) {
           this.hsSound.play();
-        }
-
-        if (projection.x === -this.MAP_SIZE / 2 && projection.y <= 21.75 && projection.y >= 18.25 && projection.z <= -35 && projection.z >= -45) {
-          _settings.settings.bulletTime = !_settings.settings.bulletTime;
-          this.scene.getObjectByName('bullet time').material.color.setHex(_settings.settings.bulletTime ? 0x00ff00 : 0xecf0f1);
-        } else if (projection.x === -this.MAP_SIZE / 2 && projection.y <= 18.25 && projection.y >= 15.25 && projection.z <= -35 && projection.z >= -45) {
-          _settings.settings.ghostHair = !_settings.settings.ghostHair;
-          this.scene.getObjectByName('ghosthair').material.color.setHex(_settings.settings.bulletTime ? 0x00ff00 : 0xecf0f1);
         }
 
         this.shot = true;
@@ -21849,26 +21877,58 @@ var Game = function () {
           }, 1500);
         }
 
-        this.ammo = (this.ammo + 1) % 30;
+        this.ammo = _settings.settings.infiniteAmmo ? 0 : (this.ammo + 1) % 30;
         this.count = (this.count + 1) % 30;
         this.sprayCount = (this.sprayCount + 1) % 30;
-
-        var target = this.scene.getObjectByName('target');
-        var targetPosition = _spray.spray['ak47'][this.sprayCount].clone().multiplyScalar(-_global.global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0));
-        target.geometry.vertices.pop();
-        target.geometry.vertices.push(targetPosition);
-        target.geometry.verticesNeedUpdate = true;
-
-        // console.log(projection.distanceTo(targetPosition));
 
         this.weaponSound.play();
 
         if (this.sprayCount === 0) {
           this.doneSound.play();
         }
+
+        // bullet time
+        if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 21.75 && projection.y >= 18.25 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
+          _settings.settings.bulletTime = !_settings.settings.bulletTime;
+          this.scene.getObjectByName('bullet time').material.color.setHex(_settings.settings.bulletTime ? 0x00ff00 : 0xecf0f1);
+          this.errorSound.play();
+        }
+        // ghosthair
+        else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 18.25 && projection.y >= 14.75 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
+            _settings.settings.ghostHair = !_settings.settings.ghostHair;
+            this.scene.getObjectByName('ghosthair').material.color.setHex(_settings.settings.ghostHair ? 0x00ff00 : 0xecf0f1);
+            this.settingSound.play();
+          }
+          // infinite ammo
+          else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 14.75 && projection.y >= 11.25 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
+              _settings.settings.infiniteAmmo = !_settings.settings.infiniteAmmo;
+              this.scene.getObjectByName('infinite ammo').material.color.setHex(_settings.settings.infiniteAmmo ? 0x00ff00 : 0xecf0f1);
+              this.settingSound.play();
+            }
+            // nospread
+            else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 11.25 && projection.y >= 7.75 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
+                _settings.settings.noSpread = !_settings.settings.noSpread;
+                this.scene.getObjectByName('nospread').material.color.setHex(_settings.settings.noSpread ? 0x00ff00 : 0xecf0f1);
+                this.settingSound.play();
+              }
+              // reset
+              else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 7.75 && projection.y >= 4.25 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
+                  this.ammo = 0;
+                  this.count = 0;
+                  this.sprayCount = 0;
+                  this.player.mesh.position.set(-_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE, _global.global.PLAYER_HEIGHT, 0);
+                  this.settingSound.play();
+                }
+
+        var target = this.scene.getObjectByName('target');
+        var targetPosition = _spray.spray['ak47'][this.sprayCount].clone().multiplyScalar(-_global.global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0));
+        target.geometry.vertices.pop();
+        target.geometry.vertices.push(targetPosition);
+        target.geometry.verticesNeedUpdate = true;
+        target.material.visible = _settings.settings.ghostHair;
       }
 
-      this.reset();
+      this.refresh();
     }
   }, {
     key: 'setCmd',
@@ -21888,8 +21948,8 @@ var Game = function () {
       this.cmd.jump = this.keyboard.pressed('space');
     }
   }, {
-    key: 'reset',
-    value: function reset() {
+    key: 'refresh',
+    value: function refresh() {
       this.cursorXY = { x: 0, y: 0 };
       this.cmd = {
         forward: 0,
@@ -21903,10 +21963,10 @@ var Game = function () {
 }();
 
 exports.default = Game;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24791,10 +24851,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     }
   };
 })();
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24873,14 +24933,14 @@ var _three = __webpack_require__(0);
 
 var THREE = _interopRequireWildcard(_three);
 
-var _global = __webpack_require__(13);
+var _global = __webpack_require__(1);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 ;
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24890,7 +24950,7 @@ var _three = __webpack_require__(0);
 
 var THREE = _interopRequireWildcard(_three);
 
-var _global = __webpack_require__(13);
+var _global = __webpack_require__(1);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -24932,7 +24992,7 @@ exports.projection = function (player, s) {
 };
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24946,7 +25006,7 @@ var _three = __webpack_require__(0);
 
 var THREE = _interopRequireWildcard(_three);
 
-var _global = __webpack_require__(13);
+var _global = __webpack_require__(1);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -24966,7 +25026,7 @@ var Player = function Player(camera) {
 exports.default = Player;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24986,33 +25046,6 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 var spray = exports.spray = {
   'ak47': [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 11, 6), new THREE.Vector3(0, 40, 0), new THREE.Vector3(0, 87, 4), new THREE.Vector3(0, 135, 6), new THREE.Vector3(0, 187, -14), new THREE.Vector3(0, 231, -27), new THREE.Vector3(0, 262, -48), new THREE.Vector3(0, 285, -21), new THREE.Vector3(0, 278, 46), new THREE.Vector3(0, 282, 81), new THREE.Vector3(0, 300, 60), new THREE.Vector3(0, 309, 84), new THREE.Vector3(0, 296, 126), new THREE.Vector3(0, 304, 131), new THREE.Vector3(0, 306, 67), new THREE.Vector3(0, 317, 37), new THREE.Vector3(0, 334, 15), new THREE.Vector3(0, 332, -28), new THREE.Vector3(0, 317, -81), new THREE.Vector3(0, 313, -48), new THREE.Vector3(0, 318, -58), new THREE.Vector3(0, 333, -48), new THREE.Vector3(0, 339, -34), new THREE.Vector3(0, 334, -64), new THREE.Vector3(0, 342, -75), new THREE.Vector3(0, 341, -41), new THREE.Vector3(0, 336, 10), new THREE.Vector3(0, 303, 83), new THREE.Vector3(0, 303, 105)],
   'm4a4': []
-};
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.global = undefined;
-
-var _three = __webpack_require__(0);
-
-var THREE = _interopRequireWildcard(_three);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-var global = exports.global = {
-  MAP_SIZE: 100,
-  MAP_HEIGHT: 25,
-  PLAYER_HEIGHT: 10,
-  INITIAL_DISTANCE: 80,
-  SPRAY_HEIGHT: 10,
-  SPRAY_SCALE: 0.02
 };
 
 /***/ }),

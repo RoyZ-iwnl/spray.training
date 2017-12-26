@@ -28,6 +28,9 @@ export default class Game {
 
     this.currentScore = 0;
     this.highScore = 0;
+
+    this.SETTINGS_MIN_Z = -47;
+    this.SETTINGS_MAX_Z = -33;
   }
 
   init() {
@@ -113,6 +116,14 @@ export default class Game {
       src: ['audio/headshot1.wav'],
       volume: 0.02,
     });
+    this.settingSound = new Howl({
+      src: ['audio/blip1.wav'],
+      volume: 0.2,
+    });
+    this.errorSound = new Howl({
+      src: ['audio/button10.wav'],
+      volume: 0.2,
+    });
   }
 
   drawWorld() {
@@ -140,10 +151,8 @@ export default class Game {
     this.scene.add(line);
 
     this.fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {     
-      const color = 0xecf0f1;
-
-      const messages = ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'];
-      messages.forEach((message, i) => {
+      ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'].forEach((message, i) => {
+        const color = (message === 'ghosthair') ? 0x00ff00 : 0xecf0f1;
         const material = new THREE.LineBasicMaterial({
           color: color,
           side: THREE.DoubleSide,
@@ -247,7 +256,7 @@ export default class Game {
 
     if (this.player.shoot && !this.shot) {
       const bulletGeometry = new THREE.Geometry();
-      const projection = utils.projection(this.player, spray['ak47'][this.count]);
+      const projection = utils.projection(this.player, settings.noSpread ? new THREE.Vector3(0, 0, 0) : spray['ak47'][this.count]);
       bulletGeometry.vertices.push(projection);
       const bulletMaterial = new THREE.PointsMaterial({color: 0xecf0f1, size: 1, sizeAttenuation: true});
       const bullet = new THREE.Points(bulletGeometry, bulletMaterial);
@@ -256,14 +265,6 @@ export default class Game {
 
       if (projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0)) <= 1) {
         this.hsSound.play();
-      }
-
-      if (projection.x === -this.MAP_SIZE / 2 && projection.y <= 21.75 && projection.y >= 18.25 && projection.z <= -35 && projection.z >= -45) {
-        settings.bulletTime = !settings.bulletTime;
-        this.scene.getObjectByName('bullet time').material.color.setHex(settings.bulletTime ? 0x00ff00 : 0xecf0f1);
-      } else if (projection.x === -this.MAP_SIZE / 2 && projection.y <= 18.25 && projection.y >= 15.25 && projection.z <= -35 && projection.z >= -45) {
-        settings.ghostHair = !settings.ghostHair;
-        this.scene.getObjectByName('ghosthair').material.color.setHex(settings.bulletTime ? 0x00ff00 : 0xecf0f1);
       }
 
       this.shot = true;
@@ -281,26 +282,58 @@ export default class Game {
         }, 1500);
       }
     
-      this.ammo = (this.ammo + 1) % 30;
+      this.ammo = settings.infiniteAmmo ? 0 : (this.ammo + 1) % 30;
       this.count = (this.count + 1) % 30;
       this.sprayCount = (this.sprayCount + 1) % 30;
-
-      const target = this.scene.getObjectByName('target');
-      const targetPosition = spray['ak47'][this.sprayCount].clone().multiplyScalar(-global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0))
-      target.geometry.vertices.pop();
-      target.geometry.vertices.push(targetPosition);
-      target.geometry.verticesNeedUpdate = true;
-
-      // console.log(projection.distanceTo(targetPosition));
 
       this.weaponSound.play();
 
       if (this.sprayCount === 0) {
         this.doneSound.play();
       }
+      
+      // bullet time
+      if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 21.75 && projection.y >= 18.25 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
+        settings.bulletTime = !settings.bulletTime;
+        this.scene.getObjectByName('bullet time').material.color.setHex(settings.bulletTime ? 0x00ff00 : 0xecf0f1);
+        this.errorSound.play();
+      }
+      // ghosthair
+      else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 18.25 && projection.y >= 14.75 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
+        settings.ghostHair = !settings.ghostHair;
+        this.scene.getObjectByName('ghosthair').material.color.setHex(settings.ghostHair ? 0x00ff00 : 0xecf0f1);
+        this.settingSound.play();
+      }
+      // infinite ammo
+      else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 14.75 && projection.y >= 11.25 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
+        settings.infiniteAmmo = !settings.infiniteAmmo;
+        this.scene.getObjectByName('infinite ammo').material.color.setHex(settings.infiniteAmmo ? 0x00ff00 : 0xecf0f1);
+        this.settingSound.play();
+      }
+      // nospread
+      else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 11.25 && projection.y >= 7.75 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
+        settings.noSpread = !settings.noSpread;
+        this.scene.getObjectByName('nospread').material.color.setHex(settings.noSpread ? 0x00ff00 : 0xecf0f1);
+        this.settingSound.play();
+      }
+      // reset
+      else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 7.75 && projection.y >= 4.25 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
+        this.ammo = 0;
+        this.count = 0;
+        this.sprayCount = 0;
+        this.player.mesh.position.set(-global.MAP_SIZE / 2 + global.INITIAL_DISTANCE, global.PLAYER_HEIGHT, 0);
+        this.settingSound.play();
+      }
+
+      const target = this.scene.getObjectByName('target');
+      const targetPosition = spray['ak47'][this.sprayCount].clone().multiplyScalar(-global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0))
+      target.geometry.vertices.pop();
+      target.geometry.vertices.push(targetPosition);
+      target.geometry.verticesNeedUpdate = true;
+      target.material.visible = settings.ghostHair;
     }
 
-    this.reset();
+    this.refresh();
   }
 
   setCmd() {
@@ -319,7 +352,7 @@ export default class Game {
     this.cmd.jump = this.keyboard.pressed('space');
   }
 
-  reset() {
+  refresh() {
     this.cursorXY = {x: 0, y: 0};
     this.cmd = {
       forward: 0,
