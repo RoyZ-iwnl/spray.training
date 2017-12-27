@@ -7,18 +7,24 @@
 </head>
 <body>
 	<!-- main page -->
-	<div id="main-page" style="position: absolute; width: 500px; height: 300px; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+	<div id="main-page" style="position: absolute; width: 500px; height: 300px; top: 40%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
 		<div style="width:100%; font-family: 'Inconsolata'; font-size: 48px;">
       recoil training
 		</div>
 		<div style="position: absolute; top: 50px; left: 400px; font-weight: 300; font-size: 14px;">α 0.0</div>
     
-    <div style="margin-top: 25px; width: 250px; margin: 0 auto;">
+    <div style="width: 250px; margin: 50px auto;">
 			<p>Instructions</p>
 			<p style="font-size: 14px;">Use WASD to move and use your mouse to aim. Hold down the trigger to show where to aim for the spray.</p>
-		</div>
+    </div>
+    
+    <div style="width: 300px; margin: 50px auto;">
+        <p>Mouse sensitivity (CS:GO)</p>
+      <div id="sens-slider" style="width: 60%; display: inline-block; margin-left: 5%; margin-right: 5%;"></div>
+      <input type="number" min="0" max="8" step="0.1" id="sens-input" style="margin-top: 10px; width: 15%; 	padding: 7px; margin: 15px 5px 5px; vertical-align: 20%; font-family: 'Helvetica Neue', 'Source Sans Pro', Arial, sans-serif; font-weight: 300; font-size: 14px;">
+    </div>
 
-		<div style="margin-top: 25px">
+		<div style="margin-top: 50px">
 			<a id="main-button-link">
 				<button id="main-button">
 					Start
@@ -52,6 +58,8 @@
 
 	<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/10.1.0/nouislider.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/10.1.0/nouislider.min.js"></script>
   <script src="lib/threex.windowresize.js"></script>
   <script src="lib/threex.keyboardstate.js"></script>
   <script src="build/bundle.js"></script>

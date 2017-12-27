@@ -85,9 +85,14 @@ export default class Game {
     this.renderer = new THREE.WebGLRenderer({antialias: true});
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     $('#game-page')[0].append(this.renderer.domElement);
-    this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+    
+    const aspect = window.innerWidth / window.innerHeight;
+    const fov = 2 * Math.atan2(aspect, 4/3) * 180 / Math.PI;
+    this.camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 1, 1000);
+    console.log(fov);
     this.camera.position.set(0, 0, 0);
     this.camera.rotation.y = 0.5 * Math.PI;
+
     this.clock = new THREE.Clock();
     THREEx.WindowResize(this.renderer, this.camera);
     this.keyboard = new THREEx.KeyboardState();
@@ -182,7 +187,7 @@ export default class Game {
 
     const targetGeometry = new THREE.Geometry();
     targetGeometry.vertices.push(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, global.SPRAY_HEIGHT, 0));
-    const targetMaterial = new THREE.PointsMaterial({color: 0xff0000, size: 1, sizeAttenuation: true});
+    const targetMaterial = new THREE.PointsMaterial({color: 0xff0000, size: 0.6, sizeAttenuation: true});
     const target = new THREE.Points(targetGeometry, targetMaterial);
     target.name = 'target';
     this.scene.add(target);
@@ -250,8 +255,12 @@ export default class Game {
   update(delta) {
     this.updateHud();
     this.setCmd();
-    this.player.mesh.rotateY(-this.cursorXY.x * 0.3 * delta);
-    this.player.camera.rotateX(-this.cursorXY.y * 0.3 * delta);
+
+    const sensitivity = global.SENS;
+    const factor = 0.05;
+
+    this.player.mesh.rotateY(-this.cursorXY.x * sensitivity * factor * delta);
+    this.player.camera.rotateX(-this.cursorXY.y * sensitivity * factor * delta);
     this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
     
     const dv = movement(this.player, this.cmd, delta);
@@ -261,7 +270,7 @@ export default class Game {
       const bulletGeometry = new THREE.Geometry();
       const projection = utils.projection(this.player, settings.noSpread ? new THREE.Vector3(0, 0, 0) : spray['ak47'][this.count]);
       bulletGeometry.vertices.push(projection);
-      const bulletMaterial = new THREE.PointsMaterial({color: 0xecf0f1, size: 1, sizeAttenuation: true});
+      const bulletMaterial = new THREE.PointsMaterial({color: 0xecf0f1, size: 0.3, sizeAttenuation: true});
       const bullet = new THREE.Points(bulletGeometry, bulletMaterial);
       this.scene.add(bullet);
       setTimeout(() => this.scene.remove(bullet), 3000);
@@ -287,31 +296,32 @@ export default class Game {
           this.reloadSound3.play();
         }, 1500);
 
-        const score = 100/(utils.accuracy(this.shots)/100+1);
-        this.highScore = Math.max(score, this.highScore);
-
-        this.scene.remove(this.scene.getObjectByName('score'))
-        this.fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {     
-          const color = 0xecf0f1;
-          const material = new THREE.LineBasicMaterial({
-            color: color,
-            side: THREE.DoubleSide,
+        if (!settings.noSpread && !settings.infiniteAmmo) {
+          const score = 100/(utils.accuracy(this.shots)/100+1);
+          this.highScore = Math.max(score, this.highScore);
+          this.scene.remove(this.scene.getObjectByName('score'))
+          this.fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {     
+            const color = 0xecf0f1;
+            const material = new THREE.LineBasicMaterial({
+              color: color,
+              side: THREE.DoubleSide,
+            });
+            const shape = new THREE.BufferGeometry();
+            const shapes = font.generateShapes(`accuracy: ${score.toFixed(2)}%\nyour highest accuracy: ${this.highScore.toFixed(2)}%`, 100, 2);
+            const geometry = new THREE.ShapeGeometry(shapes);
+            geometry.computeBoundingBox();
+            geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
+            shape.fromGeometry(geometry);
+            const text = new THREE.Mesh(shape, material);
+            text.position.x = -this.MAP_SIZE / 2;
+            text.position.y = 12.5;
+            text.position.z = 30;
+            text.rotation.y = Math.PI / 2;
+            text.name = 'score';
+            text.scale.set(0.015, 0.015, 0.015);
+            this.scene.add(text);
           });
-          const shape = new THREE.BufferGeometry();
-          const shapes = font.generateShapes(`score: ${score.toFixed(2)}%\nyour high score: ${this.highScore.toFixed(2)}%`, 100, 2);
-          const geometry = new THREE.ShapeGeometry(shapes);
-          geometry.computeBoundingBox();
-          geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
-          shape.fromGeometry(geometry);
-          const text = new THREE.Mesh(shape, material);
-          text.position.x = -this.MAP_SIZE / 2;
-          text.position.y = 12.5;
-          text.position.z = 30;
-          text.rotation.y = Math.PI / 2;
-          text.name = 'score';
-          text.scale.set(0.015, 0.015, 0.015);
-          this.scene.add(text);
-        });
+        }
 
         this.shots = [];
       }
@@ -357,6 +367,8 @@ export default class Game {
         this.sprayCount = 0;
         this.shots = [];
         this.player.mesh.position.set(-global.MAP_SIZE / 2 + global.INITIAL_DISTANCE, global.PLAYER_HEIGHT, 0);
+        // this.player.mesh.rotation.set(0, 0, 0);
+        // this.camera.rotation.set(0, 0.5 * Math.PI, 0);
         this.settingSound.play();
       }
 

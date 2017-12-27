@@ -1,7 +1,34 @@
 import * as ui from './ui.js';
 import Game from './game.js';
+import { global } from './global.js';
+// import noUiSlider from 'nouislider';
+
+const sensitivitySlider = document.getElementById('sens-slider');
+
+noUiSlider.create(sensitivitySlider, {
+	start: [ 3.5 ],
+  connect: true,
+  tooltips: true,
+	range: {
+    'min': [0.1],
+		'max': [8],
+	}
+});
+
+const sensitivityInput = document.getElementById('sens-input');
+
+sensitivitySlider.noUiSlider.on('update', (values, handle) => {
+  const value = values[handle];
+  sensitivityInput.value = value;
+});
+
+sensitivityInput.addEventListener('change', () => {
+  sensitivitySlider.noUiSlider.set([sensitivityInput.value]);
+});
+
 
 $('#main-button').on('click', () => {
+  global.SENS = sensitivityInput.value;
   ui.fadeFromTo($('#main-page'), $('#game-page'), 0.5);
   const game = new Game();
   game.init();

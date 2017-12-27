@@ -3166,9 +3166,10 @@ var global = exports.global = {
   MAP_SIZE: 100,
   MAP_HEIGHT: 25,
   PLAYER_HEIGHT: 10,
-  INITIAL_DISTANCE: 80,
+  INITIAL_DISTANCE: 50,
   SPRAY_HEIGHT: 10,
-  SPRAY_SCALE: 0.02
+  SPRAY_SCALE: 0.02,
+  SENS: 3.5
 };
 
 /***/ }),
@@ -13052,11 +13053,39 @@ var _game = __webpack_require__(8);
 
 var _game2 = _interopRequireDefault(_game);
 
+var _global = __webpack_require__(1);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
+// import noUiSlider from 'nouislider';
+
+var sensitivitySlider = document.getElementById('sens-slider');
+
+noUiSlider.create(sensitivitySlider, {
+  start: [3.5],
+  connect: true,
+  tooltips: true,
+  range: {
+    'min': [0.1],
+    'max': [8]
+  }
+});
+
+var sensitivityInput = document.getElementById('sens-input');
+
+sensitivitySlider.noUiSlider.on('update', function (values, handle) {
+  var value = values[handle];
+  sensitivityInput.value = value;
+});
+
+sensitivityInput.addEventListener('change', function () {
+  sensitivitySlider.noUiSlider.set([sensitivityInput.value]);
+});
+
 $('#main-button').on('click', function () {
+  _global.global.SENS = sensitivityInput.value;
   ui.fadeFromTo($('#main-page'), $('#game-page'), 0.5);
   var game = new _game2.default();
   game.init();
@@ -21663,9 +21692,14 @@ var Game = function () {
       this.renderer = new THREE.WebGLRenderer({ antialias: true });
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       $('#game-page')[0].append(this.renderer.domElement);
-      this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+
+      var aspect = window.innerWidth / window.innerHeight;
+      var fov = 2 * Math.atan2(aspect, 4 / 3) * 180 / Math.PI;
+      this.camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 1, 1000);
+      console.log(fov);
       this.camera.position.set(0, 0, 0);
       this.camera.rotation.y = 0.5 * Math.PI;
+
       this.clock = new THREE.Clock();
       THREEx.WindowResize(this.renderer, this.camera);
       this.keyboard = new THREEx.KeyboardState();
@@ -21758,7 +21792,7 @@ var Game = function () {
 
       var targetGeometry = new THREE.Geometry();
       targetGeometry.vertices.push(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, _global.global.SPRAY_HEIGHT, 0));
-      var targetMaterial = new THREE.PointsMaterial({ color: 0xff0000, size: 1, sizeAttenuation: true });
+      var targetMaterial = new THREE.PointsMaterial({ color: 0xff0000, size: 0.6, sizeAttenuation: true });
       var target = new THREE.Points(targetGeometry, targetMaterial);
       target.name = 'target';
       this.scene.add(target);
@@ -21839,8 +21873,12 @@ var Game = function () {
 
       this.updateHud();
       this.setCmd();
-      this.player.mesh.rotateY(-this.cursorXY.x * 0.3 * delta);
-      this.player.camera.rotateX(-this.cursorXY.y * 0.3 * delta);
+
+      var sensitivity = _global.global.SENS;
+      var factor = 0.05;
+
+      this.player.mesh.rotateY(-this.cursorXY.x * sensitivity * factor * delta);
+      this.player.camera.rotateX(-this.cursorXY.y * sensitivity * factor * delta);
       this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
 
       var dv = (0, _movement2.default)(this.player, this.cmd, delta);
@@ -21850,7 +21888,7 @@ var Game = function () {
         var bulletGeometry = new THREE.Geometry();
         var projection = utils.projection(this.player, _settings.settings.noSpread ? new THREE.Vector3(0, 0, 0) : _spray.spray['ak47'][this.count]);
         bulletGeometry.vertices.push(projection);
-        var bulletMaterial = new THREE.PointsMaterial({ color: 0xecf0f1, size: 1, sizeAttenuation: true });
+        var bulletMaterial = new THREE.PointsMaterial({ color: 0xecf0f1, size: 0.3, sizeAttenuation: true });
         var bullet = new THREE.Points(bulletGeometry, bulletMaterial);
         this.scene.add(bullet);
         setTimeout(function () {
@@ -21882,31 +21920,32 @@ var Game = function () {
             _this4.reloadSound3.play();
           }, 1500);
 
-          var score = 100 / (utils.accuracy(this.shots) / 100 + 1);
-          this.highScore = Math.max(score, this.highScore);
-
-          this.scene.remove(this.scene.getObjectByName('score'));
-          this.fontLoader.load('fonts/helvetiker_regular.typeface.json', function (font) {
-            var color = 0xecf0f1;
-            var material = new THREE.LineBasicMaterial({
-              color: color,
-              side: THREE.DoubleSide
+          if (!_settings.settings.noSpread && !_settings.settings.infiniteAmmo) {
+            var score = 100 / (utils.accuracy(this.shots) / 100 + 1);
+            this.highScore = Math.max(score, this.highScore);
+            this.scene.remove(this.scene.getObjectByName('score'));
+            this.fontLoader.load('fonts/helvetiker_regular.typeface.json', function (font) {
+              var color = 0xecf0f1;
+              var material = new THREE.LineBasicMaterial({
+                color: color,
+                side: THREE.DoubleSide
+              });
+              var shape = new THREE.BufferGeometry();
+              var shapes = font.generateShapes('accuracy: ' + score.toFixed(2) + '%\nyour highest accuracy: ' + _this4.highScore.toFixed(2) + '%', 100, 2);
+              var geometry = new THREE.ShapeGeometry(shapes);
+              geometry.computeBoundingBox();
+              geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
+              shape.fromGeometry(geometry);
+              var text = new THREE.Mesh(shape, material);
+              text.position.x = -_this4.MAP_SIZE / 2;
+              text.position.y = 12.5;
+              text.position.z = 30;
+              text.rotation.y = Math.PI / 2;
+              text.name = 'score';
+              text.scale.set(0.015, 0.015, 0.015);
+              _this4.scene.add(text);
             });
-            var shape = new THREE.BufferGeometry();
-            var shapes = font.generateShapes('score: ' + score.toFixed(2) + '%\nyour high score: ' + _this4.highScore.toFixed(2) + '%', 100, 2);
-            var geometry = new THREE.ShapeGeometry(shapes);
-            geometry.computeBoundingBox();
-            geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
-            shape.fromGeometry(geometry);
-            var text = new THREE.Mesh(shape, material);
-            text.position.x = -_this4.MAP_SIZE / 2;
-            text.position.y = 12.5;
-            text.position.z = 30;
-            text.rotation.y = Math.PI / 2;
-            text.name = 'score';
-            text.scale.set(0.015, 0.015, 0.015);
-            _this4.scene.add(text);
-          });
+          }
 
           this.shots = [];
         }
@@ -21952,6 +21991,8 @@ var Game = function () {
                   this.sprayCount = 0;
                   this.shots = [];
                   this.player.mesh.position.set(-_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE, _global.global.PLAYER_HEIGHT, 0);
+                  // this.player.mesh.rotation.set(0, 0, 0);
+                  // this.camera.rotation.set(0, 0.5 * Math.PI, 0);
                   this.settingSound.play();
                 }
 
