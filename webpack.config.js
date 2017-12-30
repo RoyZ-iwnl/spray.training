@@ -2,15 +2,22 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-  entry: './js/main.js',
+  entry: {
+    'bundle': './js/main.js',
+    'bundle.min': './js/main.js',
+  },
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: 'bundle.js',
+    filename: '[name].js',
   },
   plugins: [
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery'
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      include: /\.min\.js$/,
+      minimize: true
     })
   ],
   module: {

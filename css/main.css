@@ -13,6 +13,11 @@ canvas {
   display: block;
 }
 
+a {
+  color: #111;
+  text-decoration: none;
+}
+
 #main-button {
   background-color: #dddddd;
   color: #111111;
@@ -21,6 +26,7 @@ canvas {
   padding: 8px 20px 8px 20px;
   text-align: center;
   border: #111111 2px solid;
+  border-radius: 5px;
   width: 180px;
   cursor: pointer;
   transition-delay: 1s;

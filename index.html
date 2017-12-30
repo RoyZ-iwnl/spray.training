@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>recoil training</title>
+	<title>spray.training</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 	<link href="css/main.css" rel="stylesheet">
 </head>
 <body>
 	<!-- main page -->
 	<div id="main-page" style="position: absolute; width: 500px; height: 300px; top: 40%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-		<div style="width:100%; font-family: 'Inconsolata'; font-size: 48px;">
-      recoil training
+		<div style="width:100%; font-family: 'Inconsolata', monospace; font-size: 48px; letter-spacing: -1px;">
+      <a href="http://spray.training/">spray.training</a>
 		</div>
-		<div style="position: absolute; top: 50px; left: 410px; font-weight: 300; font-size: 14px;">v1.0</div>
-    
-    <div style="width: 300px; margin: 50px auto;">
+		<div style="position: absolute; top: 50px; left: 400px; font-weight: 300; font-size: 14px;">v1.0</div>
+
+    <div style="width: 375px; margin: 50px auto;">
 			<p>Instructions</p>
-			<p style="font-size: 14px;">Use WASD to move and use your mouse to aim. Hold down the trigger to show where to aim for the spray. Press F11 to enable full screen for the most game-accurate experience.</p>
+			<ul style="text-align: left; font-size: 14px;">
+				<li>Use the WASD keys to move and your mouse to aim.</li>
+				<li>Hold down the primary mouse button to spray your weapon, and follow the ghosthair on the wall to learn its recoil pattern.</li>
+				<li>Enable full screen mode for the most game-accurate experience.</li>
+			</ul>
     </div>
-    
+
     <div style="width: 300px; margin: 50px auto;">
         <p>Mouse sensitivity (CS:GO)</p>
       <div id="sens-slider" style="width: 60%; display: inline-block; margin-left: 5%; margin-right: 5%;"></div>
@@ -40,19 +44,19 @@
     </div>
 
     <div id="player-position" class="player-hud" style="width: 300px; height: 25px; top: 25px; left: 25px; text-align: left;">
-        
+
     </div>
 
     <div id="player-velocity" class="player-hud" style="width: 300px; height: 25px; top: 60px; left: 25px; text-align: left;">
-      
+
   </div>
 
     <div id="player-fps" class="player-hud" style="width: 300px; height: 25px; top: 95px; left: 25px; text-align: left;">
-        
+
     </div>
 
     <div id="player-ammo" class="player-hud" style="width: 300px; height: 25px; bottom: 25px; right: 25px; text-align: right;">
-        
+
     </div>
   </div>
 
@@ -62,6 +66,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/10.1.0/nouislider.min.js"></script>
   <script src="lib/threex.windowresize.js"></script>
   <script src="lib/threex.keyboardstate.js"></script>
-  <script src="build/bundle.js"></script>
+  <script src="build/bundle.min.js"></script>
 </body>
 </html>
