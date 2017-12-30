@@ -87,9 +87,11 @@ export default class Game {
     $('#game-page')[0].append(this.renderer.domElement);
     
     const aspect = window.innerWidth / window.innerHeight;
-    const fov = 2 * Math.atan2(aspect, 4/3) * 180 / Math.PI;
-    this.camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 1, 1000);
-    console.log(fov);
+    // const hfovRad = 2 * Math.atan2(aspect, 4/3);
+    // const vfovRad = 2 * Math.atan2(Math.tan(hfovRad/2), aspect);
+    // const vfovDeg = vfovRad * 180 / Math.PI;
+    const fov = 74;
+    this.camera = new THREE.PerspectiveCamera(fov, aspect, 1, 1000);
     this.camera.position.set(0, 0, 0);
     this.camera.rotation.y = 0.5 * Math.PI;
 
@@ -243,7 +245,9 @@ export default class Game {
   updateHud() {
     $('#player-position').html(`pos: ${this.player.mesh.position.x.toFixed(2)}, ${this.player.mesh.position.z.toFixed(2)}`);
 
-    $('#player-velocity').html(`speed: ${Math.hypot(this.player.velocity.x, this.player.velocity.z).toFixed(2)}`);
+    // $('#player-velocity').html(`speed: ${Math.hypot(this.player.velocity.x, this.player.velocity.z).toFixed(2)}`);
+    console.log(this.camera.fov, this.camera.aspect);
+    $('#player-velocity').html(`fov: ${(2*Math.atan2(Math.tan(this.camera.fov/2 * Math.PI/180), 1/this.camera.aspect) * 180 / Math.PI).toFixed(1)}`);
     
     $('#player-ammo').html(`${30 - this.ammo}/30`);
 
