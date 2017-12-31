@@ -21635,6 +21635,10 @@ var Game = function () {
 
     this.shots = [];
     this.highscore = 0;
+
+    this.currentWeapon = 'ak47';
+    // weapons currently supported
+    this.weapons = ['ak47', 'm4a1', 'm4a1_silencer', 'mac10'];
   }
 
   _createClass(Game, [{
@@ -25046,12 +25050,14 @@ exports.projection = function (player, s) {
   var scale = _global.global.SPRAY_SCALE;
 
   var position = player.mesh.position.clone();
-  var direction = player.camera.getWorldDirection().clone();
+  var direction = player.camera.getWorldDirection().clone().normalize();
 
   var spray = s.clone();
   spray.multiplyScalar(scale / _global.global.INITIAL_DISTANCE);
   // spray.multiplyScalar(scale / (position.distanceTo(new THREE.Vector3(-MAP_SIZE / 2 + 0.01, 5, 0))));
+  // direction.add(spray);
   direction.add(spray);
+
   if (player.velocity.lengthSq() >= 500) {
     direction.add(new THREE.Vector3(THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3)));
   }

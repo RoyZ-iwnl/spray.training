@@ -15,7 +15,7 @@ export default class Game {
       right: 0,
       jump: false,
     };
-    
+
     this.MAP_SIZE = global.MAP_SIZE;
     this.MAP_HEIGHT = global.MAP_HEIGHT;
     this.SPRAY_HEIGHT = global.SPRAY_HEIGHT;
@@ -34,6 +34,10 @@ export default class Game {
 
     this.shots = [];
     this.highscore = 0;
+
+    this.currentWeapon = 'ak47';
+    // weapons currently supported
+    this.weapons = ['ak47', 'm4a1', 'm4a1_silencer', 'mac10'];
   }
 
   init() {
@@ -88,7 +92,7 @@ export default class Game {
     this.renderer = new THREE.WebGLRenderer({antialias: true});
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     $('#game-page')[0].append(this.renderer.domElement);
-    
+
     const aspect = window.innerWidth / window.innerHeight;
     // const hfovRad = 2 * Math.atan2(aspect, 4/3);
     // const vfovRad = 2 * Math.atan2(Math.tan(hfovRad/2), aspect);
@@ -145,7 +149,7 @@ export default class Game {
     mapGeometry.computeLineDistances();
     const map = new THREE.LineSegments(mapGeometry, mapMaterial);
     map.position.y = this.MAP_HEIGHT/2;
-    
+
     this.scene.add(map);
 
     const lineMaterial = new THREE.LineDashedMaterial({color: 0xecf0f1, dashSize: 0.75, gapSize: 0.75, linewidth: 1});
@@ -163,7 +167,7 @@ export default class Game {
 
     this.scene.add(line);
 
-    this.fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {     
+    this.fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {
       ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'].forEach((message, i) => {
         const color = (message === 'ghosthair') ? 0x00ff00 : 0xecf0f1;
         const material = new THREE.LineBasicMaterial({
@@ -184,7 +188,7 @@ export default class Game {
         text.name = message;
         text.scale.set(0.015, 0.015, 0.015);
         this.scene.add(text);
-      });      
+      });
     });
 
     this.player = new Player(this.camera);
@@ -220,7 +224,7 @@ export default class Game {
         this.count = 0;
         this.shot = true;
         setTimeout(() => this.shot = false, 2500);
-        
+
         this.reloadSound1.play();
         setTimeout(() => {
           this.reloadSound2.play();
@@ -251,7 +255,7 @@ export default class Game {
     // $('#player-velocity').html(`speed: ${Math.hypot(this.player.velocity.x, this.player.velocity.z).toFixed(2)}`);
 
     $('#player-velocity').html(`fov: ${(2*Math.atan2(Math.tan(this.camera.fov/2 * Math.PI/180), 1/this.camera.aspect) * 180 / Math.PI).toFixed(1)}`);
-    
+
     $('#player-ammo').html(`${30 - this.ammo}/30`);
 
     if (this.aFrame % 30 < 3) {
@@ -269,7 +273,7 @@ export default class Game {
     this.player.mesh.rotateY(-this.cursorXY.x * sensitivity * factor * delta);
     this.player.camera.rotateX(-this.cursorXY.y * sensitivity * factor * delta);
     this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
-    
+
     const dv = movement(this.player, this.cmd, delta);
     this.player.mesh.position.add(dv.multiplyScalar(delta));
 
@@ -307,7 +311,7 @@ export default class Game {
           const score = 100/(utils.accuracy(this.shots)/100+1);
           this.highScore = Math.max(score, this.highScore);
           this.scene.remove(this.scene.getObjectByName('score'))
-          this.fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {     
+          this.fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {
             const color = 0xecf0f1;
             const material = new THREE.LineBasicMaterial({
               color: color,
@@ -332,7 +336,7 @@ export default class Game {
 
         this.shots = [];
       }
-    
+
       this.ammo = settings.infiniteAmmo ? 0 : (this.ammo + 1) % 30;
       this.count = (this.count + 1) % 30;
       this.sprayCount = (this.sprayCount + 1) % 30;
@@ -342,7 +346,7 @@ export default class Game {
       if (this.sprayCount === 0) {
         this.doneSound.play();
       }
-      
+
       // bullet time
       if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 21.75 && projection.y >= 18.25 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
         settings.bulletTime = !settings.bulletTime;
@@ -414,4 +418,3 @@ export default class Game {
     };
   }
 }
-
