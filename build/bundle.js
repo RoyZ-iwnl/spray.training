@@ -21653,8 +21653,11 @@ var Game = function () {
       var _this = this;
 
       var moveCallback = function moveCallback(e) {
-        _this.cursorXY.x += e.movementX || e.mozMovementX || e.webkitMovementX || 0;
-        _this.cursorXY.y += e.movementY || e.mozMovementY || e.webkitMovementY || 0;
+        // prevent any abnormal mouse jumping
+        if (Math.abs(e.movementX) <= 300 && Math.abs(e.movementY) <= 300) {
+          _this.cursorXY.x += e.movementX || e.mozMovementX || e.webkitMovementX || 0;
+          _this.cursorXY.y += e.movementY || e.mozMovementY || e.webkitMovementY || 0;
+        }
       };
 
       var pointerLockChange = function pointerLockChange(event) {
@@ -21861,7 +21864,7 @@ var Game = function () {
       $('#player-position').html('pos: ' + this.player.mesh.position.x.toFixed(2) + ', ' + this.player.mesh.position.z.toFixed(2));
 
       // $('#player-velocity').html(`speed: ${Math.hypot(this.player.velocity.x, this.player.velocity.z).toFixed(2)}`);
-      console.log(this.camera.fov, this.camera.aspect);
+
       $('#player-velocity').html('fov: ' + (2 * Math.atan2(Math.tan(this.camera.fov / 2 * Math.PI / 180), 1 / this.camera.aspect) * 180 / Math.PI).toFixed(1));
 
       $('#player-ammo').html(30 - this.ammo + '/30');
@@ -21875,6 +21878,7 @@ var Game = function () {
     value: function update(delta) {
       var _this4 = this;
 
+      console.log(this.cursorXY);
       this.updateHud();
       this.setCmd();
 
