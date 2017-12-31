@@ -21878,7 +21878,6 @@ var Game = function () {
     value: function update(delta) {
       var _this4 = this;
 
-      console.log(this.cursorXY);
       this.updateHud();
       this.setCmd();
 
