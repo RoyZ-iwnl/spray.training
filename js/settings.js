@@ -3,4 +3,6 @@ export const settings = {
   noSpread: false,
   ghostHair: true,
   bulletTime: false,
+
+  audio: true,
 };

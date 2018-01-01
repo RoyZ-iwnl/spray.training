@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -13006,240 +13006,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)(module)))
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var g;
-
-// This works in non-strict mode
-g = function () {
-	return this;
-}();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1, eval)("this");
-} catch (e) {
-	// This works if the window reference is available
-	if ((typeof window === "undefined" ? "undefined" : _typeof(window)) === "object") g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function($) {
-
-var _ui = __webpack_require__(6);
-
-var ui = _interopRequireWildcard(_ui);
-
-var _game = __webpack_require__(8);
-
-var _game2 = _interopRequireDefault(_game);
-
-var _global = __webpack_require__(1);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-// import noUiSlider from 'nouislider';
-
-var sensitivitySlider = document.getElementById('sens-slider');
-
-noUiSlider.create(sensitivitySlider, {
-  start: [3.5],
-  connect: true,
-  tooltips: true,
-  range: {
-    'min': [0.1],
-    'max': [8]
-  }
-});
-
-var sensitivityInput = document.getElementById('sens-input');
-
-sensitivitySlider.noUiSlider.on('update', function (values, handle) {
-  var value = values[handle];
-  sensitivityInput.value = value;
-});
-
-sensitivityInput.addEventListener('change', function () {
-  sensitivitySlider.noUiSlider.set([sensitivityInput.value]);
-});
-
-$('#main-button').on('click', function () {
-  _global.global.SENS = sensitivityInput.value;
-  ui.fadeFromTo($('#main-page'), $('#game-page'), 0.5);
-  var game = new _game2.default();
-  game.init();
-
-  var ctx = $('#xhair')[0].getContext('2d');
-  ctx.strokeStyle = '#39ff14';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(15, 0);
-  ctx.lineTo(15, 10);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(15, 20);
-  ctx.lineTo(15, 30);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(0, 15);
-  ctx.lineTo(10, 15);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(20, 15);
-  ctx.lineTo(30, 15);
-  ctx.stroke();
-});
-
-(function () {
-
-  var coin, coinImage, canvas;
-
-  function gameLoop() {
-
-    window.requestAnimationFrame(gameLoop);
-
-    coin.update();
-    coin.render();
-  }
-
-  function sprite(options) {
-
-    var that = {},
-        frameIndex = 0,
-        tickCount = 0,
-        ticksPerFrame = options.ticksPerFrame || 0,
-        numberOfFrames = options.numberOfFrames || 1;
-
-    that.context = options.context;
-    that.width = options.width;
-    that.height = options.height;
-    that.image = options.image;
-
-    that.update = function () {
-
-      tickCount += 1;
-
-      if (tickCount > ticksPerFrame) {
-
-        tickCount = 0;
-
-        // If the current frame index is in range
-        if (frameIndex < numberOfFrames - 1) {
-          // Go to the next frame
-          frameIndex += 1;
-        } else {
-          frameIndex = 0;
-        }
-      }
-    };
-
-    that.render = function () {
-
-      // Clear the canvas
-      that.context.clearRect(0, 0, that.width, that.height);
-
-      // Draw the animation
-      that.context.drawImage(that.image, frameIndex * that.width / numberOfFrames, 0, that.width / numberOfFrames, that.height, 0, 0, that.width / numberOfFrames, that.height);
-    };
-
-    return that;
-  }
-
-  // Get canvas
-  canvas = document.getElementById("player-viewmodel");
-  canvas.width = 1280;
-  canvas.height = 720;
-
-  // Create sprite sheet
-  coinImage = new Image();
-
-  // Create sprite
-  coin = sprite({
-    context: canvas.getContext("2d"),
-    width: 20480,
-    height: 720,
-    image: coinImage,
-    numberOfFrames: 16,
-    ticksPerFrame: 1
-  });
-
-  // Load sprite sheet
-  coinImage.addEventListener("load", gameLoop);
-  coinImage.src = "img/ak47/tap/sprites.png";
-})();
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function (module) {
-	if (!module.webpackPolyfill) {
-		module.deprecate = function () {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if (!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function get() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function get() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
-};
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _gsap = __webpack_require__(7);
-
-var _gsap2 = _interopRequireDefault(_gsap);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.fadeFromTo = function (pageOne, pageTwo, t) {
-  _gsap2.default.fromTo(pageOne, t, { autoAlpha: 1 }, { autoAlpha: 0 });
-  _gsap2.default.fromTo(pageTwo, t, { autoAlpha: 0 }, { autoAlpha: 1 });
-};
-
-/***/ }),
-/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21639,7 +21409,159 @@ if (_gsScope._gsDefine) {
 
 	_tickerActive = false; //ensures that the first official animation forces a ticker.tick() to update the time when it is instantiated
 })(typeof module !== "undefined" && module.exports && typeof global !== "undefined" ? global : undefined || window, "TweenMax");
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var g;
+
+// This works in non-strict mode
+g = function () {
+	return this;
+}();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1, eval)("this");
+} catch (e) {
+	// This works if the window reference is available
+	if ((typeof window === "undefined" ? "undefined" : _typeof(window)) === "object") g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function($) {
+
+var _ui = __webpack_require__(7);
+
+var ui = _interopRequireWildcard(_ui);
+
+var _game = __webpack_require__(8);
+
+var _game2 = _interopRequireDefault(_game);
+
+var _global = __webpack_require__(1);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+// import noUiSlider from 'nouislider';
+
+var sensitivitySlider = document.getElementById('sens-slider');
+
+noUiSlider.create(sensitivitySlider, {
+  start: [3.5],
+  connect: true,
+  tooltips: true,
+  range: {
+    'min': [0.1],
+    'max': [8]
+  }
+});
+
+var sensitivityInput = document.getElementById('sens-input');
+
+sensitivitySlider.noUiSlider.on('update', function (values, handle) {
+  var value = values[handle];
+  sensitivityInput.value = value;
+});
+
+sensitivityInput.addEventListener('change', function () {
+  sensitivitySlider.noUiSlider.set([sensitivityInput.value]);
+});
+
+$('#main-button').on('click', function () {
+  _global.global.SENS = sensitivityInput.value;
+  ui.fadeFromTo($('#main-page'), $('#game-page'), 0.5);
+  var game = new _game2.default();
+  game.init();
+
+  var ctx = $('#xhair')[0].getContext('2d');
+  ctx.strokeStyle = '#39ff14';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(15, 0);
+  ctx.lineTo(15, 10);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(15, 20);
+  ctx.lineTo(15, 30);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(0, 15);
+  ctx.lineTo(10, 15);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(20, 15);
+  ctx.lineTo(30, 15);
+  ctx.stroke();
+});
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function (module) {
+	if (!module.webpackPolyfill) {
+		module.deprecate = function () {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if (!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function get() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function get() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _gsap = __webpack_require__(3);
+
+var _gsap2 = _interopRequireDefault(_gsap);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.fadeFromTo = function (pageOne, pageTwo, t) {
+  _gsap2.default.fromTo(pageOne, t, { autoAlpha: 1 }, { autoAlpha: 0 });
+  _gsap2.default.fromTo(pageTwo, t, { autoAlpha: 0 }, { autoAlpha: 1 });
+};
 
 /***/ }),
 /* 8 */
@@ -21660,7 +21582,7 @@ var THREE = _interopRequireWildcard(_three);
 
 var _howler = __webpack_require__(9);
 
-var _gsap = __webpack_require__(7);
+var _gsap = __webpack_require__(3);
 
 var _gsap2 = _interopRequireDefault(_gsap);
 
@@ -21681,6 +21603,10 @@ var _spray = __webpack_require__(13);
 var _global = __webpack_require__(1);
 
 var _settings = __webpack_require__(14);
+
+var _button = __webpack_require__(15);
+
+var _button2 = _interopRequireDefault(_button);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21721,6 +21647,9 @@ var Game = function () {
     this.currentWeapon = 'ak47';
     // weapons currently supported
     this.weapons = ['ak47', 'm4a1', 'm4a1_silencer', 'mac10'];
+
+    this.buttons = [];
+    this.links = [];
   }
 
   _createClass(Game, [{
@@ -21799,38 +21728,44 @@ var Game = function () {
   }, {
     key: 'initAudio',
     value: function initAudio() {
-      this.weaponSound = new _howler.Howl({
-        src: ['audio/ak47_01.wav'],
-        volume: 0.2
-      });
-      this.reloadSound1 = new _howler.Howl({
-        src: ['audio/ak47_clipout.wav'],
-        volume: 0.2
-      });
-      this.reloadSound2 = new _howler.Howl({
-        src: ['audio/ak47_clipin.wav'],
-        volume: 0.2
-      });
-      this.reloadSound3 = new _howler.Howl({
-        src: ['audio/ak47_boltpull.wav'],
-        volume: 0.2
-      });
-      this.doneSound = new _howler.Howl({
-        src: ['audio/bell1.wav'],
-        volume: 0.2
-      });
-      this.hsSound = new _howler.Howl({
-        src: ['audio/headshot1.wav'],
-        volume: 0.02
-      });
-      this.settingSound = new _howler.Howl({
-        src: ['audio/blip1.wav'],
-        volume: 0.2
-      });
-      this.errorSound = new _howler.Howl({
-        src: ['audio/button10.wav'],
-        volume: 0.2
-      });
+      this.sounds = {
+        weapons: {
+          ak47: {
+            shoot: new _howler.Howl({
+              src: ['audio/ak47_01.wav'],
+              volume: 0.2
+            }),
+            reload: [new _howler.Howl({
+              src: ['audio/ak47_clipout.wav'],
+              volume: 0.2
+            }), new _howler.Howl({
+              src: ['audio/ak47_clipin.wav'],
+              volume: 0.2
+            }), new _howler.Howl({
+              src: ['audio/ak47_boltpull.wav'],
+              volume: 0.2
+            })]
+          }
+        },
+        general: {
+          done: new _howler.Howl({
+            src: ['audio/bell1.wav'],
+            volume: 0.2
+          }),
+          headshot: new _howler.Howl({
+            src: ['audio/headshot1.wav'],
+            volume: 0.02
+          }),
+          setting: new _howler.Howl({
+            src: ['audio/blip1.wav'],
+            volume: 0.2
+          }),
+          error: new _howler.Howl({
+            src: ['audio/button10.wav'],
+            volume: 0.2
+          })
+        }
+      };
     }
   }, {
     key: 'drawWorld',
@@ -21856,7 +21791,7 @@ var Game = function () {
 
       this.fontLoader.load('fonts/helvetiker_regular.typeface.json', function (font) {
         ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'].forEach(function (message, i) {
-          var color = message === 'ghosthair' ? 0x00ff00 : 0xecf0f1;
+          var color = 0xecf0f1;
           var material = new THREE.LineBasicMaterial({
             color: color,
             side: THREE.DoubleSide
@@ -21877,6 +21812,45 @@ var Game = function () {
           _this2.scene.add(text);
         });
       });
+
+      // command buttons
+
+      var btnBulletTime = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 20, -30), new THREE.Euler(0, Math.PI / 2, 0), 'bulletTime', 0xecf0f1, function () {
+        _settings.settings.bulletTime = !_settings.settings.bulletTime;
+      });
+      var btnGhostHair = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 16.5, -30), new THREE.Euler(0, Math.PI / 2, 0), 'ghostHair', 0x00ff00, function () {
+        _settings.settings.ghostHair = !_settings.settings.ghostHair;
+      });
+      var btnInfiniteAmmo = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 13, -30), new THREE.Euler(0, Math.PI / 2, 0), 'infiniteAmmo', 0xecf0f1, function () {
+        _settings.settings.infiniteAmmo = !_settings.settings.infiniteAmmo;
+      });
+      var btnNoSpread = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 9.5, -30), new THREE.Euler(0, Math.PI / 2, 0), 'noSpread', 0xecf0f1, function () {
+        _settings.settings.noSpread = !_settings.settings.noSpread;
+      });
+      var btnReset = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 6, -30), new THREE.Euler(0, Math.PI / 2, 0), 'reset', 0xecf0f1, function () {
+        _this2.ammo = 0;
+        _this2.count = 0;
+        _this2.sprayCount = 0;
+        _this2.shots = [];
+        _this2.player.mesh.position.set(-_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE, _global.global.PLAYER_HEIGHT, 0);
+      });
+
+      // TODO: link buttons
+
+      // const btnGithub = new Button({x: -30, y: 0, z: -global.MAP_SIZE / 2}, 'github', 0xffffff, () => {
+      //   console.log('github');
+      // }, new THREE.Mesh(new THREE.CircleGeometry(5, 32), new THREE.MeshBasicMaterial({color: 0xecf0f1, side: THREE.DoubleSide})));
+
+
+      this.buttons = [btnBulletTime, btnGhostHair, btnInfiniteAmmo, btnNoSpread, btnReset];
+      this.buttons.forEach(function (button) {
+        _this2.scene.add(button.mesh);
+      });
+
+      // this.links = [btnGithub];
+      // this.links.forEach((link) => {
+      //   this.scene.add(link.mesh);
+      // })
 
       this.player = new _player2.default(this.camera);
       this.scene.add(this.player.mesh);
@@ -21917,12 +21891,12 @@ var Game = function () {
             return _this3.shot = false;
           }, 2500);
 
-          _this3.reloadSound1.play();
+          _this3.sounds.weapons[_this3.currentWeapon].reload[0].play();
           setTimeout(function () {
-            _this3.reloadSound2.play();
+            _this3.sounds.weapons[_this3.currentWeapon].reload[1].play();
           }, 750);
           setTimeout(function () {
-            _this3.reloadSound3.play();
+            _this3.sounds.weapons[_this3.currentWeapon].reload[2].play();
           }, 1500);
         }
 
@@ -21981,7 +21955,7 @@ var Game = function () {
 
       if (this.player.shoot && !this.shot) {
         var bulletGeometry = new THREE.Geometry();
-        var projection = utils.projection(this.player, _settings.settings.noSpread ? new THREE.Vector3(0, 0, 0) : _spray.spray['ak47'][this.count]);
+        var projection = utils.projection(this.player, _settings.settings.noSpread ? new THREE.Vector3(0, 0, 0) : _spray.spray[this.currentWeapon][this.count]);
         bulletGeometry.vertices.push(projection);
         var bulletMaterial = new THREE.PointsMaterial({ color: 0xecf0f1, size: 0.3, sizeAttenuation: true });
         var bullet = new THREE.Points(bulletGeometry, bulletMaterial);
@@ -21994,7 +21968,7 @@ var Game = function () {
         this.shots.push(d);
 
         if (d <= 1) {
-          this.hsSound.play();
+          this.sounds.general.headshot.play();
         }
 
         this.shot = true;
@@ -22007,39 +21981,17 @@ var Game = function () {
             return _this4.shot = false;
           }, 2500);
 
-          this.reloadSound1.play();
+          this.sounds.weapons[this.currentWeapon].reload[0].play();
           setTimeout(function () {
-            _this4.reloadSound2.play();
+            _this4.sounds.weapons[_this4.currentWeapon].reload[1].play();
           }, 750);
           setTimeout(function () {
-            _this4.reloadSound3.play();
+            _this4.sounds.weapons[_this4.currentWeapon].reload[2].play();
           }, 1500);
 
           if (!_settings.settings.noSpread && !_settings.settings.infiniteAmmo) {
             var score = 100 / (utils.accuracy(this.shots) / 100 + 1);
             this.highScore = Math.max(score, this.highScore);
-            this.scene.remove(this.scene.getObjectByName('score'));
-            this.fontLoader.load('fonts/helvetiker_regular.typeface.json', function (font) {
-              var color = 0xecf0f1;
-              var material = new THREE.LineBasicMaterial({
-                color: color,
-                side: THREE.DoubleSide
-              });
-              var shape = new THREE.BufferGeometry();
-              var shapes = font.generateShapes('accuracy: ' + score.toFixed(2) + '%\nyour highest accuracy: ' + _this4.highScore.toFixed(2) + '%', 100, 2);
-              var geometry = new THREE.ShapeGeometry(shapes);
-              geometry.computeBoundingBox();
-              geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
-              shape.fromGeometry(geometry);
-              var text = new THREE.Mesh(shape, material);
-              text.position.x = -_this4.MAP_SIZE / 2;
-              text.position.y = 12.5;
-              text.position.z = 30;
-              text.rotation.y = Math.PI / 2;
-              text.name = 'score';
-              text.scale.set(0.015, 0.015, 0.015);
-              _this4.scene.add(text);
-            });
           }
 
           this.shots = [];
@@ -22049,50 +22001,22 @@ var Game = function () {
         this.count = (this.count + 1) % 30;
         this.sprayCount = (this.sprayCount + 1) % 30;
 
-        this.weaponSound.play();
+        this.sounds.weapons[this.currentWeapon].shoot.play();
 
         if (this.sprayCount === 0) {
-          this.doneSound.play();
+          this.sounds.general.done.play();
         }
 
-        // bullet time
-        if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 21.75 && projection.y >= 18.25 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
-          _settings.settings.bulletTime = !_settings.settings.bulletTime;
-          this.scene.getObjectByName('bullet time').material.color.setHex(_settings.settings.bulletTime ? 0x00ff00 : 0xecf0f1);
-          this.errorSound.play();
-        }
-        // ghosthair
-        else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 18.25 && projection.y >= 14.75 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
-            _settings.settings.ghostHair = !_settings.settings.ghostHair;
-            this.scene.getObjectByName('ghosthair').material.color.setHex(_settings.settings.ghostHair ? 0x00ff00 : 0xecf0f1);
-            this.settingSound.play();
+        this.buttons.forEach(function (button) {
+          if (projection.x + _this4.MAP_SIZE / 2 <= 0.01 && Math.abs(projection.y - button.position.y) <= 1 && Math.abs(projection.z - button.position.z) <= 1) {
+            button.action();
+            button.mesh.material.color.setHex(_settings.settings[button.name] ? 0x00ff00 : 0xecf0f1);
+            _this4.sounds.general.setting.play();
           }
-          // infinite ammo
-          else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 14.75 && projection.y >= 11.25 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
-              _settings.settings.infiniteAmmo = !_settings.settings.infiniteAmmo;
-              this.scene.getObjectByName('infinite ammo').material.color.setHex(_settings.settings.infiniteAmmo ? 0x00ff00 : 0xecf0f1);
-              this.settingSound.play();
-            }
-            // nospread
-            else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 11.25 && projection.y >= 7.75 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
-                _settings.settings.noSpread = !_settings.settings.noSpread;
-                this.scene.getObjectByName('nospread').material.color.setHex(_settings.settings.noSpread ? 0x00ff00 : 0xecf0f1);
-                this.settingSound.play();
-              }
-              // reset
-              else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 7.75 && projection.y >= 4.25 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
-                  this.ammo = 0;
-                  this.count = 0;
-                  this.sprayCount = 0;
-                  this.shots = [];
-                  this.player.mesh.position.set(-_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE, _global.global.PLAYER_HEIGHT, 0);
-                  // this.player.mesh.rotation.set(0, 0, 0);
-                  // this.camera.rotation.set(0, 0.5 * Math.PI, 0);
-                  this.settingSound.play();
-                }
+        });
 
         var target = this.scene.getObjectByName('target');
-        var targetPosition = _spray.spray['ak47'][this.sprayCount].clone().multiplyScalar(-_global.global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0));
+        var targetPosition = _spray.spray[this.currentWeapon][this.sprayCount].clone().multiplyScalar(-_global.global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0));
         target.geometry.vertices.pop();
         target.geometry.vertices.push(targetPosition);
         target.geometry.verticesNeedUpdate = true;
@@ -25021,7 +24945,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     }
   };
 })();
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
 /* 10 */
@@ -25246,8 +25170,46 @@ var settings = exports.settings = {
   infiniteAmmo: false,
   noSpread: false,
   ghostHair: true,
-  bulletTime: false
+  bulletTime: false,
+
+  audio: true
 };
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _three = __webpack_require__(0);
+
+var THREE = _interopRequireWildcard(_three);
+
+var _global = __webpack_require__(1);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Button = function Button(position, rotation, name, color, action) {
+  var mesh = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : new THREE.Mesh(new THREE.CircleGeometry(1, 32), new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide }));
+
+  _classCallCheck(this, Button);
+
+  this.position = position;
+  this.action = action;
+  this.name = name;
+  mesh.position.copy(position);
+  mesh.rotation.copy(rotation);
+  this.mesh = mesh;
+};
+
+exports.default = Button;
 
 /***/ })
 /******/ ]);

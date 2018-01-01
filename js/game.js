@@ -7,6 +7,7 @@ import Player from './player.js';
 import { spray } from './spray.js';
 import { global } from './global.js';
 import { settings } from './settings.js';
+import Button from './button.js';
 
 export default class Game {
   constructor() {
@@ -39,6 +40,9 @@ export default class Game {
     this.currentWeapon = 'ak47';
     // weapons currently supported
     this.weapons = ['ak47', 'm4a1', 'm4a1_silencer', 'mac10'];
+
+    this.buttons = [];
+    this.links = [];
   }
 
   init() {
@@ -110,38 +114,48 @@ export default class Game {
   }
 
   initAudio() {
-    this.weaponSound = new Howl({
-      src: ['audio/ak47_01.wav'],
-      volume: 0.2,
-    });
-    this.reloadSound1 = new Howl({
-      src: ['audio/ak47_clipout.wav'],
-      volume: 0.2,
-    });
-    this.reloadSound2 = new Howl({
-      src: ['audio/ak47_clipin.wav'],
-      volume: 0.2,
-    });
-    this.reloadSound3 = new Howl({
-      src: ['audio/ak47_boltpull.wav'],
-      volume: 0.2,
-    });
-    this.doneSound = new Howl({
-      src: ['audio/bell1.wav'],
-      volume: 0.2,
-    });
-    this.hsSound = new Howl({
-      src: ['audio/headshot1.wav'],
-      volume: 0.02,
-    });
-    this.settingSound = new Howl({
-      src: ['audio/blip1.wav'],
-      volume: 0.2,
-    });
-    this.errorSound = new Howl({
-      src: ['audio/button10.wav'],
-      volume: 0.2,
-    });
+    this.sounds = {
+      weapons: {
+        ak47: {
+          shoot: new Howl({
+            src: ['audio/ak47_01.wav'],
+            volume: 0.2,
+          }),
+          reload: [
+            new Howl({
+              src: ['audio/ak47_clipout.wav'],
+              volume: 0.2,
+            }),
+            new Howl({
+              src: ['audio/ak47_clipin.wav'],
+              volume: 0.2,
+            }),
+            new Howl({
+              src: ['audio/ak47_boltpull.wav'],
+              volume: 0.2,
+            })
+          ]
+        }
+      },
+      general: {
+        done: new Howl({
+          src: ['audio/bell1.wav'],
+          volume: 0.2,
+        }),
+        headshot: new Howl({
+          src: ['audio/headshot1.wav'],
+          volume: 0.02,
+        }),
+        setting: new Howl({
+          src: ['audio/blip1.wav'],
+          volume: 0.2,
+        }),
+        error: new Howl({
+          src: ['audio/button10.wav'],
+          volume: 0.2,
+        })
+      }
+    }
   }
 
   drawWorld() {
@@ -170,7 +184,7 @@ export default class Game {
 
     this.fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {
       ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'].forEach((message, i) => {
-        const color = (message === 'ghosthair') ? 0x00ff00 : 0xecf0f1;
+        const color = 0xecf0f1;
         const material = new THREE.LineBasicMaterial({
           color: color,
           side: THREE.DoubleSide,
@@ -191,6 +205,45 @@ export default class Game {
         this.scene.add(text);
       });
     });
+
+    // command buttons
+
+    const btnBulletTime = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 20, -30), new THREE.Euler(0, Math.PI/2, 0), 'bulletTime', 0xecf0f1, () => {
+      settings.bulletTime = !settings.bulletTime;
+    });
+    const btnGhostHair = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 16.5, -30), new THREE.Euler(0, Math.PI/2, 0), 'ghostHair', 0x00ff00, () => {
+      settings.ghostHair = !settings.ghostHair;
+    });
+    const btnInfiniteAmmo = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 13, -30), new THREE.Euler(0, Math.PI/2, 0), 'infiniteAmmo', 0xecf0f1, () => {
+      settings.infiniteAmmo = !settings.infiniteAmmo;
+    });
+    const btnNoSpread = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 9.5, -30), new THREE.Euler(0, Math.PI/2, 0), 'noSpread', 0xecf0f1, () => {
+      settings.noSpread = !settings.noSpread;
+    });
+    const btnReset = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 6, -30), new THREE.Euler(0, Math.PI/2, 0), 'reset', 0xecf0f1, () => {
+      this.ammo = 0;
+      this.count = 0;
+      this.sprayCount = 0;
+      this.shots = [];
+      this.player.mesh.position.set(-global.MAP_SIZE / 2 + global.INITIAL_DISTANCE, global.PLAYER_HEIGHT, 0);
+    });
+
+    // TODO: link buttons
+
+    // const btnGithub = new Button({x: -30, y: 0, z: -global.MAP_SIZE / 2}, 'github', 0xffffff, () => {
+    //   console.log('github');
+    // }, new THREE.Mesh(new THREE.CircleGeometry(5, 32), new THREE.MeshBasicMaterial({color: 0xecf0f1, side: THREE.DoubleSide})));
+
+
+    this.buttons = [btnBulletTime, btnGhostHair, btnInfiniteAmmo, btnNoSpread, btnReset];
+    this.buttons.forEach((button) => {
+      this.scene.add(button.mesh);
+    });
+
+    // this.links = [btnGithub];
+    // this.links.forEach((link) => {
+    //   this.scene.add(link.mesh);
+    // })
 
     this.player = new Player(this.camera);
     this.scene.add(this.player.mesh);
@@ -226,12 +279,12 @@ export default class Game {
         this.shot = true;
         setTimeout(() => this.shot = false, 2500);
 
-        this.reloadSound1.play();
+        this.sounds.weapons[this.currentWeapon].reload[0].play();
         setTimeout(() => {
-          this.reloadSound2.play();
+          this.sounds.weapons[this.currentWeapon].reload[1].play();
         }, 750);
         setTimeout(() => {
-          this.reloadSound3.play();
+          this.sounds.weapons[this.currentWeapon].reload[2].play();
         }, 1500);
       }
 
@@ -282,7 +335,7 @@ export default class Game {
 
     if (this.player.shoot && !this.shot) {
       const bulletGeometry = new THREE.Geometry();
-      const projection = utils.projection(this.player, settings.noSpread ? new THREE.Vector3(0, 0, 0) : spray['ak47'][this.count]);
+      const projection = utils.projection(this.player, settings.noSpread ? new THREE.Vector3(0, 0, 0) : spray[this.currentWeapon][this.count]);
       bulletGeometry.vertices.push(projection);
       const bulletMaterial = new THREE.PointsMaterial({color: 0xecf0f1, size: 0.3, sizeAttenuation: true});
       const bullet = new THREE.Points(bulletGeometry, bulletMaterial);
@@ -293,7 +346,7 @@ export default class Game {
       this.shots.push(d);
 
       if (d <= 1) {
-        this.hsSound.play();
+        this.sounds.general.headshot.play();
       }
 
       this.shot = true;
@@ -302,39 +355,17 @@ export default class Game {
       } else {
         setTimeout(() => this.shot = false, 2500);
 
-        this.reloadSound1.play();
+        this.sounds.weapons[this.currentWeapon].reload[0].play();
         setTimeout(() => {
-          this.reloadSound2.play();
+          this.sounds.weapons[this.currentWeapon].reload[1].play();
         }, 750);
         setTimeout(() => {
-          this.reloadSound3.play();
+          this.sounds.weapons[this.currentWeapon].reload[2].play();
         }, 1500);
 
         if (!settings.noSpread && !settings.infiniteAmmo) {
           const score = 100/(utils.accuracy(this.shots)/100+1);
           this.highScore = Math.max(score, this.highScore);
-          this.scene.remove(this.scene.getObjectByName('score'))
-          this.fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {
-            const color = 0xecf0f1;
-            const material = new THREE.LineBasicMaterial({
-              color: color,
-              side: THREE.DoubleSide,
-            });
-            const shape = new THREE.BufferGeometry();
-            const shapes = font.generateShapes(`accuracy: ${score.toFixed(2)}%\nyour highest accuracy: ${this.highScore.toFixed(2)}%`, 100, 2);
-            const geometry = new THREE.ShapeGeometry(shapes);
-            geometry.computeBoundingBox();
-            geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
-            shape.fromGeometry(geometry);
-            const text = new THREE.Mesh(shape, material);
-            text.position.x = -this.MAP_SIZE / 2;
-            text.position.y = 12.5;
-            text.position.z = 30;
-            text.rotation.y = Math.PI / 2;
-            text.name = 'score';
-            text.scale.set(0.015, 0.015, 0.015);
-            this.scene.add(text);
-          });
         }
 
         this.shots = [];
@@ -344,50 +375,22 @@ export default class Game {
       this.count = (this.count + 1) % 30;
       this.sprayCount = (this.sprayCount + 1) % 30;
 
-      this.weaponSound.play();
+      this.sounds.weapons[this.currentWeapon].shoot.play();
 
       if (this.sprayCount === 0) {
-        this.doneSound.play();
+        this.sounds.general.done.play();
       }
 
-      // bullet time
-      if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 21.75 && projection.y >= 18.25 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
-        settings.bulletTime = !settings.bulletTime;
-        this.scene.getObjectByName('bullet time').material.color.setHex(settings.bulletTime ? 0x00ff00 : 0xecf0f1);
-        this.errorSound.play();
-      }
-      // ghosthair
-      else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 18.25 && projection.y >= 14.75 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
-        settings.ghostHair = !settings.ghostHair;
-        this.scene.getObjectByName('ghosthair').material.color.setHex(settings.ghostHair ? 0x00ff00 : 0xecf0f1);
-        this.settingSound.play();
-      }
-      // infinite ammo
-      else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 14.75 && projection.y >= 11.25 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
-        settings.infiniteAmmo = !settings.infiniteAmmo;
-        this.scene.getObjectByName('infinite ammo').material.color.setHex(settings.infiniteAmmo ? 0x00ff00 : 0xecf0f1);
-        this.settingSound.play();
-      }
-      // nospread
-      else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 11.25 && projection.y >= 7.75 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
-        settings.noSpread = !settings.noSpread;
-        this.scene.getObjectByName('nospread').material.color.setHex(settings.noSpread ? 0x00ff00 : 0xecf0f1);
-        this.settingSound.play();
-      }
-      // reset
-      else if (projection.x + this.MAP_SIZE / 2 <= 0.01 && projection.y <= 7.75 && projection.y >= 4.25 && projection.z <= this.SETTINGS_MAX_Z && projection.z >= this.SETTINGS_MIN_Z) {
-        this.ammo = 0;
-        this.count = 0;
-        this.sprayCount = 0;
-        this.shots = [];
-        this.player.mesh.position.set(-global.MAP_SIZE / 2 + global.INITIAL_DISTANCE, global.PLAYER_HEIGHT, 0);
-        // this.player.mesh.rotation.set(0, 0, 0);
-        // this.camera.rotation.set(0, 0.5 * Math.PI, 0);
-        this.settingSound.play();
-      }
+      this.buttons.forEach((button) => {
+        if (projection.x + this.MAP_SIZE / 2 <= 0.01 && Math.abs(projection.y - button.position.y) <= 1 && Math.abs(projection.z - button.position.z) <= 1) {
+          button.action();
+          button.mesh.material.color.setHex(settings[button.name] ? 0x00ff00 : 0xecf0f1);
+          this.sounds.general.setting.play();
+        }
+      });
 
       const target = this.scene.getObjectByName('target');
-      const targetPosition = spray['ak47'][this.sprayCount].clone().multiplyScalar(-global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0))
+      const targetPosition = spray[this.currentWeapon][this.sprayCount].clone().multiplyScalar(-global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0))
       target.geometry.vertices.pop();
       target.geometry.vertices.push(targetPosition);
       target.geometry.verticesNeedUpdate = true;
