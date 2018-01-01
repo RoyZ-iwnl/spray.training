@@ -4,10 +4,10 @@ import TweenMax from 'gsap';
 import movement from './movement.js';
 import * as utils from './utils.js';
 import Player from './player.js';
-import { spray } from './spray.js';
 import { global } from './global.js';
 import { settings } from './settings.js';
 import Button from './button.js';
+import { weapons } from './weapons.js';
 
 export default class Game {
   constructor() {
@@ -190,7 +190,7 @@ export default class Game {
           side: THREE.DoubleSide,
         });
         const shape = new THREE.BufferGeometry();
-        const shapes = font.generateShapes(message, 100, 2);
+        const shapes = font.generateShapes(message, 1.5, 2);
         const geometry = new THREE.ShapeGeometry(shapes);
         geometry.computeBoundingBox();
         geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
@@ -201,7 +201,49 @@ export default class Game {
         text.position.z = -40;
         text.rotation.y = Math.PI / 2;
         text.name = message;
-        text.scale.set(0.015, 0.015, 0.015);
+        this.scene.add(text);
+      });
+
+      Object.keys(weapons).forEach((k, i) => {
+        const message = weapons[k].name;
+        const color = 0xecf0f1;
+        const material = new THREE.LineBasicMaterial({
+          color: color,
+          side: THREE.DoubleSide,
+        })
+        const shape = new THREE.BufferGeometry();
+        const shapes = font.generateShapes(message, 1.5, 2)
+        const geometry = new THREE.ShapeGeometry(shapes);
+        geometry.computeBoundingBox();
+        geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
+        shape.fromGeometry(geometry);
+        const text = new THREE.Mesh(shape, material);
+        text.position.x = 30 - 20 * (~~(i/4));
+        text.position.y = 20 - 5*(i%4);
+        text.position.z = this.MAP_SIZE / 2;
+        text.rotation.y = Math.PI;
+        text.name = message;
+        this.scene.add(text);
+      });
+
+      ['s p r a y . t r a i n i n g'].forEach((message, i) => {
+        const color = 0xecf0f1;
+        const material = new THREE.LineBasicMaterial({
+          color: color,
+          side: THREE.DoubleSide,
+        })
+        const shape = new THREE.BufferGeometry();
+        const shapes = font.generateShapes(message, 4, 2)
+        const geometry = new THREE.ShapeGeometry(shapes);
+        geometry.computeBoundingBox();
+        geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
+        shape.fromGeometry(geometry);
+        const text = new THREE.Mesh(shape, material);
+        text.position.x = this.MAP_SIZE / 2;
+        text.position.y = 10;
+        text.position.z = 0;
+        text.rotation.y = -Math.PI / 2;
+        text.name = message;
         this.scene.add(text);
       });
     });
@@ -277,18 +319,18 @@ export default class Game {
         this.ammo = 0;
         this.count = 0;
         this.shot = true;
-        setTimeout(() => this.shot = false, 2500);
+        setTimeout(() => this.shot = false, weapons[this.currentWeapon].reload);
 
         this.sounds.weapons[this.currentWeapon].reload[0].play();
         setTimeout(() => {
           this.sounds.weapons[this.currentWeapon].reload[1].play();
-        }, 750);
+        }, weapons[this.currentWeapon].delay[0]);
         setTimeout(() => {
           this.sounds.weapons[this.currentWeapon].reload[2].play();
-        }, 1500);
+        }, weapons[this.currentWeapon].delay[1]);
       }
 
-      setTimeout(() => {locked = false;}, 2500);
+      setTimeout(() => {locked = false;}, weapons[this.currentWeapon].reload);
     });
   }
 
@@ -310,9 +352,9 @@ export default class Game {
 
     $('#player-velocity').html(`fov: ${(2*Math.atan2(Math.tan(this.camera.fov/2 * Math.PI/180), 1/this.camera.aspect) * 180 / Math.PI).toFixed(1)}`);
 
-    $('#player-ammo').html(`${30 - this.ammo}/30`);
+    $('#player-ammo').html(`${weapons[this.currentWeapon].magazine - this.ammo}/${weapons[this.currentWeapon].magazine}`);
 
-    if (this.aFrame % 30 < 3) {
+    if (this.aFrame % weapons[this.currentWeapon].magazine < 3) {
       $('#player-fps').html(`fps: ${(1/this.delta).toFixed(0)}`);
     }
   }
@@ -335,7 +377,7 @@ export default class Game {
 
     if (this.player.shoot && !this.shot) {
       const bulletGeometry = new THREE.Geometry();
-      const projection = utils.projection(this.player, settings.noSpread ? new THREE.Vector3(0, 0, 0) : spray[this.currentWeapon][this.count]);
+      const projection = utils.projection(this.player, settings.noSpread ? new THREE.Vector3(0, 0, 0) : weapons[this.currentWeapon].spray[this.count]);
       bulletGeometry.vertices.push(projection);
       const bulletMaterial = new THREE.PointsMaterial({color: 0xecf0f1, size: 0.3, sizeAttenuation: true});
       const bullet = new THREE.Points(bulletGeometry, bulletMaterial);
@@ -350,18 +392,18 @@ export default class Game {
       }
 
       this.shot = true;
-      if (this.ammo !== 29) {
-        setTimeout(() => this.shot = false, 100);
+      if (this.ammo !== weapons[this.currentWeapon].magazine-1) {
+        setTimeout(() => this.shot = false, 60000/weapons[this.currentWeapon].rpm);
       } else {
-        setTimeout(() => this.shot = false, 2500);
+        setTimeout(() => this.shot = false, weapons[this.currentWeapon].reload);
 
         this.sounds.weapons[this.currentWeapon].reload[0].play();
         setTimeout(() => {
           this.sounds.weapons[this.currentWeapon].reload[1].play();
-        }, 750);
+        }, weapons[this.currentWeapon].delay[0]);
         setTimeout(() => {
           this.sounds.weapons[this.currentWeapon].reload[2].play();
-        }, 1500);
+        }, weapons[this.currentWeapon].delay[1]);
 
         if (!settings.noSpread && !settings.infiniteAmmo) {
           const score = 100/(utils.accuracy(this.shots)/100+1);
@@ -371,9 +413,9 @@ export default class Game {
         this.shots = [];
       }
 
-      this.ammo = settings.infiniteAmmo ? 0 : (this.ammo + 1) % 30;
-      this.count = (this.count + 1) % 30;
-      this.sprayCount = (this.sprayCount + 1) % 30;
+      this.ammo = settings.infiniteAmmo ? 0 : (this.ammo + 1) % weapons[this.currentWeapon].magazine;
+      this.count = (this.count + 1) % weapons[this.currentWeapon].magazine;
+      this.sprayCount = (this.sprayCount + 1) % weapons[this.currentWeapon].magazine;
 
       this.sounds.weapons[this.currentWeapon].shoot.play();
 
@@ -390,7 +432,7 @@ export default class Game {
       });
 
       const target = this.scene.getObjectByName('target');
-      const targetPosition = spray[this.currentWeapon][this.sprayCount].clone().multiplyScalar(-global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0))
+      const targetPosition = weapons[this.currentWeapon].spray[this.sprayCount].clone().multiplyScalar(-global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0))
       target.geometry.vertices.pop();
       target.geometry.vertices.push(targetPosition);
       target.geometry.verticesNeedUpdate = true;

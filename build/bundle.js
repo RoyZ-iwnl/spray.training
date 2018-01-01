@@ -21598,8 +21598,6 @@ var _player = __webpack_require__(12);
 
 var _player2 = _interopRequireDefault(_player);
 
-var _spray = __webpack_require__(13);
-
 var _global = __webpack_require__(1);
 
 var _settings = __webpack_require__(14);
@@ -21607,6 +21605,8 @@ var _settings = __webpack_require__(14);
 var _button = __webpack_require__(15);
 
 var _button2 = _interopRequireDefault(_button);
+
+var _weapons = __webpack_require__(16);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21797,7 +21797,7 @@ var Game = function () {
             side: THREE.DoubleSide
           });
           var shape = new THREE.BufferGeometry();
-          var shapes = font.generateShapes(message, 100, 2);
+          var shapes = font.generateShapes(message, 1.5, 2);
           var geometry = new THREE.ShapeGeometry(shapes);
           geometry.computeBoundingBox();
           geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
@@ -21808,7 +21808,49 @@ var Game = function () {
           text.position.z = -40;
           text.rotation.y = Math.PI / 2;
           text.name = message;
-          text.scale.set(0.015, 0.015, 0.015);
+          _this2.scene.add(text);
+        });
+
+        Object.keys(_weapons.weapons).forEach(function (k, i) {
+          var message = _weapons.weapons[k].name;
+          var color = 0xecf0f1;
+          var material = new THREE.LineBasicMaterial({
+            color: color,
+            side: THREE.DoubleSide
+          });
+          var shape = new THREE.BufferGeometry();
+          var shapes = font.generateShapes(message, 1.5, 2);
+          var geometry = new THREE.ShapeGeometry(shapes);
+          geometry.computeBoundingBox();
+          geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
+          shape.fromGeometry(geometry);
+          var text = new THREE.Mesh(shape, material);
+          text.position.x = 30 - 20 * ~~(i / 4);
+          text.position.y = 20 - 5 * (i % 4);
+          text.position.z = _this2.MAP_SIZE / 2;
+          text.rotation.y = Math.PI;
+          text.name = message;
+          _this2.scene.add(text);
+        });
+
+        ['s p r a y . t r a i n i n g'].forEach(function (message, i) {
+          var color = 0xecf0f1;
+          var material = new THREE.LineBasicMaterial({
+            color: color,
+            side: THREE.DoubleSide
+          });
+          var shape = new THREE.BufferGeometry();
+          var shapes = font.generateShapes(message, 4, 2);
+          var geometry = new THREE.ShapeGeometry(shapes);
+          geometry.computeBoundingBox();
+          geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
+          shape.fromGeometry(geometry);
+          var text = new THREE.Mesh(shape, material);
+          text.position.x = _this2.MAP_SIZE / 2;
+          text.position.y = 10;
+          text.position.z = 0;
+          text.rotation.y = -Math.PI / 2;
+          text.name = message;
           _this2.scene.add(text);
         });
       });
@@ -21889,20 +21931,20 @@ var Game = function () {
           _this3.shot = true;
           setTimeout(function () {
             return _this3.shot = false;
-          }, 2500);
+          }, _weapons.weapons[_this3.currentWeapon].reload);
 
           _this3.sounds.weapons[_this3.currentWeapon].reload[0].play();
           setTimeout(function () {
             _this3.sounds.weapons[_this3.currentWeapon].reload[1].play();
-          }, 750);
+          }, _weapons.weapons[_this3.currentWeapon].delay[0]);
           setTimeout(function () {
             _this3.sounds.weapons[_this3.currentWeapon].reload[2].play();
-          }, 1500);
+          }, _weapons.weapons[_this3.currentWeapon].delay[1]);
         }
 
         setTimeout(function () {
           locked = false;
-        }, 2500);
+        }, _weapons.weapons[_this3.currentWeapon].reload);
       });
     }
   }, {
@@ -21927,9 +21969,9 @@ var Game = function () {
 
       $('#player-velocity').html('fov: ' + (2 * Math.atan2(Math.tan(this.camera.fov / 2 * Math.PI / 180), 1 / this.camera.aspect) * 180 / Math.PI).toFixed(1));
 
-      $('#player-ammo').html(30 - this.ammo + '/30');
+      $('#player-ammo').html(_weapons.weapons[this.currentWeapon].magazine - this.ammo + '/' + _weapons.weapons[this.currentWeapon].magazine);
 
-      if (this.aFrame % 30 < 3) {
+      if (this.aFrame % _weapons.weapons[this.currentWeapon].magazine < 3) {
         $('#player-fps').html('fps: ' + (1 / this.delta).toFixed(0));
       }
     }
@@ -21955,7 +21997,7 @@ var Game = function () {
 
       if (this.player.shoot && !this.shot) {
         var bulletGeometry = new THREE.Geometry();
-        var projection = utils.projection(this.player, _settings.settings.noSpread ? new THREE.Vector3(0, 0, 0) : _spray.spray[this.currentWeapon][this.count]);
+        var projection = utils.projection(this.player, _settings.settings.noSpread ? new THREE.Vector3(0, 0, 0) : _weapons.weapons[this.currentWeapon].spray[this.count]);
         bulletGeometry.vertices.push(projection);
         var bulletMaterial = new THREE.PointsMaterial({ color: 0xecf0f1, size: 0.3, sizeAttenuation: true });
         var bullet = new THREE.Points(bulletGeometry, bulletMaterial);
@@ -21972,22 +22014,22 @@ var Game = function () {
         }
 
         this.shot = true;
-        if (this.ammo !== 29) {
+        if (this.ammo !== _weapons.weapons[this.currentWeapon].magazine - 1) {
           setTimeout(function () {
             return _this4.shot = false;
-          }, 100);
+          }, 60000 / _weapons.weapons[this.currentWeapon].rpm);
         } else {
           setTimeout(function () {
             return _this4.shot = false;
-          }, 2500);
+          }, _weapons.weapons[this.currentWeapon].reload);
 
           this.sounds.weapons[this.currentWeapon].reload[0].play();
           setTimeout(function () {
             _this4.sounds.weapons[_this4.currentWeapon].reload[1].play();
-          }, 750);
+          }, _weapons.weapons[this.currentWeapon].delay[0]);
           setTimeout(function () {
             _this4.sounds.weapons[_this4.currentWeapon].reload[2].play();
-          }, 1500);
+          }, _weapons.weapons[this.currentWeapon].delay[1]);
 
           if (!_settings.settings.noSpread && !_settings.settings.infiniteAmmo) {
             var score = 100 / (utils.accuracy(this.shots) / 100 + 1);
@@ -21997,9 +22039,9 @@ var Game = function () {
           this.shots = [];
         }
 
-        this.ammo = _settings.settings.infiniteAmmo ? 0 : (this.ammo + 1) % 30;
-        this.count = (this.count + 1) % 30;
-        this.sprayCount = (this.sprayCount + 1) % 30;
+        this.ammo = _settings.settings.infiniteAmmo ? 0 : (this.ammo + 1) % _weapons.weapons[this.currentWeapon].magazine;
+        this.count = (this.count + 1) % _weapons.weapons[this.currentWeapon].magazine;
+        this.sprayCount = (this.sprayCount + 1) % _weapons.weapons[this.currentWeapon].magazine;
 
         this.sounds.weapons[this.currentWeapon].shoot.play();
 
@@ -22016,7 +22058,7 @@ var Game = function () {
         });
 
         var target = this.scene.getObjectByName('target');
-        var targetPosition = _spray.spray[this.currentWeapon][this.sprayCount].clone().multiplyScalar(-_global.global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0));
+        var targetPosition = _weapons.weapons[this.currentWeapon].spray[this.sprayCount].clone().multiplyScalar(-_global.global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0));
         target.geometry.vertices.pop();
         target.geometry.vertices.push(targetPosition);
         target.geometry.verticesNeedUpdate = true;
@@ -25134,29 +25176,7 @@ var Player = function Player(camera) {
 exports.default = Player;
 
 /***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.spray = undefined;
-
-var _three = __webpack_require__(0);
-
-var THREE = _interopRequireWildcard(_three);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-var spray = exports.spray = {
-  'ak47': [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 11, 6), new THREE.Vector3(0, 40, 0), new THREE.Vector3(0, 87, 4), new THREE.Vector3(0, 135, 6), new THREE.Vector3(0, 187, -14), new THREE.Vector3(0, 231, -27), new THREE.Vector3(0, 262, -48), new THREE.Vector3(0, 285, -21), new THREE.Vector3(0, 278, 46), new THREE.Vector3(0, 282, 81), new THREE.Vector3(0, 300, 60), new THREE.Vector3(0, 309, 84), new THREE.Vector3(0, 296, 126), new THREE.Vector3(0, 304, 131), new THREE.Vector3(0, 306, 67), new THREE.Vector3(0, 317, 37), new THREE.Vector3(0, 334, 15), new THREE.Vector3(0, 332, -28), new THREE.Vector3(0, 317, -81), new THREE.Vector3(0, 313, -48), new THREE.Vector3(0, 318, -58), new THREE.Vector3(0, 333, -48), new THREE.Vector3(0, 339, -34), new THREE.Vector3(0, 334, -64), new THREE.Vector3(0, 342, -75), new THREE.Vector3(0, 341, -41), new THREE.Vector3(0, 336, 10), new THREE.Vector3(0, 303, 83), new THREE.Vector3(0, 303, 105)],
-  'm4a4': []
-};
-
-/***/ }),
+/* 13 */,
 /* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -25210,6 +25230,151 @@ var Button = function Button(position, rotation, name, color, action) {
 };
 
 exports.default = Button;
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.weapons = undefined;
+
+var _three = __webpack_require__(0);
+
+var THREE = _interopRequireWildcard(_three);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var weapons = exports.weapons = {
+  // rifles
+  'ak47': {
+    name: 'AK-47',
+    spray: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 11, 6), new THREE.Vector3(0, 40, 0), new THREE.Vector3(0, 87, 4), new THREE.Vector3(0, 135, 6), new THREE.Vector3(0, 187, -14), new THREE.Vector3(0, 231, -27), new THREE.Vector3(0, 262, -48), new THREE.Vector3(0, 285, -21), new THREE.Vector3(0, 278, 46), new THREE.Vector3(0, 282, 81), new THREE.Vector3(0, 300, 60), new THREE.Vector3(0, 309, 84), new THREE.Vector3(0, 296, 126), new THREE.Vector3(0, 304, 131), new THREE.Vector3(0, 306, 67), new THREE.Vector3(0, 317, 37), new THREE.Vector3(0, 334, 15), new THREE.Vector3(0, 332, -28), new THREE.Vector3(0, 317, -81), new THREE.Vector3(0, 313, -48), new THREE.Vector3(0, 318, -58), new THREE.Vector3(0, 333, -48), new THREE.Vector3(0, 339, -34), new THREE.Vector3(0, 334, -64), new THREE.Vector3(0, 342, -75), new THREE.Vector3(0, 341, -41), new THREE.Vector3(0, 336, 10), new THREE.Vector3(0, 303, 83), new THREE.Vector3(0, 303, 105)],
+    magazine: 30,
+    rpm: 600,
+    reload: 2500,
+    delay: [750, 1500]
+  },
+  'm4a1': {
+    name: 'M4A4',
+    spray: [],
+    magazine: 30,
+    rpm: 666,
+    reload: 3100,
+    delay: [750, 1500]
+  },
+  'm4a1_silencer': {
+    name: 'M4A1-S',
+    spray: [],
+    magazine: 20,
+    rpm: 600,
+    reload: 3100,
+    delay: [750, 1500]
+  },
+  'galilar': {
+    name: 'Galil',
+    spray: [],
+    magazine: 35,
+    rpm: 666,
+    reload: 3000,
+    delay: [750, 1500]
+  },
+  'sg556': {
+    name: 'SG 553',
+    spray: [],
+    magazine: 30,
+    rpm: 666,
+    reload: 2800,
+    delay: [750, 1500]
+  },
+  'famas': {
+    name: 'FAMAS',
+    spray: [],
+    magazine: 25,
+    rpm: 666,
+    reload: 3300,
+    delay: [750, 1500]
+  },
+  'aug': {
+    name: 'AUG',
+    spray: [],
+    magazine: 30,
+    rpm: 666,
+    reload: 3800,
+    delay: [750, 1500]
+  },
+  // submachine guns
+  'mac10': {
+    name: 'MAC-10',
+    spray: [],
+    magazine: 30,
+    rpm: 800,
+    reload: 2600,
+    delay: [750, 1500]
+  },
+  'mp7': {
+    name: 'MP7',
+    spray: [],
+    magazine: 30,
+    rpm: 750,
+    reload: 3100,
+    delay: [750, 1500]
+  },
+  'ump45': {
+    name: 'UMP-45',
+    spray: [],
+    magazine: 25,
+    rpm: 666,
+    reload: 3500,
+    delay: [750, 1500]
+  },
+  'bizon': {
+    name: 'PP-Bizon',
+    spray: [],
+    magazine: 64,
+    rpm: 750,
+    reload: 2400,
+    delay: [750, 1500]
+  },
+  'p90': {
+    name: 'P90',
+    spray: [],
+    magazine: 50,
+    rpm: 857,
+    reload: 3300,
+    delay: [750, 1500]
+  },
+  'mp9': {
+    name: 'MP9',
+    spray: [],
+    magazine: 30,
+    rpm: 857,
+    reload: 2100,
+    delay: [750, 1500]
+  },
+  //machine guns
+  'm249': {
+    name: 'M249',
+    spray: [],
+    magazine: 100,
+    rpm: 750,
+    reload: 5700,
+    delay: [750, 1500]
+  },
+  //pistols
+  'cz75a': {
+    name: 'CZ75-Auto',
+    spray: [],
+    magazine: 12,
+    rpm: 600,
+    reload: 2700,
+    delay: [750, 1500]
+  }
+};
 
 /***/ })
 /******/ ]);
