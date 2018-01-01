@@ -15,7 +15,13 @@ exports.projection = (player, s) => {
   spray.multiplyScalar(scale / global.INITIAL_DISTANCE);
   // spray.multiplyScalar(scale / (position.distanceTo(new THREE.Vector3(-MAP_SIZE / 2 + 0.01, 5, 0))));
 
-  direction.add(spray);
+  const z = new THREE.Vector3(0, 0, 1);
+  const quat = new THREE.Quaternion().setFromEuler(player.mesh.rotation);
+  z.applyQuaternion(quat);
+  const y = new THREE.Vector3().crossVectors(direction, z);
+  const u = new THREE.Vector3().addVectors(y.multiplyScalar(spray.y), z.multiplyScalar(spray.z));
+
+  direction.add(u);
 
   if (player.velocity.lengthSq() >= 500) {
     direction.add(new THREE.Vector3(THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3)));

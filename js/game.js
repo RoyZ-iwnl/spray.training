@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Howl } from 'howler';
+import TweenMax from 'gsap';
 import movement from './movement.js';
 import * as utils from './utils.js';
 import Player from './player.js';
@@ -52,7 +53,7 @@ export default class Game {
   pointerlock() {
     const moveCallback = (e) => {
       // prevent any abnormal mouse jumping
-      if (Math.abs(e.movementX) <= 300 && Math.abs(e.movementY) <= 300) {
+      if (Math.abs(e.movementX) <= 300 && Math.abs(e.movementY) <= 100) {
         this.cursorXY.x += e.movementX || e.mozMovementX || e.webkitMovementX || 0;
         this.cursorXY.y += e.movementY || e.mozMovementY || e.webkitMovementY || 0;
       }
@@ -268,10 +269,12 @@ export default class Game {
     this.setCmd();
 
     const sensitivity = global.SENS;
-    const factor = 0.05;
+    const m_yaw = 0.022;
+    const m_pitch = 0.022;
+    const factor = 2.5;
 
-    this.player.mesh.rotateY(-this.cursorXY.x * sensitivity * factor * delta);
-    this.player.camera.rotateX(-this.cursorXY.y * sensitivity * factor * delta);
+    this.player.mesh.rotateY(-this.cursorXY.x * sensitivity * m_yaw * factor * delta);
+    this.player.camera.rotateX(-this.cursorXY.y * sensitivity * m_pitch * factor * delta);
     this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
 
     const dv = movement(this.player, this.cmd, delta);

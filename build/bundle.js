@@ -13110,6 +13110,84 @@ $('#main-button').on('click', function () {
   ctx.lineTo(30, 15);
   ctx.stroke();
 });
+
+(function () {
+
+  var coin, coinImage, canvas;
+
+  function gameLoop() {
+
+    window.requestAnimationFrame(gameLoop);
+
+    coin.update();
+    coin.render();
+  }
+
+  function sprite(options) {
+
+    var that = {},
+        frameIndex = 0,
+        tickCount = 0,
+        ticksPerFrame = options.ticksPerFrame || 0,
+        numberOfFrames = options.numberOfFrames || 1;
+
+    that.context = options.context;
+    that.width = options.width;
+    that.height = options.height;
+    that.image = options.image;
+
+    that.update = function () {
+
+      tickCount += 1;
+
+      if (tickCount > ticksPerFrame) {
+
+        tickCount = 0;
+
+        // If the current frame index is in range
+        if (frameIndex < numberOfFrames - 1) {
+          // Go to the next frame
+          frameIndex += 1;
+        } else {
+          frameIndex = 0;
+        }
+      }
+    };
+
+    that.render = function () {
+
+      // Clear the canvas
+      that.context.clearRect(0, 0, that.width, that.height);
+
+      // Draw the animation
+      that.context.drawImage(that.image, frameIndex * that.width / numberOfFrames, 0, that.width / numberOfFrames, that.height, 0, 0, that.width / numberOfFrames, that.height);
+    };
+
+    return that;
+  }
+
+  // Get canvas
+  canvas = document.getElementById("player-viewmodel");
+  canvas.width = 1280;
+  canvas.height = 720;
+
+  // Create sprite sheet
+  coinImage = new Image();
+
+  // Create sprite
+  coin = sprite({
+    context: canvas.getContext("2d"),
+    width: 20480,
+    height: 720,
+    image: coinImage,
+    numberOfFrames: 16,
+    ticksPerFrame: 1
+  });
+
+  // Load sprite sheet
+  coinImage.addEventListener("load", gameLoop);
+  coinImage.src = "img/ak47/tap/sprites.png";
+})();
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
@@ -21582,6 +21660,10 @@ var THREE = _interopRequireWildcard(_three);
 
 var _howler = __webpack_require__(9);
 
+var _gsap = __webpack_require__(7);
+
+var _gsap2 = _interopRequireDefault(_gsap);
+
 var _movement = __webpack_require__(10);
 
 var _movement2 = _interopRequireDefault(_movement);
@@ -21658,7 +21740,7 @@ var Game = function () {
 
       var moveCallback = function moveCallback(e) {
         // prevent any abnormal mouse jumping
-        if (Math.abs(e.movementX) <= 300 && Math.abs(e.movementY) <= 300) {
+        if (Math.abs(e.movementX) <= 300 && Math.abs(e.movementY) <= 100) {
           _this.cursorXY.x += e.movementX || e.mozMovementX || e.webkitMovementX || 0;
           _this.cursorXY.y += e.movementY || e.mozMovementY || e.webkitMovementY || 0;
         }
@@ -21886,10 +21968,12 @@ var Game = function () {
       this.setCmd();
 
       var sensitivity = _global.global.SENS;
-      var factor = 0.05;
+      var m_yaw = 0.022;
+      var m_pitch = 0.022;
+      var factor = 2.5;
 
-      this.player.mesh.rotateY(-this.cursorXY.x * sensitivity * factor * delta);
-      this.player.camera.rotateX(-this.cursorXY.y * sensitivity * factor * delta);
+      this.player.mesh.rotateY(-this.cursorXY.x * sensitivity * m_yaw * factor * delta);
+      this.player.camera.rotateX(-this.cursorXY.y * sensitivity * m_pitch * factor * delta);
       this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
 
       var dv = (0, _movement2.default)(this.player, this.cmd, delta);
@@ -25055,8 +25139,14 @@ exports.projection = function (player, s) {
   var spray = s.clone();
   spray.multiplyScalar(scale / _global.global.INITIAL_DISTANCE);
   // spray.multiplyScalar(scale / (position.distanceTo(new THREE.Vector3(-MAP_SIZE / 2 + 0.01, 5, 0))));
-  // direction.add(spray);
-  direction.add(spray);
+
+  var z = new THREE.Vector3(0, 0, 1);
+  var quat = new THREE.Quaternion().setFromEuler(player.mesh.rotation);
+  z.applyQuaternion(quat);
+  var y = new THREE.Vector3().crossVectors(direction, z);
+  var u = new THREE.Vector3().addVectors(y.multiplyScalar(spray.y), z.multiplyScalar(spray.z));
+
+  direction.add(u);
 
   if (player.velocity.lengthSq() >= 500) {
     direction.add(new THREE.Vector3(THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3)));
