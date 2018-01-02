@@ -333,8 +333,8 @@ export default class Game {
       this.scene.add(bullet);
       setTimeout(() => this.scene.remove(bullet), 3000);
 
-      // const d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
-      // this.shots.push(d);
+      const d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
+      this.shots.push(d);
 
       audio.playTap(this.currentWeapon);
       if (d <= 1) {
