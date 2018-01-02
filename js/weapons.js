@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { global } from './global.js';
 
 export const weapons = {
   // rifles

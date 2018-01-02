@@ -21961,8 +21961,8 @@ var Game = function () {
           return _this4.scene.remove(bullet);
         }, 3000);
 
-        // const d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
-        // this.shots.push(d);
+        var d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
+        this.shots.push(d);
 
         audio.playTap(this.currentWeapon);
         if (d <= 1) {
@@ -22004,6 +22004,17 @@ var Game = function () {
             audio.playSetting();
           }
         });
+
+        if (Math.abs(projection.z - this.MAP_SIZE / 2) <= 0.01) {
+          var u = 3 - (projection.x + 30) / 20;
+          var v = (-projection.y + 21) / 5;
+          if (Math.abs(u - ~~(u + 0.5)) <= 0.25 && Math.abs(v - ~~(v + 0.5)) <= 0.4) {
+            var w = 4 * ~~(u + 0.5) + ~~(v + 0.5);
+            this.currentWeapon = Object.keys(_weapons.weapons)[w];
+            audio.playDone();
+            this.reset();
+          }
+        }
 
         var target = this.scene.getObjectByName('target');
         var targetPosition = _weapons.weapons[this.currentWeapon].spray[this.sprayCount].clone().multiplyScalar(-_global.global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0));
@@ -25202,6 +25213,8 @@ exports.weapons = undefined;
 var _three = __webpack_require__(0);
 
 var THREE = _interopRequireWildcard(_three);
+
+var _global = __webpack_require__(1);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 

@@ -373,6 +373,17 @@ export default class Game {
         }
       });
 
+      if (Math.abs(projection.z - this.MAP_SIZE / 2) <= 0.01) {
+        const u = 3 - (projection.x + 30) / 20;
+        const v = (-projection.y + 21) / 5;
+        if (Math.abs(u - ~~(u+0.5)) <= 0.25 && Math.abs(v - ~~(v+0.5)) <= 0.4) {
+          const w = 4*~~(u+0.5) + ~~(v+0.5);
+          this.currentWeapon = Object.keys(weapons)[w];
+          audio.playDone();
+          this.reset();
+        }
+      }
+
       const target = this.scene.getObjectByName('target');
       const targetPosition = weapons[this.currentWeapon].spray[this.sprayCount].clone().multiplyScalar(-global.SPRAY_SCALE).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0))
       target.geometry.vertices.pop();
