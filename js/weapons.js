@@ -4,6 +4,29 @@ export const weapons = {
   // rifles
   'ak47': {
     name: 'AK-47',
+    audio: {
+      shoot: [
+        new Howl({
+          src: ['audio/weapons/ak47/ak47_01.wav'],
+          volume: 0.2,
+        }),
+      ],
+      reload: [
+        new Howl({
+          src: ['audio/weapons/ak47/ak47_clipout.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/ak47/ak47_clipin.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/ak47/ak47_boltpull.wav'],
+          volume: 0.2,
+        })
+      ],
+      audioDelay: [750, 1500],
+    },
     spray: [
       new THREE.Vector3(0, 0, 0),
       new THREE.Vector3(0, 11, 6),
@@ -39,15 +62,79 @@ export const weapons = {
     magazine: 30,
     rpm: 600,
     reload: 2500,
-    delay: [750, 1500],
   },
   'm4a1': {
     name: 'M4A4',
-    spray: [],
+    audio: {
+      shoot: [
+        new Howl({
+          src: ['audio/weapons/m4a1/m4a1_01.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/m4a1/m4a1_02.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/m4a1/m4a1_03.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/m4a1/m4a1_04.wav'],
+          volume: 0.2,
+        }),
+      ],
+      reload: [
+        new Howl({
+          src: ['audio/weapons/m4a1/m4a1_clipout.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/m4a1/m4a1_clipin.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/m4a1/m4a1_cliphit.wav'],
+          volume: 0.2,
+        })
+      ],
+      audioDelay: [750, 1500],
+    },
+    spray: [
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 11, 6),
+      new THREE.Vector3(0, 40, 0),
+      new THREE.Vector3(0, 87, 4),
+      new THREE.Vector3(0, 135, 6),
+      new THREE.Vector3(0, 187, -14),
+      new THREE.Vector3(0, 231, -27),
+      new THREE.Vector3(0, 262, -48),
+      new THREE.Vector3(0, 285, -21),
+      new THREE.Vector3(0, 278, 46),
+      new THREE.Vector3(0, 282, 81),
+      new THREE.Vector3(0, 300, 60),
+      new THREE.Vector3(0, 309, 84),
+      new THREE.Vector3(0, 296, 126),
+      new THREE.Vector3(0, 304, 131),
+      new THREE.Vector3(0, 306, 67),
+      new THREE.Vector3(0, 317, 37),
+      new THREE.Vector3(0, 334, 15),
+      new THREE.Vector3(0, 332, -28),
+      new THREE.Vector3(0, 317, -81),
+      new THREE.Vector3(0, 313, -48),
+      new THREE.Vector3(0, 318, -58),
+      new THREE.Vector3(0, 333, -48),
+      new THREE.Vector3(0, 339, -34),
+      new THREE.Vector3(0, 334, -64),
+      new THREE.Vector3(0, 342, -75),
+      new THREE.Vector3(0, 341, -41),
+      new THREE.Vector3(0, 336, 10),
+      new THREE.Vector3(0, 303, 83),
+      new THREE.Vector3(0, 303, 105),
+    ],
     magazine: 30,
     rpm: 666,
     reload: 3100,
-    delay: [750, 1500],
   },
   'm4a1_silencer': {
     name: 'M4A1-S',
@@ -55,7 +142,6 @@ export const weapons = {
     magazine: 20,
     rpm: 600,
     reload: 3100,
-    delay: [750, 1500],
   },
   'galilar': {
     name: 'Galil',
@@ -63,7 +149,6 @@ export const weapons = {
     magazine: 35,
     rpm: 666,
     reload: 3000,
-    delay: [750, 1500],
   },
   'sg556': {
     name: 'SG 553',
@@ -71,7 +156,6 @@ export const weapons = {
     magazine: 30,
     rpm: 666,
     reload: 2800,
-    delay: [750, 1500],
   },
   'famas': {
     name: 'FAMAS',
@@ -79,7 +163,6 @@ export const weapons = {
     magazine: 25,
     rpm: 666,
     reload: 3300,
-    delay: [750, 1500],
   },
   'aug': {
     name: 'AUG',
@@ -87,7 +170,6 @@ export const weapons = {
     magazine: 30,
     rpm: 666,
     reload: 3800,
-    delay: [750, 1500],
   },
   // submachine guns
   'mac10': {
@@ -96,7 +178,6 @@ export const weapons = {
     magazine: 30,
     rpm: 800,
     reload: 2600,
-    delay: [750, 1500],
   },
   'mp7': {
     name: 'MP7',
@@ -104,7 +185,6 @@ export const weapons = {
     magazine: 30,
     rpm: 750,
     reload: 3100,
-    delay: [750, 1500],
   },
   'ump45': {
     name: 'UMP-45',
@@ -112,7 +192,6 @@ export const weapons = {
     magazine: 25,
     rpm: 666,
     reload: 3500,
-    delay: [750, 1500],
   },
   'bizon': {
     name: 'PP-Bizon',
@@ -120,7 +199,6 @@ export const weapons = {
     magazine: 64,
     rpm: 750,
     reload: 2400,
-    delay: [750, 1500],
   },
   'p90': {
     name: 'P90',
@@ -128,7 +206,6 @@ export const weapons = {
     magazine: 50,
     rpm: 857,
     reload: 3300,
-    delay: [750, 1500],
   },
   'mp9': {
     name: 'MP9',
@@ -136,7 +213,6 @@ export const weapons = {
     magazine: 30,
     rpm: 857,
     reload: 2100,
-    delay: [750, 1500],
   },
   //machine guns
   'm249': {
@@ -145,7 +221,6 @@ export const weapons = {
     magazine: 100,
     rpm: 750,
     reload: 5700,
-    delay: [750, 1500],
   },
   //pistols
   'cz75a': {
@@ -154,6 +229,5 @@ export const weapons = {
     magazine: 12,
     rpm: 600,
     reload: 2700,
-    delay: [750, 1500],
   },
 };

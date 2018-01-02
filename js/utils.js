@@ -45,3 +45,5 @@ exports.projection = (player, s) => {
 exports.accuracy = (shots) => {
   return shots.reduce((acc, shot) => acc + shot, 0);
 };
+
+exports.rand = (arr) => arr[~~(Math.random() * arr.length)];

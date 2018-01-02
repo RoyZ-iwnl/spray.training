@@ -21600,13 +21600,17 @@ var _player2 = _interopRequireDefault(_player);
 
 var _global = __webpack_require__(1);
 
-var _settings = __webpack_require__(14);
+var _settings = __webpack_require__(13);
 
-var _button = __webpack_require__(15);
+var _button = __webpack_require__(14);
 
 var _button2 = _interopRequireDefault(_button);
 
-var _weapons = __webpack_require__(16);
+var _weapons = __webpack_require__(15);
+
+var _audio = __webpack_require__(16);
+
+var audio = _interopRequireWildcard(_audio);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21645,8 +21649,6 @@ var Game = function () {
     this.highscore = 0;
 
     this.currentWeapon = 'ak47';
-    // weapons currently supported
-    this.weapons = ['ak47', 'm4a1', 'm4a1_silencer', 'mac10'];
 
     this.buttons = [];
     this.links = [];
@@ -21657,7 +21659,6 @@ var Game = function () {
     value: function init() {
       this.pointerlock();
       this.init3JS();
-      this.initAudio();
       this.drawWorld();
       this.initControls();
       this.animate();
@@ -21726,48 +21727,6 @@ var Game = function () {
       this.fontLoader = new THREE.FontLoader();
     }
   }, {
-    key: 'initAudio',
-    value: function initAudio() {
-      this.sounds = {
-        weapons: {
-          ak47: {
-            shoot: new _howler.Howl({
-              src: ['audio/ak47_01.wav'],
-              volume: 0.2
-            }),
-            reload: [new _howler.Howl({
-              src: ['audio/ak47_clipout.wav'],
-              volume: 0.2
-            }), new _howler.Howl({
-              src: ['audio/ak47_clipin.wav'],
-              volume: 0.2
-            }), new _howler.Howl({
-              src: ['audio/ak47_boltpull.wav'],
-              volume: 0.2
-            })]
-          }
-        },
-        general: {
-          done: new _howler.Howl({
-            src: ['audio/bell1.wav'],
-            volume: 0.2
-          }),
-          headshot: new _howler.Howl({
-            src: ['audio/headshot1.wav'],
-            volume: 0.02
-          }),
-          setting: new _howler.Howl({
-            src: ['audio/blip1.wav'],
-            volume: 0.2
-          }),
-          error: new _howler.Howl({
-            src: ['audio/button10.wav'],
-            volume: 0.2
-          })
-        }
-      };
-    }
-  }, {
     key: 'drawWorld',
     value: function drawWorld() {
       var _this2 = this;
@@ -21789,6 +21748,9 @@ var Game = function () {
 
       this.scene.add(line);
 
+      var textGroup = new THREE.Group();
+      this.scene.add(textGroup);
+
       this.fontLoader.load('fonts/helvetiker_regular.typeface.json', function (font) {
         ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'].forEach(function (message, i) {
           var color = 0xecf0f1;
@@ -21808,7 +21770,8 @@ var Game = function () {
           text.position.z = -40;
           text.rotation.y = Math.PI / 2;
           text.name = message;
-          _this2.scene.add(text);
+          textGroup.add(text);
+          // this.scene.add(text);
         });
 
         Object.keys(_weapons.weapons).forEach(function (k, i) {
@@ -21830,7 +21793,8 @@ var Game = function () {
           text.position.z = _this2.MAP_SIZE / 2;
           text.rotation.y = Math.PI;
           text.name = message;
-          _this2.scene.add(text);
+          textGroup.add(text);
+          // this.scene.add(text);
         });
 
         ['s p r a y . t r a i n i n g'].forEach(function (message, i) {
@@ -21851,7 +21815,8 @@ var Game = function () {
           text.position.z = 0;
           text.rotation.y = -Math.PI / 2;
           text.name = message;
-          _this2.scene.add(text);
+          textGroup.add(text);
+          // this.scene.add(text);
         });
       });
 
@@ -21870,11 +21835,7 @@ var Game = function () {
         _settings.settings.noSpread = !_settings.settings.noSpread;
       });
       var btnReset = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 6, -30), new THREE.Euler(0, Math.PI / 2, 0), 'reset', 0xecf0f1, function () {
-        _this2.ammo = 0;
-        _this2.count = 0;
-        _this2.sprayCount = 0;
-        _this2.shots = [];
-        _this2.player.mesh.position.set(-_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE, _global.global.PLAYER_HEIGHT, 0);
+        _this2.reset();
       });
 
       // TODO: link buttons
@@ -21933,13 +21894,7 @@ var Game = function () {
             return _this3.shot = false;
           }, _weapons.weapons[_this3.currentWeapon].reload);
 
-          _this3.sounds.weapons[_this3.currentWeapon].reload[0].play();
-          setTimeout(function () {
-            _this3.sounds.weapons[_this3.currentWeapon].reload[1].play();
-          }, _weapons.weapons[_this3.currentWeapon].delay[0]);
-          setTimeout(function () {
-            _this3.sounds.weapons[_this3.currentWeapon].reload[2].play();
-          }, _weapons.weapons[_this3.currentWeapon].delay[1]);
+          audio.playReload(_this3.currentWeapon);
         }
 
         setTimeout(function () {
@@ -22006,11 +21961,12 @@ var Game = function () {
           return _this4.scene.remove(bullet);
         }, 3000);
 
-        var d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
-        this.shots.push(d);
+        // const d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
+        // this.shots.push(d);
 
+        audio.playTap(this.currentWeapon);
         if (d <= 1) {
-          this.sounds.general.headshot.play();
+          audio.playHeadshot();
         }
 
         this.shot = true;
@@ -22023,13 +21979,7 @@ var Game = function () {
             return _this4.shot = false;
           }, _weapons.weapons[this.currentWeapon].reload);
 
-          this.sounds.weapons[this.currentWeapon].reload[0].play();
-          setTimeout(function () {
-            _this4.sounds.weapons[_this4.currentWeapon].reload[1].play();
-          }, _weapons.weapons[this.currentWeapon].delay[0]);
-          setTimeout(function () {
-            _this4.sounds.weapons[_this4.currentWeapon].reload[2].play();
-          }, _weapons.weapons[this.currentWeapon].delay[1]);
+          audio.playReload(this.currentWeapon);
 
           if (!_settings.settings.noSpread && !_settings.settings.infiniteAmmo) {
             var score = 100 / (utils.accuracy(this.shots) / 100 + 1);
@@ -22043,17 +21993,15 @@ var Game = function () {
         this.count = (this.count + 1) % _weapons.weapons[this.currentWeapon].magazine;
         this.sprayCount = (this.sprayCount + 1) % _weapons.weapons[this.currentWeapon].magazine;
 
-        this.sounds.weapons[this.currentWeapon].shoot.play();
-
         if (this.sprayCount === 0) {
-          this.sounds.general.done.play();
+          audio.playDone();
         }
 
         this.buttons.forEach(function (button) {
-          if (projection.x + _this4.MAP_SIZE / 2 <= 0.01 && Math.abs(projection.y - button.position.y) <= 1 && Math.abs(projection.z - button.position.z) <= 1) {
+          if (Math.abs(projection.x + _this4.MAP_SIZE / 2) <= 0.01 && Math.abs(projection.y - button.position.y) <= 1 && Math.abs(projection.z - button.position.z) <= 1) {
             button.action();
             button.mesh.material.color.setHex(_settings.settings[button.name] ? 0x00ff00 : 0xecf0f1);
-            _this4.sounds.general.setting.play();
+            audio.playSetting();
           }
         });
 
@@ -22064,7 +22012,13 @@ var Game = function () {
         target.geometry.verticesNeedUpdate = true;
         target.material.visible = _settings.settings.ghostHair;
       }
-      this.refresh();
+
+      this.cursorXY = { x: 0, y: 0 };
+      this.cmd = {
+        forward: 0,
+        right: 0,
+        jump: false
+      };
     }
   }, {
     key: 'setCmd',
@@ -22084,14 +22038,13 @@ var Game = function () {
       this.cmd.jump = this.keyboard.pressed('space');
     }
   }, {
-    key: 'refresh',
-    value: function refresh() {
-      this.cursorXY = { x: 0, y: 0 };
-      this.cmd = {
-        forward: 0,
-        right: 0,
-        jump: false
-      };
+    key: 'reset',
+    value: function reset() {
+      this.ammo = 0;
+      this.count = 0;
+      this.sprayCount = 0;
+      this.shots = [];
+      this.player.mesh.position.set(-_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE, _global.global.PLAYER_HEIGHT, 0);
     }
   }]);
 
@@ -25141,6 +25094,10 @@ exports.accuracy = function (shots) {
   }, 0);
 };
 
+exports.rand = function (arr) {
+  return arr[~~(Math.random() * arr.length)];
+};
+
 /***/ }),
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -25176,8 +25133,7 @@ var Player = function Player(camera) {
 exports.default = Player;
 
 /***/ }),
-/* 13 */,
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25196,7 +25152,7 @@ var settings = exports.settings = {
 };
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25232,7 +25188,7 @@ var Button = function Button(position, rotation, name, color, action) {
 exports.default = Button;
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25253,59 +25209,95 @@ var weapons = exports.weapons = {
   // rifles
   'ak47': {
     name: 'AK-47',
+    audio: {
+      shoot: [new Howl({
+        src: ['audio/weapons/ak47/ak47_01.wav'],
+        volume: 0.2
+      })],
+      reload: [new Howl({
+        src: ['audio/weapons/ak47/ak47_clipout.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/ak47/ak47_clipin.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/ak47/ak47_boltpull.wav'],
+        volume: 0.2
+      })],
+      audioDelay: [750, 1500]
+    },
     spray: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 11, 6), new THREE.Vector3(0, 40, 0), new THREE.Vector3(0, 87, 4), new THREE.Vector3(0, 135, 6), new THREE.Vector3(0, 187, -14), new THREE.Vector3(0, 231, -27), new THREE.Vector3(0, 262, -48), new THREE.Vector3(0, 285, -21), new THREE.Vector3(0, 278, 46), new THREE.Vector3(0, 282, 81), new THREE.Vector3(0, 300, 60), new THREE.Vector3(0, 309, 84), new THREE.Vector3(0, 296, 126), new THREE.Vector3(0, 304, 131), new THREE.Vector3(0, 306, 67), new THREE.Vector3(0, 317, 37), new THREE.Vector3(0, 334, 15), new THREE.Vector3(0, 332, -28), new THREE.Vector3(0, 317, -81), new THREE.Vector3(0, 313, -48), new THREE.Vector3(0, 318, -58), new THREE.Vector3(0, 333, -48), new THREE.Vector3(0, 339, -34), new THREE.Vector3(0, 334, -64), new THREE.Vector3(0, 342, -75), new THREE.Vector3(0, 341, -41), new THREE.Vector3(0, 336, 10), new THREE.Vector3(0, 303, 83), new THREE.Vector3(0, 303, 105)],
     magazine: 30,
     rpm: 600,
-    reload: 2500,
-    delay: [750, 1500]
+    reload: 2500
   },
   'm4a1': {
     name: 'M4A4',
-    spray: [],
+    audio: {
+      shoot: [new Howl({
+        src: ['audio/weapons/m4a1/m4a1_01.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/m4a1/m4a1_02.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/m4a1/m4a1_03.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/m4a1/m4a1_04.wav'],
+        volume: 0.2
+      })],
+      reload: [new Howl({
+        src: ['audio/weapons/m4a1/m4a1_clipout.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/m4a1/m4a1_clipin.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/m4a1/m4a1_cliphit.wav'],
+        volume: 0.2
+      })],
+      audioDelay: [750, 1500]
+    },
+    spray: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 11, 6), new THREE.Vector3(0, 40, 0), new THREE.Vector3(0, 87, 4), new THREE.Vector3(0, 135, 6), new THREE.Vector3(0, 187, -14), new THREE.Vector3(0, 231, -27), new THREE.Vector3(0, 262, -48), new THREE.Vector3(0, 285, -21), new THREE.Vector3(0, 278, 46), new THREE.Vector3(0, 282, 81), new THREE.Vector3(0, 300, 60), new THREE.Vector3(0, 309, 84), new THREE.Vector3(0, 296, 126), new THREE.Vector3(0, 304, 131), new THREE.Vector3(0, 306, 67), new THREE.Vector3(0, 317, 37), new THREE.Vector3(0, 334, 15), new THREE.Vector3(0, 332, -28), new THREE.Vector3(0, 317, -81), new THREE.Vector3(0, 313, -48), new THREE.Vector3(0, 318, -58), new THREE.Vector3(0, 333, -48), new THREE.Vector3(0, 339, -34), new THREE.Vector3(0, 334, -64), new THREE.Vector3(0, 342, -75), new THREE.Vector3(0, 341, -41), new THREE.Vector3(0, 336, 10), new THREE.Vector3(0, 303, 83), new THREE.Vector3(0, 303, 105)],
     magazine: 30,
     rpm: 666,
-    reload: 3100,
-    delay: [750, 1500]
+    reload: 3100
   },
   'm4a1_silencer': {
     name: 'M4A1-S',
     spray: [],
     magazine: 20,
     rpm: 600,
-    reload: 3100,
-    delay: [750, 1500]
+    reload: 3100
   },
   'galilar': {
     name: 'Galil',
     spray: [],
     magazine: 35,
     rpm: 666,
-    reload: 3000,
-    delay: [750, 1500]
+    reload: 3000
   },
   'sg556': {
     name: 'SG 553',
     spray: [],
     magazine: 30,
     rpm: 666,
-    reload: 2800,
-    delay: [750, 1500]
+    reload: 2800
   },
   'famas': {
     name: 'FAMAS',
     spray: [],
     magazine: 25,
     rpm: 666,
-    reload: 3300,
-    delay: [750, 1500]
+    reload: 3300
   },
   'aug': {
     name: 'AUG',
     spray: [],
     magazine: 30,
     rpm: 666,
-    reload: 3800,
-    delay: [750, 1500]
+    reload: 3800
   },
   // submachine guns
   'mac10': {
@@ -25313,48 +25305,42 @@ var weapons = exports.weapons = {
     spray: [],
     magazine: 30,
     rpm: 800,
-    reload: 2600,
-    delay: [750, 1500]
+    reload: 2600
   },
   'mp7': {
     name: 'MP7',
     spray: [],
     magazine: 30,
     rpm: 750,
-    reload: 3100,
-    delay: [750, 1500]
+    reload: 3100
   },
   'ump45': {
     name: 'UMP-45',
     spray: [],
     magazine: 25,
     rpm: 666,
-    reload: 3500,
-    delay: [750, 1500]
+    reload: 3500
   },
   'bizon': {
     name: 'PP-Bizon',
     spray: [],
     magazine: 64,
     rpm: 750,
-    reload: 2400,
-    delay: [750, 1500]
+    reload: 2400
   },
   'p90': {
     name: 'P90',
     spray: [],
     magazine: 50,
     rpm: 857,
-    reload: 3300,
-    delay: [750, 1500]
+    reload: 3300
   },
   'mp9': {
     name: 'MP9',
     spray: [],
     magazine: 30,
     rpm: 857,
-    reload: 2100,
-    delay: [750, 1500]
+    reload: 2100
   },
   //machine guns
   'm249': {
@@ -25362,8 +25348,7 @@ var weapons = exports.weapons = {
     spray: [],
     magazine: 100,
     rpm: 750,
-    reload: 5700,
-    delay: [750, 1500]
+    reload: 5700
   },
   //pistols
   'cz75a': {
@@ -25371,9 +25356,74 @@ var weapons = exports.weapons = {
     spray: [],
     magazine: 12,
     rpm: 600,
-    reload: 2700,
-    delay: [750, 1500]
+    reload: 2700
   }
+};
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _howler = __webpack_require__(9);
+
+var _weapons = __webpack_require__(15);
+
+var _utils = __webpack_require__(11);
+
+var done = new _howler.Howl({
+  src: ['audio/general/bell1.wav'],
+  volume: 0.2
+});
+
+var headshot = new _howler.Howl({
+  src: ['audio/general/headshot1.wav'],
+  volume: 0.02
+});
+
+var setting = new _howler.Howl({
+  src: ['audio/general/blip1.wav'],
+  volume: 0.2
+});
+
+var error = new _howler.Howl({
+  src: ['audio/general/button10.wav'],
+  volume: 0.2
+});
+
+exports.playReload = function (name) {
+  // const weapon = weapons[name];
+  var audio = _weapons.weapons[name].audio;
+  audio.reload[0].play();
+  setTimeout(function () {
+    audio.reload[1].play();
+  }, audio.audioDelay[0]);
+  setTimeout(function () {
+    audio.reload[2].play();
+  }, audio.audioDelay[1]);
+};
+
+exports.playTap = function (name) {
+  var audio = _weapons.weapons[name].audio;
+  (0, _utils.rand)(audio.shoot).play();
+};
+
+exports.playDone = function () {
+  done.play();
+};
+
+exports.playHeadshot = function () {
+  headshot.play();
+};
+
+exports.playSetting = function () {
+  setting.play();
+};
+
+exports.playError = function () {
+  error.play();
 };
 
 /***/ })
