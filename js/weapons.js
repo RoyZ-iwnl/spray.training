@@ -556,7 +556,77 @@ export const weapons = {
   },
   'mp7': {
     name: 'MP7',
-    spray: [],
+    audio: {
+      shoot: [
+        new Howl({
+          src: ['audio/weapons/mp7/mp7_01.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/mp7/mp7_02.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/mp7/mp7_03.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/mp7/mp7_04.wav'],
+          volume: 0.2,
+        }),
+      ],
+      reload: [
+        new Howl({
+          src: ['audio/weapons/mp7/mp7_clipout.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/mp7/mp7_clipin.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/mp7/mp7_slideforward.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/mp7/mp7_slideback.wav'],
+          volume: 0.2,
+        })
+      ],
+      audioDelay: [750, 1500, 1750],
+    },
+    spray: [
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 8, 0),
+      new THREE.Vector3(0, 15, 2),
+      new THREE.Vector3(0, 21, 8),
+      new THREE.Vector3(0, 40, 19),
+      new THREE.Vector3(0, 68, 37),
+      new THREE.Vector3(0, 102, 36),
+      new THREE.Vector3(0, 127, 55),
+      new THREE.Vector3(0, 153, 61),
+      new THREE.Vector3(0, 160, 82),
+      new THREE.Vector3(0, 167, 94),
+      new THREE.Vector3(0, 184, 77),
+      new THREE.Vector3(0, 192, 39),
+      new THREE.Vector3(0, 195, 3),
+      new THREE.Vector3(0, 196, -26),
+      new THREE.Vector3(0, 206, -28),
+      new THREE.Vector3(0, 217, -16),
+      new THREE.Vector3(0, 219, -8),
+      new THREE.Vector3(0, 223, -1),
+      new THREE.Vector3(0, 228, -8),
+      new THREE.Vector3(0, 236, -4),
+      new THREE.Vector3(0, 230, 26),
+      new THREE.Vector3(0, 211, 66),
+      new THREE.Vector3(0, 211, 74),
+      new THREE.Vector3(0, 206, 92),
+      new THREE.Vector3(0, 202, 88),
+      new THREE.Vector3(0, 198, 90),
+      new THREE.Vector3(0, 202, 90),
+      new THREE.Vector3(0, 203, 100),
+      new THREE.Vector3(0, 209, 101),
+    ],
     magazine: 30,
     rpm: 750,
     reload: 3100,
