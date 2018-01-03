@@ -223,6 +223,7 @@ export default class Game {
     });
     const btnReset = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 6, -30), new THREE.Euler(0, Math.PI/2, 0), 'reset', 0xecf0f1, () => {
       this.reset();
+      this.player.mesh.position.set(-global.MAP_SIZE / 2 + global.INITIAL_DISTANCE, global.PLAYER_HEIGHT, 0);
     });
 
     // TODO: link buttons
@@ -425,6 +426,5 @@ export default class Game {
     this.count = 0;
     this.sprayCount = 0;
     this.shots = [];
-    this.player.mesh.position.set(-global.MAP_SIZE / 2 + global.INITIAL_DISTANCE, global.PLAYER_HEIGHT, 0);
   }
 }

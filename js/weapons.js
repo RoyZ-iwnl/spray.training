@@ -341,7 +341,68 @@ export const weapons = {
   },
   'famas': {
     name: 'FAMAS',
-    spray: [],
+    audio: {
+      shoot: [
+        new Howl({
+          src: ['audio/weapons/famas/famas_01.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/famas/famas_02.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/famas/famas_03.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/famas/famas_04.wav'],
+          volume: 0.2,
+        }),
+      ],
+      reload: [
+        new Howl({
+          src: ['audio/weapons/famas/famas_clipout.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/famas/famas_clipin.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/famas/famas_cliphit.wav'],
+          volume: 0.2,
+        })
+      ],
+      audioDelay: [750, 1500],
+    },
+    spray: [
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 9, 8),
+      new THREE.Vector3(0, 17, 6),
+      new THREE.Vector3(0, 37, 19),
+      new THREE.Vector3(0, 70, 21),
+      new THREE.Vector3(0, 112, 20),
+      new THREE.Vector3(0, 148, -8),
+      new THREE.Vector3(0, 171, -40),
+      new THREE.Vector3(0, 195, -27),
+      new THREE.Vector3(0, 210, 12),
+      new THREE.Vector3(0, 222, 45),
+      new THREE.Vector3(0, 225, 71),
+      new THREE.Vector3(0, 236, 62),
+      new THREE.Vector3(0, 244, 16),
+      new THREE.Vector3(0, 255, -8),
+      new THREE.Vector3(0, 249, -47),
+      new THREE.Vector3(0, 251, -58),
+      new THREE.Vector3(0, 250, -88),
+      new THREE.Vector3(0, 260, -94),
+      new THREE.Vector3(0, 266, -85),
+      new THREE.Vector3(0, 263, -35),
+      new THREE.Vector3(0, 269, -30),
+      new THREE.Vector3(0, 267, -51),
+      new THREE.Vector3(0, 254, -81),
+      new THREE.Vector3(0, 233, -112),
+    ],
     magazine: 25,
     rpm: 666,
     reload: 3300,
