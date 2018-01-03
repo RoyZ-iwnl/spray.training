@@ -24733,7 +24733,30 @@ var weapons = exports.weapons = {
   },
   'bizon': {
     name: 'PP-Bizon',
-    spray: [],
+    audio: {
+      shoot: [new Howl({
+        src: ['audio/weapons/bizon/bizon_01.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/bizon/bizon_02.wav'],
+        volume: 0.2
+      })],
+      reload: [new Howl({
+        src: ['audio/weapons/bizon/bizon_clipout.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/bizon/bizon_clipin.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/bizon/bizon_boltforward.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/bizon/bizon_boltback.wav'],
+        volume: 0.2
+      })],
+      audioDelay: [750, 1500, 1750]
+    },
+    spray: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 9, 2), new THREE.Vector3(0, 15, 7), new THREE.Vector3(0, 30, 14), new THREE.Vector3(0, 54, 29), new THREE.Vector3(0, 83, 54), new THREE.Vector3(0, 122, 48), new THREE.Vector3(0, 160, 30), new THREE.Vector3(0, 193, 29), new THREE.Vector3(0, 204, -8), new THREE.Vector3(0, 214, -36), new THREE.Vector3(0, 231, -47), new THREE.Vector3(0, 235, -75), new THREE.Vector3(0, 250, -62), new THREE.Vector3(0, 248, -11), new THREE.Vector3(0, 254, -11), new THREE.Vector3(0, 254, -36), new THREE.Vector3(0, 254, -48), new THREE.Vector3(0, 260, -40), new THREE.Vector3(0, 266, -53), new THREE.Vector3(0, 265, -78), new THREE.Vector3(0, 257, -107), new THREE.Vector3(0, 257, -123), new THREE.Vector3(0, 255, -137), new THREE.Vector3(0, 251, -151), new THREE.Vector3(0, 243, -150), new THREE.Vector3(0, 245, -142), new THREE.Vector3(0, 252, -136), new THREE.Vector3(0, 258, -133), new THREE.Vector3(0, 266, -91), new THREE.Vector3(0, 270, -85), new THREE.Vector3(0, 276, -82), new THREE.Vector3(0, 272, -102), new THREE.Vector3(0, 275, -72), new THREE.Vector3(0, 263, -74), new THREE.Vector3(0, 254, -84), new THREE.Vector3(0, 255, -60), new THREE.Vector3(0, 258, -64), new THREE.Vector3(0, 267, -48), new THREE.Vector3(0, 271, -53), new THREE.Vector3(0, 259, -83), new THREE.Vector3(0, 250, -109), new THREE.Vector3(0, 231, -134), new THREE.Vector3(0, 225, -144), new THREE.Vector3(0, 236, -130), new THREE.Vector3(0, 244, -133), new THREE.Vector3(0, 238, -153), new THREE.Vector3(0, 229, -176), new THREE.Vector3(0, 240, -141), new THREE.Vector3(0, 252, -104), new THREE.Vector3(0, 256, -100), new THREE.Vector3(0, 245, -109), new THREE.Vector3(0, 243, -107), new THREE.Vector3(0, 247, -110), new THREE.Vector3(0, 240, -129), new THREE.Vector3(0, 247, -105), new THREE.Vector3(0, 256, -77), new THREE.Vector3(0, 262, -45), new THREE.Vector3(0, 252, 8), new THREE.Vector3(0, 248, 21), new THREE.Vector3(0, 252, 11), new THREE.Vector3(0, 252, -21), new THREE.Vector3(0, 254, -4), new THREE.Vector3(0, 262, 8)],
     magazine: 64,
     rpm: 750,
     reload: 2400
