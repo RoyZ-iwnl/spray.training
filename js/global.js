@@ -6,6 +6,6 @@ export const global = {
   PLAYER_HEIGHT: 10,
   INITIAL_DISTANCE: 75,
   SPRAY_HEIGHT: 10,
-  SPRAY_SCALE: 0.02,
+  SPRAY_SCALE: 0.015,
   SENS: 3.5,
 };

@@ -19,7 +19,7 @@ exports.projection = (player, s) => {
   const quat = new THREE.Quaternion().setFromEuler(player.mesh.rotation);
   z.applyQuaternion(quat);
   const y = new THREE.Vector3().crossVectors(direction, z);
-  const u = new THREE.Vector3().addVectors(y.multiplyScalar(spray.y), z.multiplyScalar(spray.z));
+  const u = new THREE.Vector3().subVectors(y.multiplyScalar(spray.y), z.multiplyScalar(spray.z));
 
   direction.add(u);
 
