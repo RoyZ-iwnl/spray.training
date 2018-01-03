@@ -377,8 +377,8 @@ export default class Game {
       if (Math.abs(projection.z - this.MAP_SIZE / 2) <= 0.01) {
         const u = 3 - (projection.x + 30) / 20;
         const v = (-projection.y + 21) / 5;
-        if (Math.abs(u - ~~(u+0.5)) <= 0.25 && Math.abs(v - ~~(v+0.5)) <= 0.4) {
-          const w = 4*~~(u+0.5) + ~~(v+0.5);
+        const w = 4*~~(u+0.5) + ~~(v+0.5);
+        if (Math.abs(u - ~~(u+0.5)) <= 0.25 && Math.abs(v - ~~(v+0.5)) <= 0.4 && w >= 0 && w <= 14 && u >= 0 && u <= 3 && v >= 0 && v <= 3) {
           const newWeapon = Object.keys(weapons)[w];
           
           if (this.currentWeapon !== newWeapon) {

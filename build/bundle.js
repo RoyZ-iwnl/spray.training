@@ -24836,7 +24836,27 @@ var weapons = exports.weapons = {
   //machine guns
   'm249': {
     name: 'M249',
-    spray: [],
+    audio: {
+      shoot: [new Howl({
+        src: ['audio/weapons/m249/m249-1.wav'],
+        volume: 0.2
+      })],
+      reload: [new Howl({
+        src: ['audio/weapons/m249/m249_boxout.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/m249/m249_boxin.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/m249/m249_coverdown.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/m249/m249_cpverup.wav'],
+        volume: 0.2
+      })],
+      audioDelay: [750, 1500, 1750]
+    },
+    spray: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 10, 9), new THREE.Vector3(0, 35, 24), new THREE.Vector3(0, 75, 48), new THREE.Vector3(0, 124, 84), new THREE.Vector3(0, 174, 118), new THREE.Vector3(0, 228, 99), new THREE.Vector3(0, 274, 51), new THREE.Vector3(0, 309, 2), new THREE.Vector3(0, 336, -45), new THREE.Vector3(0, 357, -67), new THREE.Vector3(0, 384, -83), new THREE.Vector3(0, 404, -46), new THREE.Vector3(0, 423, -47), new THREE.Vector3(0, 439, -62), new THREE.Vector3(0, 455, -73), new THREE.Vector3(0, 463, -94), new THREE.Vector3(0, 455, -92), new THREE.Vector3(0, 450, -85), new THREE.Vector3(0, 452, -51), new THREE.Vector3(0, 445, 12), new THREE.Vector3(0, 450, 21), new THREE.Vector3(0, 457, 41), new THREE.Vector3(0, 457, 79), new THREE.Vector3(0, 456, 112), new THREE.Vector3(0, 446, 126), new THREE.Vector3(0, 443, 102), new THREE.Vector3(0, 438, 37), new THREE.Vector3(0, 442, 16), new THREE.Vector3(0, 446, 23), new THREE.Vector3(0, 446, -5), new THREE.Vector3(0, 436, -58), new THREE.Vector3(0, 441, -67), new THREE.Vector3(0, 452, -47), new THREE.Vector3(0, 452, -11), new THREE.Vector3(0, 453, -26), new THREE.Vector3(0, 458, -18), new THREE.Vector3(0, 457, 23), new THREE.Vector3(0, 462, 49), new THREE.Vector3(0, 471, 29), new THREE.Vector3(0, 478, -4), new THREE.Vector3(0, 487, -32), new THREE.Vector3(0, 478, 1), new THREE.Vector3(0, 472, -19), new THREE.Vector3(0, 459, -66), new THREE.Vector3(0, 459, -87), new THREE.Vector3(0, 468, -74), new THREE.Vector3(0, 479, -70), new THREE.Vector3(0, 485, -53), new THREE.Vector3(0, 475, -3), new THREE.Vector3(0, 467, 31), new THREE.Vector3(0, 445, 5), new THREE.Vector3(0, 438, -10), new THREE.Vector3(0, 443, -36), new THREE.Vector3(0, 453, -57), new THREE.Vector3(0, 457, -30), new THREE.Vector3(0, 460, -35), new THREE.Vector3(0, 457, -74), new THREE.Vector3(0, 449, -117), new THREE.Vector3(0, 443, -110), new THREE.Vector3(0, 444, -82), new THREE.Vector3(0, 447, -94), new THREE.Vector3(0, 453, -110), new THREE.Vector3(0, 462, -110), new THREE.Vector3(0, 471, -94), new THREE.Vector3(0, 434, -30), new THREE.Vector3(0, 394, 23), new THREE.Vector3(0, 346, 67), new THREE.Vector3(0, 322, 104), new THREE.Vector3(0, 317, 135), new THREE.Vector3(0, 333, 110), new THREE.Vector3(0, 351, 56), new THREE.Vector3(0, 366, 2), new THREE.Vector3(0, 386, -45), new THREE.Vector3(0, 404, -72), new THREE.Vector3(0, 424, -89), new THREE.Vector3(0, 423, -46), new THREE.Vector3(0, 426, -48), new THREE.Vector3(0, 436, -62), new THREE.Vector3(0, 450, -73), new THREE.Vector3(0, 458, -94), new THREE.Vector3(0, 464, -95), new THREE.Vector3(0, 468, -89), new THREE.Vector3(0, 472, -55), new THREE.Vector3(0, 447, 15), new THREE.Vector3(0, 441, 20), new THREE.Vector3(0, 446, 38), new THREE.Vector3(0, 446, 77), new THREE.Vector3(0, 447, 110), new THREE.Vector3(0, 452, 126), new THREE.Vector3(0, 459, 106), new THREE.Vector3(0, 456, 41), new THREE.Vector3(0, 444, 17), new THREE.Vector3(0, 437, 25), new THREE.Vector3(0, 434, -4), new THREE.Vector3(0, 425, -56), new THREE.Vector3(0, 431, -66), new THREE.Vector3(0, 444, -46), new THREE.Vector3(0, 459, -14), new THREE.Vector3(0, 471, -27)],
     magazine: 100,
     rpm: 750,
     reload: 5700
@@ -25445,8 +25465,8 @@ var Game = function () {
         if (Math.abs(projection.z - this.MAP_SIZE / 2) <= 0.01) {
           var u = 3 - (projection.x + 30) / 20;
           var v = (-projection.y + 21) / 5;
-          if (Math.abs(u - ~~(u + 0.5)) <= 0.25 && Math.abs(v - ~~(v + 0.5)) <= 0.4) {
-            var w = 4 * ~~(u + 0.5) + ~~(v + 0.5);
+          var w = 4 * ~~(u + 0.5) + ~~(v + 0.5);
+          if (Math.abs(u - ~~(u + 0.5)) <= 0.25 && Math.abs(v - ~~(v + 0.5)) <= 0.4 && w >= 0 && w <= 14 && u >= 0 && u <= 3 && v >= 0 && v <= 3) {
             var newWeapon = Object.keys(_weapons.weapons)[w];
 
             if (this.currentWeapon !== newWeapon) {
