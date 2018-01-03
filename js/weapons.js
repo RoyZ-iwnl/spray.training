@@ -483,7 +483,73 @@ export const weapons = {
   // submachine guns
   'mac10': {
     name: 'MAC-10',
-    spray: [],
+    audio: {
+      shoot: [
+        new Howl({
+          src: ['audio/weapons/mac10/mac10_01.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/mac10/mac10_02.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/mac10/mac10_03.wav'],
+          volume: 0.2,
+        }),
+      ],
+      reload: [
+        new Howl({
+          src: ['audio/weapons/mac10/mac10_clipout.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/mac10/mac10_clipin.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/mac10/mac10_boltforward.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/mac10/mac10_boltback.wav'],
+          volume: 0.2,
+        })
+      ],
+      audioDelay: [750, 1500, 1750],
+    },
+    spray: [
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 6, 9),
+      new THREE.Vector3(0, 13, 12),
+      new THREE.Vector3(0, 25, 6),
+      new THREE.Vector3(0, 52, -2),
+      new THREE.Vector3(0, 85, -22),
+      new THREE.Vector3(0, 133, -45),
+      new THREE.Vector3(0, 174, -62),
+      new THREE.Vector3(0, 208, -51),
+      new THREE.Vector3(0, 228, -68),
+      new THREE.Vector3(0, 250, -76),
+      new THREE.Vector3(0, 272, -85),
+      new THREE.Vector3(0, 287, -80),
+      new THREE.Vector3(0, 295, -76),
+      new THREE.Vector3(0, 301, -57),
+      new THREE.Vector3(0, 302, -16),
+      new THREE.Vector3(0, 289, 42),
+      new THREE.Vector3(0, 288, 45),
+      new THREE.Vector3(0, 281, 68),
+      new THREE.Vector3(0, 281, 55),
+      new THREE.Vector3(0, 276, 67),
+      new THREE.Vector3(0, 275, 91),
+      new THREE.Vector3(0, 279, 112),
+      new THREE.Vector3(0, 281, 80),
+      new THREE.Vector3(0, 285, 54),
+      new THREE.Vector3(0, 286, 23),
+      new THREE.Vector3(0, 283, -20),
+      new THREE.Vector3(0, 291, -25),
+      new THREE.Vector3(0, 281, 17),
+      new THREE.Vector3(0, 279, 12),
+    ],
     magazine: 30,
     rpm: 800,
     reload: 2600,
