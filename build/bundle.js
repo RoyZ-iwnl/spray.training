@@ -24763,7 +24763,33 @@ var weapons = exports.weapons = {
   //pistols
   'cz75a': {
     name: 'CZ75-Auto',
-    spray: [],
+    audio: {
+      shoot: [new Howl({
+        src: ['audio/weapons/cz75a/cz75_01.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/cz75a/cz75_02.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/cz75a/cz75_03.wav'],
+        volume: 0.2
+      })],
+      reload: [new Howl({
+        src: ['audio/weapons/p250/p250_clipout.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/p250/p250_clipin.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/p250/p250_sliderelease.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/p250/p250_slideback.wav'],
+        volume: 0.2
+      })],
+      audioDelay: [750, 1500, 1750]
+    },
+    spray: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 2, 12), new THREE.Vector3(0, 21, 1), new THREE.Vector3(0, 15, 9), new THREE.Vector3(0, 9, -9), new THREE.Vector3(0, 30, -48), new THREE.Vector3(0, 31, -1), new THREE.Vector3(0, 57, 22), new THREE.Vector3(0, 77, 78), new THREE.Vector3(0, 120, 29), new THREE.Vector3(0, 162, 80), new THREE.Vector3(0, 206, 91)],
     magazine: 12,
     rpm: 600,
     reload: 2700
