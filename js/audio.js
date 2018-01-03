@@ -25,13 +25,15 @@ const error = new Howl({
 exports.playReload = (name) => {
   // const weapon = weapons[name];
   const audio = weapons[name].audio;
-  audio.reload[0].play();
-  setTimeout(() => {
-    audio.reload[1].play();
-  }, audio.audioDelay[0]);
-  setTimeout(() => {
-    audio.reload[2].play();
-  }, audio.audioDelay[1]);
+  audio.audioDelay.forEach((delay, i) => {
+    if (i === 0) {
+      audio.reload[i].play();
+    } else {
+      setTimeout(() => {
+        audio.reload[i].play();
+      }, delay);
+    }
+  });
 };
 
 exports.playTap = (name) => {
