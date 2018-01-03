@@ -633,7 +633,60 @@ export const weapons = {
   },
   'ump45': {
     name: 'UMP-45',
-    spray: [],
+    audio: {
+      shoot: [
+        new Howl({
+          src: ['audio/weapons/ump45/ump45_02.wav'],
+          volume: 0.2,
+        }),
+      ],
+      reload: [
+        new Howl({
+          src: ['audio/weapons/ump45/ump45_clipout.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/ump45/ump45_clipin.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/ump45/ump45_boltforward.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/ump45/ump45_boltback.wav'],
+          volume: 0.2,
+        })
+      ],
+      audioDelay: [750, 1500, 1750],
+    },
+    spray: [
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 13, 2),
+      new THREE.Vector3(0, 29, 9),
+      new THREE.Vector3(0, 63, 12),
+      new THREE.Vector3(0, 107, 21),
+      new THREE.Vector3(0, 152, 40),
+      new THREE.Vector3(0, 204, 45),
+      new THREE.Vector3(0, 238, 23),
+      new THREE.Vector3(0, 262, 31),
+      new THREE.Vector3(0, 288, 13),
+      new THREE.Vector3(0, 305, -24),
+      new THREE.Vector3(0, 314, -52),
+      new THREE.Vector3(0, 321, -51),
+      new THREE.Vector3(0, 333, -60),
+      new THREE.Vector3(0, 344, -60),
+      new THREE.Vector3(0, 338, -78),
+      new THREE.Vector3(0, 333, -89),
+      new THREE.Vector3(0, 344, -64),
+      new THREE.Vector3(0, 348, -26),
+      new THREE.Vector3(0, 344, -27),
+      new THREE.Vector3(0, 332, -54),
+      new THREE.Vector3(0, 328, -87),
+      new THREE.Vector3(0, 332, -79),
+      new THREE.Vector3(0, 330, -36),
+      new THREE.Vector3(0, 327, -29),
+    ],
     magazine: 25,
     rpm: 666,
     reload: 3500,

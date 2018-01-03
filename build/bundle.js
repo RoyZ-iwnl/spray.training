@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -13006,7 +13006,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)(module)))
 
 /***/ }),
 /* 3 */
@@ -21446,634 +21446,6 @@ module.exports = g;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function($) {
-
-var _ui = __webpack_require__(7);
-
-var ui = _interopRequireWildcard(_ui);
-
-var _game = __webpack_require__(8);
-
-var _game2 = _interopRequireDefault(_game);
-
-var _global = __webpack_require__(1);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-// import noUiSlider from 'nouislider';
-
-var sensitivitySlider = document.getElementById('sens-slider');
-
-noUiSlider.create(sensitivitySlider, {
-  start: [3.5],
-  connect: true,
-  tooltips: true,
-  range: {
-    'min': [0.1],
-    'max': [8]
-  }
-});
-
-var sensitivityInput = document.getElementById('sens-input');
-
-sensitivitySlider.noUiSlider.on('update', function (values, handle) {
-  var value = values[handle];
-  sensitivityInput.value = value;
-});
-
-sensitivityInput.addEventListener('change', function () {
-  sensitivitySlider.noUiSlider.set([sensitivityInput.value]);
-});
-
-$('#main-button').on('click', function () {
-  _global.global.SENS = sensitivityInput.value;
-  ui.fadeFromTo($('#main-page'), $('#game-page'), 0.5);
-  var game = new _game2.default();
-  game.init();
-
-  var ctx = $('#xhair')[0].getContext('2d');
-  ctx.strokeStyle = '#39ff14';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(15, 0);
-  ctx.lineTo(15, 10);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(15, 20);
-  ctx.lineTo(15, 30);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(0, 15);
-  ctx.lineTo(10, 15);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(20, 15);
-  ctx.lineTo(30, 15);
-  ctx.stroke();
-});
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function (module) {
-	if (!module.webpackPolyfill) {
-		module.deprecate = function () {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if (!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function get() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function get() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
-};
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _gsap = __webpack_require__(3);
-
-var _gsap2 = _interopRequireDefault(_gsap);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.fadeFromTo = function (pageOne, pageTwo, t) {
-  _gsap2.default.fromTo(pageOne, t, { autoAlpha: 1 }, { autoAlpha: 0 });
-  _gsap2.default.fromTo(pageTwo, t, { autoAlpha: 0 }, { autoAlpha: 1 });
-};
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function($) {
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _three = __webpack_require__(0);
-
-var THREE = _interopRequireWildcard(_three);
-
-var _howler = __webpack_require__(9);
-
-var _gsap = __webpack_require__(3);
-
-var _gsap2 = _interopRequireDefault(_gsap);
-
-var _movement = __webpack_require__(10);
-
-var _movement2 = _interopRequireDefault(_movement);
-
-var _utils = __webpack_require__(11);
-
-var utils = _interopRequireWildcard(_utils);
-
-var _player = __webpack_require__(12);
-
-var _player2 = _interopRequireDefault(_player);
-
-var _global = __webpack_require__(1);
-
-var _settings = __webpack_require__(13);
-
-var _button = __webpack_require__(14);
-
-var _button2 = _interopRequireDefault(_button);
-
-var _weapons = __webpack_require__(15);
-
-var _audio = __webpack_require__(16);
-
-var audio = _interopRequireWildcard(_audio);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Game = function () {
-  function Game() {
-    _classCallCheck(this, Game);
-
-    this.cursorXY = { x: 0, y: 0 };
-    this.cmd = {
-      forward: 0,
-      right: 0,
-      jump: false
-    };
-
-    this.MAP_SIZE = _global.global.MAP_SIZE;
-    this.MAP_HEIGHT = _global.global.MAP_HEIGHT;
-    this.SPRAY_HEIGHT = _global.global.SPRAY_HEIGHT;
-
-    this.shot = false;
-
-    this.ammo = 0;
-    this.count = 0;
-    this.sprayCount = 0;
-
-    this.currentScore = 0;
-    this.highScore = 0;
-
-    this.SETTINGS_MIN_Z = -47;
-    this.SETTINGS_MAX_Z = -33;
-
-    this.shots = [];
-    this.highscore = 0;
-
-    this.currentWeapon = 'ak47';
-
-    this.buttons = [];
-    this.links = [];
-  }
-
-  _createClass(Game, [{
-    key: 'init',
-    value: function init() {
-      this.pointerlock();
-      this.init3JS();
-      this.drawWorld();
-      this.initControls();
-      this.animate();
-    }
-  }, {
-    key: 'pointerlock',
-    value: function pointerlock() {
-      var _this = this;
-
-      var moveCallback = function moveCallback(e) {
-        // prevent any abnormal mouse jumping
-        if (Math.abs(e.movementX) <= 300 && Math.abs(e.movementY) <= 100) {
-          _this.cursorXY.x += e.movementX || e.mozMovementX || e.webkitMovementX || 0;
-          _this.cursorXY.y += e.movementY || e.mozMovementY || e.webkitMovementY || 0;
-        }
-      };
-
-      var pointerLockChange = function pointerLockChange(event) {
-        var element = document.body;
-        if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
-          document.addEventListener('mousemove', moveCallback, false);
-        } else {
-          document.removeEventListener('mousemove', moveCallback, false);
-        }
-      };
-
-      var listener = function listener(event) {
-        var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
-        if (!havePointerLock) {
-          return;
-        }
-
-        var element = document.body;
-        element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-        element.requestPointerLock();
-
-        document.addEventListener('pointerlockchange', pointerLockChange, false);
-        document.addEventListener('mozpointerlockchange', pointerLockChange, false);
-        document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
-      };
-
-      this.listener = listener;
-      document.addEventListener('click', listener, false);
-    }
-  }, {
-    key: 'init3JS',
-    value: function init3JS() {
-      this.scene = new THREE.Scene();
-      this.scene.background = new THREE.Color(0x111111);
-      this.renderer = new THREE.WebGLRenderer({ antialias: true });
-      this.renderer.setSize(window.innerWidth, window.innerHeight);
-      $('#game-page')[0].append(this.renderer.domElement);
-
-      var aspect = window.innerWidth / window.innerHeight;
-      // const hfovRad = 2 * Math.atan2(aspect, 4/3);
-      // const vfovRad = 2 * Math.atan2(Math.tan(hfovRad/2), aspect);
-      // const vfovDeg = vfovRad * 180 / Math.PI;
-      var fov = 74;
-      this.camera = new THREE.PerspectiveCamera(fov, aspect, 1, 1000);
-      this.camera.position.set(0, 0, 0);
-      this.camera.rotation.y = 0.5 * Math.PI;
-
-      this.clock = new THREE.Clock();
-      THREEx.WindowResize(this.renderer, this.camera);
-      this.keyboard = new THREEx.KeyboardState();
-      this.fontLoader = new THREE.FontLoader();
-    }
-  }, {
-    key: 'drawWorld',
-    value: function drawWorld() {
-      var _this2 = this;
-
-      var mapMaterial = new THREE.LineDashedMaterial({ color: 0xffaa00, dashSize: 2, gapSize: 1, linewidth: 1 });
-      var mapGeometry = new THREE.Geometry().fromBufferGeometry(new THREE.EdgesGeometry(new THREE.BoxGeometry(this.MAP_SIZE, this.MAP_HEIGHT, this.MAP_SIZE)));
-      mapGeometry.computeLineDistances();
-      var map = new THREE.LineSegments(mapGeometry, mapMaterial);
-      map.position.y = this.MAP_HEIGHT / 2;
-
-      this.scene.add(map);
-
-      var lineMaterial = new THREE.LineDashedMaterial({ color: 0xecf0f1, dashSize: 0.75, gapSize: 0.75, linewidth: 1 });
-      var lineGeometry = new THREE.Geometry();
-      lineGeometry.vertices.push(new THREE.Vector3(-this.MAP_SIZE / 2, 0, 8), new THREE.Vector3(-this.MAP_SIZE / 2, 0, -8), new THREE.Vector3(-this.MAP_SIZE / 2, 8, 0), new THREE.Vector3(-this.MAP_SIZE / 2, -8, 0));
-      lineGeometry.computeLineDistances();
-      var line = new THREE.LineSegments(lineGeometry, lineMaterial);
-      line.position.y = this.SPRAY_HEIGHT;
-
-      this.scene.add(line);
-
-      var textGroup = new THREE.Group();
-      this.scene.add(textGroup);
-
-      this.fontLoader.load('fonts/helvetiker_regular.typeface.json', function (font) {
-        ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'].forEach(function (message, i) {
-          var color = 0xecf0f1;
-          var material = new THREE.LineBasicMaterial({
-            color: color,
-            side: THREE.DoubleSide
-          });
-          var shape = new THREE.BufferGeometry();
-          var shapes = font.generateShapes(message, 1.5, 2);
-          var geometry = new THREE.ShapeGeometry(shapes);
-          geometry.computeBoundingBox();
-          geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
-          shape.fromGeometry(geometry);
-          var text = new THREE.Mesh(shape, material);
-          text.position.x = -_this2.MAP_SIZE / 2;
-          text.position.y = 20 - 3.5 * i;
-          text.position.z = -40;
-          text.rotation.y = Math.PI / 2;
-          text.name = message;
-          textGroup.add(text);
-          // this.scene.add(text);
-        });
-
-        Object.keys(_weapons.weapons).forEach(function (k, i) {
-          var message = _weapons.weapons[k].name;
-          var color = 0xecf0f1;
-          var material = new THREE.LineBasicMaterial({
-            color: color,
-            side: THREE.DoubleSide
-          });
-          var shape = new THREE.BufferGeometry();
-          var shapes = font.generateShapes(message, 1.5, 2);
-          var geometry = new THREE.ShapeGeometry(shapes);
-          geometry.computeBoundingBox();
-          geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
-          shape.fromGeometry(geometry);
-          var text = new THREE.Mesh(shape, material);
-          text.position.x = 30 - 20 * ~~(i / 4);
-          text.position.y = 20 - 5 * (i % 4);
-          text.position.z = _this2.MAP_SIZE / 2;
-          text.rotation.y = Math.PI;
-          text.name = message;
-          textGroup.add(text);
-          // this.scene.add(text);
-        });
-
-        ['s p r a y . t r a i n i n g'].forEach(function (message, i) {
-          var color = 0xecf0f1;
-          var material = new THREE.LineBasicMaterial({
-            color: color,
-            side: THREE.DoubleSide
-          });
-          var shape = new THREE.BufferGeometry();
-          var shapes = font.generateShapes(message, 4, 2);
-          var geometry = new THREE.ShapeGeometry(shapes);
-          geometry.computeBoundingBox();
-          geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
-          shape.fromGeometry(geometry);
-          var text = new THREE.Mesh(shape, material);
-          text.position.x = _this2.MAP_SIZE / 2;
-          text.position.y = 10;
-          text.position.z = 0;
-          text.rotation.y = -Math.PI / 2;
-          text.name = message;
-          textGroup.add(text);
-          // this.scene.add(text);
-        });
-      });
-
-      // command buttons
-
-      var btnBulletTime = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 20, -30), new THREE.Euler(0, Math.PI / 2, 0), 'bulletTime', 0xecf0f1, function () {
-        _settings.settings.bulletTime = !_settings.settings.bulletTime;
-      });
-      var btnGhostHair = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 16.5, -30), new THREE.Euler(0, Math.PI / 2, 0), 'ghostHair', 0x00ff00, function () {
-        _settings.settings.ghostHair = !_settings.settings.ghostHair;
-      });
-      var btnInfiniteAmmo = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 13, -30), new THREE.Euler(0, Math.PI / 2, 0), 'infiniteAmmo', 0xecf0f1, function () {
-        _settings.settings.infiniteAmmo = !_settings.settings.infiniteAmmo;
-      });
-      var btnNoSpread = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 9.5, -30), new THREE.Euler(0, Math.PI / 2, 0), 'noSpread', 0xecf0f1, function () {
-        _settings.settings.noSpread = !_settings.settings.noSpread;
-      });
-      var btnReset = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 6, -30), new THREE.Euler(0, Math.PI / 2, 0), 'reset', 0xecf0f1, function () {
-        _this2.reset();
-        _this2.player.mesh.position.set(-_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE, _global.global.PLAYER_HEIGHT, 0);
-      });
-
-      // TODO: link buttons
-
-      // const btnGithub = new Button({x: -30, y: 0, z: -global.MAP_SIZE / 2}, 'github', 0xffffff, () => {
-      //   console.log('github');
-      // }, new THREE.Mesh(new THREE.CircleGeometry(5, 32), new THREE.MeshBasicMaterial({color: 0xecf0f1, side: THREE.DoubleSide})));
-
-
-      this.buttons = [btnBulletTime, btnGhostHair, btnInfiniteAmmo, btnNoSpread, btnReset];
-      this.buttons.forEach(function (button) {
-        _this2.scene.add(button.mesh);
-      });
-
-      // this.links = [btnGithub];
-      // this.links.forEach((link) => {
-      //   this.scene.add(link.mesh);
-      // })
-
-      this.player = new _player2.default(this.camera);
-      this.scene.add(this.player.mesh);
-
-      var targetGeometry = new THREE.Geometry();
-      targetGeometry.vertices.push(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, _global.global.SPRAY_HEIGHT, 0));
-      var targetMaterial = new THREE.PointsMaterial({ color: 0xff0000, size: 0.6, sizeAttenuation: true });
-      var target = new THREE.Points(targetGeometry, targetMaterial);
-      target.name = 'target';
-      this.scene.add(target);
-    }
-  }, {
-    key: 'initControls',
-    value: function initControls() {
-      var _this3 = this;
-
-      $(document).mouseup(function () {
-        _this3.player.shoot = false;
-        _this3.count = 0;
-      }).mousedown(function () {
-        _this3.player.shoot = true;
-      });
-
-      var locked = false;
-
-      $(document).keydown(function (e) {
-        if (e.which === 82 && _this3.ammo !== 0) {
-          if (locked) {
-            return;
-          }
-
-          locked = true;
-
-          _this3.ammo = 0;
-          _this3.count = 0;
-          _this3.shot = true;
-          setTimeout(function () {
-            return _this3.shot = false;
-          }, _weapons.weapons[_this3.currentWeapon].reload);
-
-          audio.playReload(_this3.currentWeapon);
-        }
-
-        setTimeout(function () {
-          locked = false;
-        }, _weapons.weapons[_this3.currentWeapon].reload);
-      });
-    }
-  }, {
-    key: 'animate',
-    value: function animate() {
-      this.render();
-      this.delta = this.clock.getDelta();
-      this.update(this.delta);
-      this.aFrame = requestAnimationFrame(this.animate.bind(this));
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      this.renderer.render(this.scene, this.camera);
-    }
-  }, {
-    key: 'updateHud',
-    value: function updateHud() {
-      $('#player-position').html('pos: ' + this.player.mesh.position.x.toFixed(2) + ', ' + this.player.mesh.position.z.toFixed(2));
-
-      // $('#player-velocity').html(`speed: ${Math.hypot(this.player.velocity.x, this.player.velocity.z).toFixed(2)}`);
-
-      $('#player-velocity').html('fov: ' + (2 * Math.atan2(Math.tan(this.camera.fov / 2 * Math.PI / 180), 1 / this.camera.aspect) * 180 / Math.PI).toFixed(1));
-
-      $('#player-ammo').html(_weapons.weapons[this.currentWeapon].magazine - this.ammo + '/' + _weapons.weapons[this.currentWeapon].magazine);
-
-      if (this.aFrame % _weapons.weapons[this.currentWeapon].magazine < 3) {
-        $('#player-fps').html('fps: ' + (1 / this.delta).toFixed(0));
-      }
-    }
-  }, {
-    key: 'update',
-    value: function update(delta) {
-      var _this4 = this;
-
-      this.updateHud();
-      this.setCmd();
-
-      var sensitivity = _global.global.SENS;
-      var m_yaw = 0.022;
-      var m_pitch = 0.022;
-      var factor = 2.5;
-
-      this.player.mesh.rotateY(-this.cursorXY.x * sensitivity * m_yaw * factor * delta);
-      this.player.camera.rotateX(-this.cursorXY.y * sensitivity * m_pitch * factor * delta);
-      this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
-
-      var dv = (0, _movement2.default)(this.player, this.cmd, delta);
-      this.player.mesh.position.add(dv.multiplyScalar(delta));
-
-      if (this.player.shoot && !this.shot) {
-        var bulletGeometry = new THREE.Geometry();
-        var projection = utils.projection(this.player, _settings.settings.noSpread ? new THREE.Vector3(0, 0, 0) : _weapons.weapons[this.currentWeapon].spray[this.count]);
-        bulletGeometry.vertices.push(projection);
-        var bulletMaterial = new THREE.PointsMaterial({ color: 0xecf0f1, size: 0.3, sizeAttenuation: true });
-        var bullet = new THREE.Points(bulletGeometry, bulletMaterial);
-        this.scene.add(bullet);
-        setTimeout(function () {
-          return _this4.scene.remove(bullet);
-        }, 3000);
-
-        var d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
-        this.shots.push(d);
-
-        audio.playTap(this.currentWeapon);
-        if (d <= 1) {
-          audio.playHeadshot();
-        }
-
-        this.shot = true;
-        if (this.ammo !== _weapons.weapons[this.currentWeapon].magazine - 1) {
-          setTimeout(function () {
-            return _this4.shot = false;
-          }, 60000 / _weapons.weapons[this.currentWeapon].rpm);
-        } else {
-          setTimeout(function () {
-            return _this4.shot = false;
-          }, _weapons.weapons[this.currentWeapon].reload);
-
-          audio.playReload(this.currentWeapon);
-
-          if (!_settings.settings.noSpread && !_settings.settings.infiniteAmmo) {
-            var score = 100 / (utils.accuracy(this.shots) / 100 + 1);
-            this.highScore = Math.max(score, this.highScore);
-          }
-
-          this.shots = [];
-        }
-
-        this.ammo = _settings.settings.infiniteAmmo ? 0 : (this.ammo + 1) % _weapons.weapons[this.currentWeapon].magazine;
-        this.count = (this.count + 1) % _weapons.weapons[this.currentWeapon].magazine;
-        this.sprayCount = (this.sprayCount + 1) % _weapons.weapons[this.currentWeapon].magazine;
-
-        if (this.sprayCount === 0) {
-          audio.playDone();
-        }
-
-        this.buttons.forEach(function (button) {
-          if (Math.abs(projection.x + _this4.MAP_SIZE / 2) <= 0.01 && Math.abs(projection.y - button.position.y) <= 1 && Math.abs(projection.z - button.position.z) <= 1) {
-            button.action();
-            button.mesh.material.color.setHex(_settings.settings[button.name] ? 0x00ff00 : 0xecf0f1);
-            audio.playSetting();
-          }
-        });
-
-        if (Math.abs(projection.z - this.MAP_SIZE / 2) <= 0.01) {
-          var u = 3 - (projection.x + 30) / 20;
-          var v = (-projection.y + 21) / 5;
-          if (Math.abs(u - ~~(u + 0.5)) <= 0.25 && Math.abs(v - ~~(v + 0.5)) <= 0.4) {
-            var w = 4 * ~~(u + 0.5) + ~~(v + 0.5);
-            var newWeapon = Object.keys(_weapons.weapons)[w];
-
-            if (this.currentWeapon !== newWeapon) {
-              this.currentWeapon = newWeapon;
-              audio.playDone();
-              this.reset();
-            }
-          }
-        }
-
-        var target = this.scene.getObjectByName('target');
-        var targetPosition = _weapons.weapons[this.currentWeapon].spray[this.sprayCount].clone().multiply(new THREE.Vector3(0, -1, 1).multiplyScalar(_global.global.SPRAY_SCALE)).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0));
-        target.geometry.vertices.pop();
-        target.geometry.vertices.push(targetPosition);
-        target.geometry.verticesNeedUpdate = true;
-        target.material.visible = _settings.settings.ghostHair;
-      }
-
-      this.cursorXY = { x: 0, y: 0 };
-      this.cmd = {
-        forward: 0,
-        right: 0,
-        jump: false
-      };
-    }
-  }, {
-    key: 'setCmd',
-    value: function setCmd() {
-      if (this.keyboard.pressed('W')) {
-        this.cmd.forward++;
-      }
-      if (this.keyboard.pressed('S')) {
-        this.cmd.forward--;
-      }
-      if (this.keyboard.pressed('A')) {
-        this.cmd.right--;
-      }
-      if (this.keyboard.pressed('D')) {
-        this.cmd.right++;
-      }
-      this.cmd.jump = this.keyboard.pressed('space');
-    }
-  }, {
-    key: 'reset',
-    value: function reset() {
-      this.ammo = 0;
-      this.count = 0;
-      this.sprayCount = 0;
-      this.shots = [];
-    }
-  }]);
-
-  return Game;
-}();
-
-exports.default = Game;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 /* WEBPACK VAR INJECTION */(function(global) {var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -24958,93 +24330,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports.default = function (player, cmd, delta) {
-  var position = player.mesh.position;
-  var velocity = player.velocity;
-  var rotation = player.mesh.rotation;
-  var cRotation = player.camera.rotation;
-
-  var accelerate = function accelerate(wishDir, wishSpeed, accel) {
-    var currentSpeed = velocity.dot(wishDir);
-    var addSpeed = wishSpeed - currentSpeed;
-    if (addSpeed <= 0) return;
-
-    var accelSpeed = accel * delta * wishSpeed;
-    accelSpeed = Math.min(accelSpeed, addSpeed);
-
-    velocity.x += accelSpeed * wishDir.x;
-    velocity.z += accelSpeed * wishDir.z;
-  };
-
-  var applyFriction = function applyFriction(t) {
-    var copy = velocity.clone();
-    copy.y = 0;
-
-    var speedF = copy.length();
-    var controlF = void 0;
-    var dropF = 0;
-
-    if (position.y <= _global.global.PLAYER_HEIGHT) {
-      controlF = Math.max(speedF, 10);
-      dropF = controlF * 10 * delta * t;
-    }
-
-    var newSpeedF = speedF - dropF;
-    var playerF = newSpeedF;
-    newSpeedF = Math.max(newSpeedF, 0);
-    if (speedF > 0) {
-      newSpeedF /= speedF;
-    }
-    velocity.multiplyScalar(newSpeedF);
-  };
-
-  var groundMove = function groundMove() {
-    applyFriction(1);
-
-    var wishDir = new THREE.Vector3(-cmd.forward, 0, -cmd.right);
-    wishDir.normalize();
-    var wishSpeed = wishDir.length() * 50;
-
-    accelerate(wishDir, wishSpeed, 10);
-    velocity.y = 0;
-  };
-
-  groundMove();
-
-  var v1 = new THREE.Vector3(1, 0, 0);
-  var v2 = new THREE.Vector3(0, 1, 0);
-  var v3 = new THREE.Vector3(0, 0, 1);
-  var quat = new THREE.Quaternion().setFromEuler(rotation);
-
-  v1.applyQuaternion(quat);
-  v2.applyQuaternion(quat);
-  v3.applyQuaternion(quat);
-
-  return new THREE.Vector3().add(v1.multiplyScalar(velocity.x)).add(v2.multiplyScalar(velocity.y)).add(v3.multiplyScalar(velocity.z));
-};
-
-var _three = __webpack_require__(0);
-
-var THREE = _interopRequireWildcard(_three);
-
-var _global = __webpack_require__(1);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-;
-
-/***/ }),
-/* 11 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25114,96 +24400,7 @@ exports.rand = function (arr) {
 };
 
 /***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _three = __webpack_require__(0);
-
-var THREE = _interopRequireWildcard(_three);
-
-var _global = __webpack_require__(1);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Player = function Player(camera) {
-  _classCallCheck(this, Player);
-
-  this.camera = camera;
-  this.mesh = new THREE.Mesh(new THREE.SphereGeometry(5, 32, 32), new THREE.MeshBasicMaterial({ color: 0x00aaff, visible: false })).add(camera);
-  this.mesh.position.x = -_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE;
-  this.mesh.position.y = _global.global.PLAYER_HEIGHT;
-  this.velocity = new THREE.Vector3(0, 0, 0);
-  this.shoot = false;
-};
-
-exports.default = Player;
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var settings = exports.settings = {
-  infiniteAmmo: false,
-  noSpread: false,
-  ghostHair: true,
-  bulletTime: false,
-
-  audio: true
-};
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _three = __webpack_require__(0);
-
-var THREE = _interopRequireWildcard(_three);
-
-var _global = __webpack_require__(1);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Button = function Button(position, rotation, name, color, action) {
-  var mesh = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : new THREE.Mesh(new THREE.CircleGeometry(1, 32), new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide }));
-
-  _classCallCheck(this, Button);
-
-  this.position = position;
-  this.action = action;
-  this.name = name;
-  mesh.position.copy(position);
-  mesh.rotation.copy(rotation);
-  this.mesh = mesh;
-};
-
-exports.default = Button;
-
-/***/ }),
-/* 15 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25509,7 +24706,27 @@ var weapons = exports.weapons = {
   },
   'ump45': {
     name: 'UMP-45',
-    spray: [],
+    audio: {
+      shoot: [new Howl({
+        src: ['audio/weapons/ump45/ump45_02.wav'],
+        volume: 0.2
+      })],
+      reload: [new Howl({
+        src: ['audio/weapons/ump45/ump45_clipout.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/ump45/ump45_clipin.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/ump45/ump45_boltforward.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/ump45/ump45_boltback.wav'],
+        volume: 0.2
+      })],
+      audioDelay: [750, 1500, 1750]
+    },
+    spray: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 13, 2), new THREE.Vector3(0, 29, 9), new THREE.Vector3(0, 63, 12), new THREE.Vector3(0, 107, 21), new THREE.Vector3(0, 152, 40), new THREE.Vector3(0, 204, 45), new THREE.Vector3(0, 238, 23), new THREE.Vector3(0, 262, 31), new THREE.Vector3(0, 288, 13), new THREE.Vector3(0, 305, -24), new THREE.Vector3(0, 314, -52), new THREE.Vector3(0, 321, -51), new THREE.Vector3(0, 333, -60), new THREE.Vector3(0, 344, -60), new THREE.Vector3(0, 338, -78), new THREE.Vector3(0, 333, -89), new THREE.Vector3(0, 344, -64), new THREE.Vector3(0, 348, -26), new THREE.Vector3(0, 344, -27), new THREE.Vector3(0, 332, -54), new THREE.Vector3(0, 328, -87), new THREE.Vector3(0, 332, -79), new THREE.Vector3(0, 330, -36), new THREE.Vector3(0, 327, -29)],
     magazine: 25,
     rpm: 666,
     reload: 3500
@@ -25554,17 +24771,820 @@ var weapons = exports.weapons = {
 };
 
 /***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function($) {
+
+var _ui = __webpack_require__(10);
+
+var ui = _interopRequireWildcard(_ui);
+
+var _game = __webpack_require__(11);
+
+var _game2 = _interopRequireDefault(_game);
+
+var _global = __webpack_require__(1);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+// import noUiSlider from 'nouislider';
+
+var sensitivitySlider = document.getElementById('sens-slider');
+
+noUiSlider.create(sensitivitySlider, {
+  start: [3.5],
+  connect: true,
+  tooltips: true,
+  range: {
+    'min': [0.1],
+    'max': [8]
+  }
+});
+
+var sensitivityInput = document.getElementById('sens-input');
+
+sensitivitySlider.noUiSlider.on('update', function (values, handle) {
+  var value = values[handle];
+  sensitivityInput.value = value;
+});
+
+sensitivityInput.addEventListener('change', function () {
+  sensitivitySlider.noUiSlider.set([sensitivityInput.value]);
+});
+
+$('#main-button').on('click', function () {
+  _global.global.SENS = sensitivityInput.value;
+  ui.fadeFromTo($('#main-page'), $('#game-page'), 0.5);
+  var game = new _game2.default();
+  game.init();
+
+  var ctx = $('#xhair')[0].getContext('2d');
+  ctx.strokeStyle = '#39ff14';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(15, 0);
+  ctx.lineTo(15, 10);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(15, 20);
+  ctx.lineTo(15, 30);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(0, 15);
+  ctx.lineTo(10, 15);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(20, 15);
+  ctx.lineTo(30, 15);
+  ctx.stroke();
+});
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function (module) {
+	if (!module.webpackPolyfill) {
+		module.deprecate = function () {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if (!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function get() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function get() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _gsap = __webpack_require__(3);
+
+var _gsap2 = _interopRequireDefault(_gsap);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.fadeFromTo = function (pageOne, pageTwo, t) {
+  _gsap2.default.fromTo(pageOne, t, { autoAlpha: 1 }, { autoAlpha: 0 });
+  _gsap2.default.fromTo(pageTwo, t, { autoAlpha: 0 }, { autoAlpha: 1 });
+};
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function($) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _three = __webpack_require__(0);
+
+var THREE = _interopRequireWildcard(_three);
+
+var _howler = __webpack_require__(5);
+
+var _gsap = __webpack_require__(3);
+
+var _gsap2 = _interopRequireDefault(_gsap);
+
+var _movement = __webpack_require__(12);
+
+var _movement2 = _interopRequireDefault(_movement);
+
+var _utils = __webpack_require__(6);
+
+var utils = _interopRequireWildcard(_utils);
+
+var _player = __webpack_require__(13);
+
+var _player2 = _interopRequireDefault(_player);
+
+var _global = __webpack_require__(1);
+
+var _settings = __webpack_require__(14);
+
+var _button = __webpack_require__(15);
+
+var _button2 = _interopRequireDefault(_button);
+
+var _weapons = __webpack_require__(7);
+
+var _audio = __webpack_require__(16);
+
+var audio = _interopRequireWildcard(_audio);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Game = function () {
+  function Game() {
+    _classCallCheck(this, Game);
+
+    this.cursorXY = { x: 0, y: 0 };
+    this.cmd = {
+      forward: 0,
+      right: 0,
+      jump: false
+    };
+
+    this.MAP_SIZE = _global.global.MAP_SIZE;
+    this.MAP_HEIGHT = _global.global.MAP_HEIGHT;
+    this.SPRAY_HEIGHT = _global.global.SPRAY_HEIGHT;
+
+    this.shot = false;
+
+    this.ammo = 0;
+    this.count = 0;
+    this.sprayCount = 0;
+
+    this.currentScore = 0;
+    this.highScore = 0;
+
+    this.SETTINGS_MIN_Z = -47;
+    this.SETTINGS_MAX_Z = -33;
+
+    this.shots = [];
+    this.highscore = 0;
+
+    this.currentWeapon = 'ak47';
+
+    this.buttons = [];
+    this.links = [];
+  }
+
+  _createClass(Game, [{
+    key: 'init',
+    value: function init() {
+      this.pointerlock();
+      this.init3JS();
+      this.drawWorld();
+      this.initControls();
+      this.animate();
+    }
+  }, {
+    key: 'pointerlock',
+    value: function pointerlock() {
+      var _this = this;
+
+      var moveCallback = function moveCallback(e) {
+        // prevent any abnormal mouse jumping
+        if (Math.abs(e.movementX) <= 300 && Math.abs(e.movementY) <= 100) {
+          _this.cursorXY.x += e.movementX || e.mozMovementX || e.webkitMovementX || 0;
+          _this.cursorXY.y += e.movementY || e.mozMovementY || e.webkitMovementY || 0;
+        }
+      };
+
+      var pointerLockChange = function pointerLockChange(event) {
+        var element = document.body;
+        if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
+          document.addEventListener('mousemove', moveCallback, false);
+        } else {
+          document.removeEventListener('mousemove', moveCallback, false);
+        }
+      };
+
+      var listener = function listener(event) {
+        var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+        if (!havePointerLock) {
+          return;
+        }
+
+        var element = document.body;
+        element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+        element.requestPointerLock();
+
+        document.addEventListener('pointerlockchange', pointerLockChange, false);
+        document.addEventListener('mozpointerlockchange', pointerLockChange, false);
+        document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
+      };
+
+      this.listener = listener;
+      document.addEventListener('click', listener, false);
+    }
+  }, {
+    key: 'init3JS',
+    value: function init3JS() {
+      this.scene = new THREE.Scene();
+      this.scene.background = new THREE.Color(0x111111);
+      this.renderer = new THREE.WebGLRenderer({ antialias: true });
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+      $('#game-page')[0].append(this.renderer.domElement);
+
+      var aspect = window.innerWidth / window.innerHeight;
+      // const hfovRad = 2 * Math.atan2(aspect, 4/3);
+      // const vfovRad = 2 * Math.atan2(Math.tan(hfovRad/2), aspect);
+      // const vfovDeg = vfovRad * 180 / Math.PI;
+      var fov = 74;
+      this.camera = new THREE.PerspectiveCamera(fov, aspect, 1, 1000);
+      this.camera.position.set(0, 0, 0);
+      this.camera.rotation.y = 0.5 * Math.PI;
+
+      this.clock = new THREE.Clock();
+      THREEx.WindowResize(this.renderer, this.camera);
+      this.keyboard = new THREEx.KeyboardState();
+      this.fontLoader = new THREE.FontLoader();
+    }
+  }, {
+    key: 'drawWorld',
+    value: function drawWorld() {
+      var _this2 = this;
+
+      var mapMaterial = new THREE.LineDashedMaterial({ color: 0xffaa00, dashSize: 2, gapSize: 1, linewidth: 1 });
+      var mapGeometry = new THREE.Geometry().fromBufferGeometry(new THREE.EdgesGeometry(new THREE.BoxGeometry(this.MAP_SIZE, this.MAP_HEIGHT, this.MAP_SIZE)));
+      mapGeometry.computeLineDistances();
+      var map = new THREE.LineSegments(mapGeometry, mapMaterial);
+      map.position.y = this.MAP_HEIGHT / 2;
+
+      this.scene.add(map);
+
+      var lineMaterial = new THREE.LineDashedMaterial({ color: 0xecf0f1, dashSize: 0.75, gapSize: 0.75, linewidth: 1 });
+      var lineGeometry = new THREE.Geometry();
+      lineGeometry.vertices.push(new THREE.Vector3(-this.MAP_SIZE / 2, 0, 8), new THREE.Vector3(-this.MAP_SIZE / 2, 0, -8), new THREE.Vector3(-this.MAP_SIZE / 2, 8, 0), new THREE.Vector3(-this.MAP_SIZE / 2, -8, 0));
+      lineGeometry.computeLineDistances();
+      var line = new THREE.LineSegments(lineGeometry, lineMaterial);
+      line.position.y = this.SPRAY_HEIGHT;
+
+      this.scene.add(line);
+
+      var textGroup = new THREE.Group();
+      this.scene.add(textGroup);
+
+      this.fontLoader.load('fonts/helvetiker_regular.typeface.json', function (font) {
+        ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'].forEach(function (message, i) {
+          var color = 0xecf0f1;
+          var material = new THREE.LineBasicMaterial({
+            color: color,
+            side: THREE.DoubleSide
+          });
+          var shape = new THREE.BufferGeometry();
+          var shapes = font.generateShapes(message, 1.5, 2);
+          var geometry = new THREE.ShapeGeometry(shapes);
+          geometry.computeBoundingBox();
+          geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
+          shape.fromGeometry(geometry);
+          var text = new THREE.Mesh(shape, material);
+          text.position.x = -_this2.MAP_SIZE / 2;
+          text.position.y = 20 - 3.5 * i;
+          text.position.z = -40;
+          text.rotation.y = Math.PI / 2;
+          text.name = message;
+          textGroup.add(text);
+          // this.scene.add(text);
+        });
+
+        Object.keys(_weapons.weapons).forEach(function (k, i) {
+          var message = _weapons.weapons[k].name;
+          var color = 0xecf0f1;
+          var material = new THREE.LineBasicMaterial({
+            color: color,
+            side: THREE.DoubleSide
+          });
+          var shape = new THREE.BufferGeometry();
+          var shapes = font.generateShapes(message, 1.5, 2);
+          var geometry = new THREE.ShapeGeometry(shapes);
+          geometry.computeBoundingBox();
+          geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
+          shape.fromGeometry(geometry);
+          var text = new THREE.Mesh(shape, material);
+          text.position.x = 30 - 20 * ~~(i / 4);
+          text.position.y = 20 - 5 * (i % 4);
+          text.position.z = _this2.MAP_SIZE / 2;
+          text.rotation.y = Math.PI;
+          text.name = message;
+          textGroup.add(text);
+          // this.scene.add(text);
+        });
+
+        ['s p r a y . t r a i n i n g'].forEach(function (message, i) {
+          var color = 0xecf0f1;
+          var material = new THREE.LineBasicMaterial({
+            color: color,
+            side: THREE.DoubleSide
+          });
+          var shape = new THREE.BufferGeometry();
+          var shapes = font.generateShapes(message, 4, 2);
+          var geometry = new THREE.ShapeGeometry(shapes);
+          geometry.computeBoundingBox();
+          geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), 0, 0);
+          shape.fromGeometry(geometry);
+          var text = new THREE.Mesh(shape, material);
+          text.position.x = _this2.MAP_SIZE / 2;
+          text.position.y = 10;
+          text.position.z = 0;
+          text.rotation.y = -Math.PI / 2;
+          text.name = message;
+          textGroup.add(text);
+          // this.scene.add(text);
+        });
+      });
+
+      // command buttons
+
+      var btnBulletTime = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 20, -30), new THREE.Euler(0, Math.PI / 2, 0), 'bulletTime', 0xecf0f1, function () {
+        _settings.settings.bulletTime = !_settings.settings.bulletTime;
+      });
+      var btnGhostHair = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 16.5, -30), new THREE.Euler(0, Math.PI / 2, 0), 'ghostHair', 0x00ff00, function () {
+        _settings.settings.ghostHair = !_settings.settings.ghostHair;
+      });
+      var btnInfiniteAmmo = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 13, -30), new THREE.Euler(0, Math.PI / 2, 0), 'infiniteAmmo', 0xecf0f1, function () {
+        _settings.settings.infiniteAmmo = !_settings.settings.infiniteAmmo;
+      });
+      var btnNoSpread = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 9.5, -30), new THREE.Euler(0, Math.PI / 2, 0), 'noSpread', 0xecf0f1, function () {
+        _settings.settings.noSpread = !_settings.settings.noSpread;
+      });
+      var btnReset = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 6, -30), new THREE.Euler(0, Math.PI / 2, 0), 'reset', 0xecf0f1, function () {
+        _this2.reset();
+        _this2.player.mesh.position.set(-_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE, _global.global.PLAYER_HEIGHT, 0);
+      });
+
+      // TODO: link buttons
+
+      // const btnGithub = new Button({x: -30, y: 0, z: -global.MAP_SIZE / 2}, 'github', 0xffffff, () => {
+      //   console.log('github');
+      // }, new THREE.Mesh(new THREE.CircleGeometry(5, 32), new THREE.MeshBasicMaterial({color: 0xecf0f1, side: THREE.DoubleSide})));
+
+
+      this.buttons = [btnBulletTime, btnGhostHair, btnInfiniteAmmo, btnNoSpread, btnReset];
+      this.buttons.forEach(function (button) {
+        _this2.scene.add(button.mesh);
+      });
+
+      // this.links = [btnGithub];
+      // this.links.forEach((link) => {
+      //   this.scene.add(link.mesh);
+      // })
+
+      this.player = new _player2.default(this.camera);
+      this.scene.add(this.player.mesh);
+
+      var targetGeometry = new THREE.Geometry();
+      targetGeometry.vertices.push(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, _global.global.SPRAY_HEIGHT, 0));
+      var targetMaterial = new THREE.PointsMaterial({ color: 0xff0000, size: 0.6, sizeAttenuation: true });
+      var target = new THREE.Points(targetGeometry, targetMaterial);
+      target.name = 'target';
+      this.scene.add(target);
+    }
+  }, {
+    key: 'initControls',
+    value: function initControls() {
+      var _this3 = this;
+
+      $(document).mouseup(function () {
+        _this3.player.shoot = false;
+        _this3.count = 0;
+      }).mousedown(function () {
+        _this3.player.shoot = true;
+      });
+
+      var locked = false;
+
+      $(document).keydown(function (e) {
+        if (e.which === 82 && _this3.ammo !== 0) {
+          if (locked) {
+            return;
+          }
+
+          locked = true;
+
+          _this3.ammo = 0;
+          _this3.count = 0;
+          _this3.shot = true;
+          setTimeout(function () {
+            return _this3.shot = false;
+          }, _weapons.weapons[_this3.currentWeapon].reload);
+
+          audio.playReload(_this3.currentWeapon);
+        }
+
+        setTimeout(function () {
+          locked = false;
+        }, _weapons.weapons[_this3.currentWeapon].reload);
+      });
+    }
+  }, {
+    key: 'animate',
+    value: function animate() {
+      this.render();
+      this.delta = this.clock.getDelta();
+      this.update(this.delta);
+      this.aFrame = requestAnimationFrame(this.animate.bind(this));
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      this.renderer.render(this.scene, this.camera);
+    }
+  }, {
+    key: 'updateHud',
+    value: function updateHud() {
+      $('#player-position').html('pos: ' + this.player.mesh.position.x.toFixed(2) + ', ' + this.player.mesh.position.z.toFixed(2));
+
+      // $('#player-velocity').html(`speed: ${Math.hypot(this.player.velocity.x, this.player.velocity.z).toFixed(2)}`);
+
+      $('#player-velocity').html('fov: ' + (2 * Math.atan2(Math.tan(this.camera.fov / 2 * Math.PI / 180), 1 / this.camera.aspect) * 180 / Math.PI).toFixed(1));
+
+      $('#player-ammo').html(_weapons.weapons[this.currentWeapon].magazine - this.ammo + '/' + _weapons.weapons[this.currentWeapon].magazine);
+
+      if (this.aFrame % _weapons.weapons[this.currentWeapon].magazine < 3) {
+        $('#player-fps').html('fps: ' + (1 / this.delta).toFixed(0));
+      }
+    }
+  }, {
+    key: 'update',
+    value: function update(delta) {
+      var _this4 = this;
+
+      this.updateHud();
+      this.setCmd();
+
+      var sensitivity = _global.global.SENS;
+      var m_yaw = 0.022;
+      var m_pitch = 0.022;
+      var factor = 2.5;
+
+      this.player.mesh.rotateY(-this.cursorXY.x * sensitivity * m_yaw * factor * delta);
+      this.player.camera.rotateX(-this.cursorXY.y * sensitivity * m_pitch * factor * delta);
+      this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
+
+      var dv = (0, _movement2.default)(this.player, this.cmd, delta);
+      this.player.mesh.position.add(dv.multiplyScalar(delta));
+
+      if (this.player.shoot && !this.shot) {
+        var bulletGeometry = new THREE.Geometry();
+        var projection = utils.projection(this.player, _settings.settings.noSpread ? new THREE.Vector3(0, 0, 0) : _weapons.weapons[this.currentWeapon].spray[this.count]);
+        bulletGeometry.vertices.push(projection);
+        var bulletMaterial = new THREE.PointsMaterial({ color: 0xecf0f1, size: 0.3, sizeAttenuation: true });
+        var bullet = new THREE.Points(bulletGeometry, bulletMaterial);
+        this.scene.add(bullet);
+        setTimeout(function () {
+          return _this4.scene.remove(bullet);
+        }, 3000);
+
+        var d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
+        this.shots.push(d);
+
+        audio.playTap(this.currentWeapon);
+        if (d <= 1) {
+          audio.playHeadshot();
+        }
+
+        this.shot = true;
+        if (this.ammo !== _weapons.weapons[this.currentWeapon].magazine - 1) {
+          setTimeout(function () {
+            return _this4.shot = false;
+          }, 60000 / _weapons.weapons[this.currentWeapon].rpm);
+        } else {
+          setTimeout(function () {
+            return _this4.shot = false;
+          }, _weapons.weapons[this.currentWeapon].reload);
+
+          audio.playReload(this.currentWeapon);
+
+          if (!_settings.settings.noSpread && !_settings.settings.infiniteAmmo) {
+            var score = 100 / (utils.accuracy(this.shots) / 100 + 1);
+            this.highScore = Math.max(score, this.highScore);
+          }
+
+          this.shots = [];
+        }
+
+        this.ammo = _settings.settings.infiniteAmmo ? 0 : (this.ammo + 1) % _weapons.weapons[this.currentWeapon].magazine;
+        this.count = (this.count + 1) % _weapons.weapons[this.currentWeapon].magazine;
+        this.sprayCount = (this.sprayCount + 1) % _weapons.weapons[this.currentWeapon].magazine;
+
+        if (this.sprayCount === 0) {
+          audio.playDone();
+        }
+
+        this.buttons.forEach(function (button) {
+          if (Math.abs(projection.x + _this4.MAP_SIZE / 2) <= 0.01 && Math.abs(projection.y - button.position.y) <= 1 && Math.abs(projection.z - button.position.z) <= 1) {
+            button.action();
+            button.mesh.material.color.setHex(_settings.settings[button.name] ? 0x00ff00 : 0xecf0f1);
+            audio.playSetting();
+          }
+        });
+
+        if (Math.abs(projection.z - this.MAP_SIZE / 2) <= 0.01) {
+          var u = 3 - (projection.x + 30) / 20;
+          var v = (-projection.y + 21) / 5;
+          if (Math.abs(u - ~~(u + 0.5)) <= 0.25 && Math.abs(v - ~~(v + 0.5)) <= 0.4) {
+            var w = 4 * ~~(u + 0.5) + ~~(v + 0.5);
+            var newWeapon = Object.keys(_weapons.weapons)[w];
+
+            if (this.currentWeapon !== newWeapon) {
+              this.currentWeapon = newWeapon;
+              audio.playDone();
+              this.reset();
+            }
+          }
+        }
+
+        var target = this.scene.getObjectByName('target');
+        var targetPosition = _weapons.weapons[this.currentWeapon].spray[this.sprayCount].clone().multiply(new THREE.Vector3(0, -1, 1).multiplyScalar(_global.global.SPRAY_SCALE)).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0));
+        target.geometry.vertices.pop();
+        target.geometry.vertices.push(targetPosition);
+        target.geometry.verticesNeedUpdate = true;
+        target.material.visible = _settings.settings.ghostHair;
+      }
+
+      this.cursorXY = { x: 0, y: 0 };
+      this.cmd = {
+        forward: 0,
+        right: 0,
+        jump: false
+      };
+    }
+  }, {
+    key: 'setCmd',
+    value: function setCmd() {
+      if (this.keyboard.pressed('W')) {
+        this.cmd.forward++;
+      }
+      if (this.keyboard.pressed('S')) {
+        this.cmd.forward--;
+      }
+      if (this.keyboard.pressed('A')) {
+        this.cmd.right--;
+      }
+      if (this.keyboard.pressed('D')) {
+        this.cmd.right++;
+      }
+      this.cmd.jump = this.keyboard.pressed('space');
+    }
+  }, {
+    key: 'reset',
+    value: function reset() {
+      this.ammo = 0;
+      this.count = 0;
+      this.sprayCount = 0;
+      this.shots = [];
+    }
+  }]);
+
+  return Game;
+}();
+
+exports.default = Game;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.default = function (player, cmd, delta) {
+  var position = player.mesh.position;
+  var velocity = player.velocity;
+  var rotation = player.mesh.rotation;
+  var cRotation = player.camera.rotation;
+
+  var accelerate = function accelerate(wishDir, wishSpeed, accel) {
+    var currentSpeed = velocity.dot(wishDir);
+    var addSpeed = wishSpeed - currentSpeed;
+    if (addSpeed <= 0) return;
+
+    var accelSpeed = accel * delta * wishSpeed;
+    accelSpeed = Math.min(accelSpeed, addSpeed);
+
+    velocity.x += accelSpeed * wishDir.x;
+    velocity.z += accelSpeed * wishDir.z;
+  };
+
+  var applyFriction = function applyFriction(t) {
+    var copy = velocity.clone();
+    copy.y = 0;
+
+    var speedF = copy.length();
+    var controlF = void 0;
+    var dropF = 0;
+
+    if (position.y <= _global.global.PLAYER_HEIGHT) {
+      controlF = Math.max(speedF, 10);
+      dropF = controlF * 10 * delta * t;
+    }
+
+    var newSpeedF = speedF - dropF;
+    var playerF = newSpeedF;
+    newSpeedF = Math.max(newSpeedF, 0);
+    if (speedF > 0) {
+      newSpeedF /= speedF;
+    }
+    velocity.multiplyScalar(newSpeedF);
+  };
+
+  var groundMove = function groundMove() {
+    applyFriction(1);
+
+    var wishDir = new THREE.Vector3(-cmd.forward, 0, -cmd.right);
+    wishDir.normalize();
+    var wishSpeed = wishDir.length() * 50;
+
+    accelerate(wishDir, wishSpeed, 10);
+    velocity.y = 0;
+  };
+
+  groundMove();
+
+  var v1 = new THREE.Vector3(1, 0, 0);
+  var v2 = new THREE.Vector3(0, 1, 0);
+  var v3 = new THREE.Vector3(0, 0, 1);
+  var quat = new THREE.Quaternion().setFromEuler(rotation);
+
+  v1.applyQuaternion(quat);
+  v2.applyQuaternion(quat);
+  v3.applyQuaternion(quat);
+
+  return new THREE.Vector3().add(v1.multiplyScalar(velocity.x)).add(v2.multiplyScalar(velocity.y)).add(v3.multiplyScalar(velocity.z));
+};
+
+var _three = __webpack_require__(0);
+
+var THREE = _interopRequireWildcard(_three);
+
+var _global = __webpack_require__(1);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+;
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _three = __webpack_require__(0);
+
+var THREE = _interopRequireWildcard(_three);
+
+var _global = __webpack_require__(1);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Player = function Player(camera) {
+  _classCallCheck(this, Player);
+
+  this.camera = camera;
+  this.mesh = new THREE.Mesh(new THREE.SphereGeometry(5, 32, 32), new THREE.MeshBasicMaterial({ color: 0x00aaff, visible: false })).add(camera);
+  this.mesh.position.x = -_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE;
+  this.mesh.position.y = _global.global.PLAYER_HEIGHT;
+  this.velocity = new THREE.Vector3(0, 0, 0);
+  this.shoot = false;
+};
+
+exports.default = Player;
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var settings = exports.settings = {
+  infiniteAmmo: false,
+  noSpread: false,
+  ghostHair: true,
+  bulletTime: false,
+
+  audio: true
+};
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _three = __webpack_require__(0);
+
+var THREE = _interopRequireWildcard(_three);
+
+var _global = __webpack_require__(1);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Button = function Button(position, rotation, name, color, action) {
+  var mesh = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : new THREE.Mesh(new THREE.CircleGeometry(1, 32), new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide }));
+
+  _classCallCheck(this, Button);
+
+  this.position = position;
+  this.action = action;
+  this.name = name;
+  mesh.position.copy(position);
+  mesh.rotation.copy(rotation);
+  this.mesh = mesh;
+};
+
+exports.default = Button;
+
+/***/ }),
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _howler = __webpack_require__(9);
+var _howler = __webpack_require__(5);
 
-var _weapons = __webpack_require__(15);
+var _weapons = __webpack_require__(7);
 
-var _utils = __webpack_require__(11);
+var _utils = __webpack_require__(6);
 
 var done = new _howler.Howl({
   src: ['audio/general/bell1.wav'],
