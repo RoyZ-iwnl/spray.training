@@ -24,6 +24,7 @@ export default class Game {
     this.SPRAY_HEIGHT = global.SPRAY_HEIGHT;
 
     this.shot = false;
+    this.reloading = false;
 
     this.ammo = 0;
     this.count = 0;
@@ -274,8 +275,10 @@ export default class Game {
 
         this.ammo = 0;
         this.count = 0;
-        this.shot = true;
-        setTimeout(() => this.shot = false, weapons[this.currentWeapon].reload);
+        this.reloading = true;
+        setTimeout(() => {
+          this.reloading = false;
+        }, weapons[this.currentWeapon].reload);
 
         audio.playReload(this.currentWeapon);
       }
@@ -325,7 +328,7 @@ export default class Game {
     const dv = movement(this.player, this.cmd, delta);
     this.player.mesh.position.add(dv.multiplyScalar(delta));
 
-    if (this.player.shoot && !this.shot) {
+    if (this.player.shoot && !this.shot && !this.reloading) {
       const bulletGeometry = new THREE.Geometry();
       const projection = utils.projection(this.player, settings.noSpread ? new THREE.Vector3(0, 0, 0) : weapons[this.currentWeapon].spray[this.count]);
       bulletGeometry.vertices.push(projection);
@@ -346,7 +349,11 @@ export default class Game {
       if (this.ammo !== weapons[this.currentWeapon].magazine-1) {
         setTimeout(() => this.shot = false, 60000/weapons[this.currentWeapon].rpm);
       } else {
-        setTimeout(() => this.shot = false, weapons[this.currentWeapon].reload);
+        this.reloading = true;
+        setTimeout(() => {
+          this.shot = false;
+          this.reloading = false;
+        }, weapons[this.currentWeapon].reload);
 
         audio.playReload(this.currentWeapon);
 

@@ -1,7 +1,7 @@
 import * as ui from './ui.js';
 import Game from './game.js';
 import { global } from './global.js';
-// import noUiSlider from 'nouislider';
+import HUD from './hud.js';
 
 const sensitivitySlider = document.getElementById('sens-slider');
 
@@ -33,23 +33,27 @@ $('#main-button').on('click', () => {
   const game = new Game();
   game.init();
 
-  const ctx = $('#xhair')[0].getContext('2d');
-  ctx.strokeStyle = '#39ff14';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(15, 0);
-  ctx.lineTo(15, 10);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(15, 20);
-  ctx.lineTo(15, 30);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(0, 15);
-  ctx.lineTo(10, 15);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(20, 15);
-  ctx.lineTo(30, 15);
-  ctx.stroke();
+  const hud = new HUD(game);
+  hud.init();
+
+  // const crosshairCtx = $('#xhair')[0].getContext('2d');
+  // crosshairCtx.strokeStyle = '#39ff14';
+  // crosshairCtx.lineWidth = 2;
+  // crosshairCtx.beginPath();
+  // crosshairCtx.moveTo(15, 0);
+  // crosshairCtx.lineTo(15, 10);
+  // crosshairCtx.stroke();
+  // crosshairCtx.beginPath();
+  // crosshairCtx.moveTo(15, 20);
+  // crosshairCtx.lineTo(15, 30);
+  // crosshairCtx.stroke();
+  // crosshairCtx.beginPath();
+  // crosshairCtx.moveTo(0, 15);
+  // crosshairCtx.lineTo(10, 15);
+  // crosshairCtx.stroke();
+  // crosshairCtx.beginPath();
+  // crosshairCtx.moveTo(20, 15);
+  // crosshairCtx.lineTo(30, 15);
+  // crosshairCtx.stroke();
+
 });

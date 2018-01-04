@@ -1,6 +1,12 @@
 import * as THREE from 'three';
 import { global } from './global.js';
 
+const createImage = (src) => {
+  const img = new Image();
+  img.src = src;
+  return img;
+};
+
 export const weapons = {
   // rifles
   'ak47': {
@@ -27,6 +33,26 @@ export const weapons = {
         })
       ],
       audioDelay: [750, 1500],
+    },
+    viewmodel: {
+      shoot: {
+        img: createImage('img/weapons/ak47/tap/tap_sprite.png'),
+        width: 20480,
+        height: 720,
+        frames: 16,
+      },
+      reload: {
+        img: createImage('img/weapons/ak47/reload/reload_sprite.png'),
+        width: 101120,
+        height: 720,
+        frames: 79,
+      },
+      inspect: {
+        img: null,
+        width: 0,
+        height: 0,
+        frames: 0,
+      }
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
@@ -992,7 +1018,7 @@ export const weapons = {
           volume: 0.2,
         }),
         new Howl({
-          src: ['audio/weapons/m249/m249_cpverup.wav'],
+          src: ['audio/weapons/m249/m249_coverup.wav'],
           volume: 0.2,
         })
       ],

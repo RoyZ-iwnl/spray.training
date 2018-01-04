@@ -24419,6 +24419,12 @@ var _global = __webpack_require__(1);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
+var createImage = function createImage(src) {
+  var img = new Image();
+  img.src = src;
+  return img;
+};
+
 var weapons = exports.weapons = {
   // rifles
   'ak47': {
@@ -24439,6 +24445,26 @@ var weapons = exports.weapons = {
         volume: 0.2
       })],
       audioDelay: [750, 1500]
+    },
+    viewmodel: {
+      shoot: {
+        img: createImage('img/weapons/ak47/tap/tap_sprite.png'),
+        width: 20480,
+        height: 720,
+        frames: 16
+      },
+      reload: {
+        img: createImage('img/weapons/ak47/reload/reload_sprite.png'),
+        width: 101120,
+        height: 720,
+        frames: 79
+      },
+      inspect: {
+        img: null,
+        width: 0,
+        height: 0,
+        frames: 0
+      }
     },
     spray: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 14, 7), new THREE.Vector3(0, 51, 0), new THREE.Vector3(0, 109, 5), new THREE.Vector3(0, 170, 7), new THREE.Vector3(0, 235, -18), new THREE.Vector3(0, 290, -34), new THREE.Vector3(0, 329, -60), new THREE.Vector3(0, 358, -27), new THREE.Vector3(0, 350, 57), new THREE.Vector3(0, 355, 101), new THREE.Vector3(0, 377, 75), new THREE.Vector3(0, 389, 106), new THREE.Vector3(0, 372, 158), new THREE.Vector3(0, 382, 164), new THREE.Vector3(0, 385, 84), new THREE.Vector3(0, 399, 49), new THREE.Vector3(0, 420, 18), new THREE.Vector3(0, 417, -36), new THREE.Vector3(0, 399, -102), new THREE.Vector3(0, 394, -61), new THREE.Vector3(0, 400, -73), new THREE.Vector3(0, 419, -61), new THREE.Vector3(0, 426, -43), new THREE.Vector3(0, 420, -81), new THREE.Vector3(0, 430, -94), new THREE.Vector3(0, 429, -52), new THREE.Vector3(0, 423, 13), new THREE.Vector3(0, 381, 104), new THREE.Vector3(0, 381, 132)],
     magazine: 30,
@@ -24851,7 +24877,7 @@ var weapons = exports.weapons = {
         src: ['audio/weapons/m249/m249_coverdown.wav'],
         volume: 0.2
       }), new Howl({
-        src: ['audio/weapons/m249/m249_cpverup.wav'],
+        src: ['audio/weapons/m249/m249_coverup.wav'],
         volume: 0.2
       })],
       audioDelay: [750, 1500, 1750]
@@ -24914,11 +24940,13 @@ var _game2 = _interopRequireDefault(_game);
 
 var _global = __webpack_require__(1);
 
+var _hud = __webpack_require__(17);
+
+var _hud2 = _interopRequireDefault(_hud);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-// import noUiSlider from 'nouislider';
 
 var sensitivitySlider = document.getElementById('sens-slider');
 
@@ -24949,25 +24977,28 @@ $('#main-button').on('click', function () {
   var game = new _game2.default();
   game.init();
 
-  var ctx = $('#xhair')[0].getContext('2d');
-  ctx.strokeStyle = '#39ff14';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(15, 0);
-  ctx.lineTo(15, 10);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(15, 20);
-  ctx.lineTo(15, 30);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(0, 15);
-  ctx.lineTo(10, 15);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(20, 15);
-  ctx.lineTo(30, 15);
-  ctx.stroke();
+  var hud = new _hud2.default(game);
+  hud.init();
+
+  // const crosshairCtx = $('#xhair')[0].getContext('2d');
+  // crosshairCtx.strokeStyle = '#39ff14';
+  // crosshairCtx.lineWidth = 2;
+  // crosshairCtx.beginPath();
+  // crosshairCtx.moveTo(15, 0);
+  // crosshairCtx.lineTo(15, 10);
+  // crosshairCtx.stroke();
+  // crosshairCtx.beginPath();
+  // crosshairCtx.moveTo(15, 20);
+  // crosshairCtx.lineTo(15, 30);
+  // crosshairCtx.stroke();
+  // crosshairCtx.beginPath();
+  // crosshairCtx.moveTo(0, 15);
+  // crosshairCtx.lineTo(10, 15);
+  // crosshairCtx.stroke();
+  // crosshairCtx.beginPath();
+  // crosshairCtx.moveTo(20, 15);
+  // crosshairCtx.lineTo(30, 15);
+  // crosshairCtx.stroke();
 });
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
@@ -25090,6 +25121,7 @@ var Game = function () {
     this.SPRAY_HEIGHT = _global.global.SPRAY_HEIGHT;
 
     this.shot = false;
+    this.reloading = false;
 
     this.ammo = 0;
     this.count = 0;
@@ -25346,9 +25378,9 @@ var Game = function () {
 
           _this3.ammo = 0;
           _this3.count = 0;
-          _this3.shot = true;
+          _this3.reloading = true;
           setTimeout(function () {
-            return _this3.shot = false;
+            _this3.reloading = false;
           }, _weapons.weapons[_this3.currentWeapon].reload);
 
           audio.playReload(_this3.currentWeapon);
@@ -25407,7 +25439,7 @@ var Game = function () {
       var dv = (0, _movement2.default)(this.player, this.cmd, delta);
       this.player.mesh.position.add(dv.multiplyScalar(delta));
 
-      if (this.player.shoot && !this.shot) {
+      if (this.player.shoot && !this.shot && !this.reloading) {
         var bulletGeometry = new THREE.Geometry();
         var projection = utils.projection(this.player, _settings.settings.noSpread ? new THREE.Vector3(0, 0, 0) : _weapons.weapons[this.currentWeapon].spray[this.count]);
         bulletGeometry.vertices.push(projection);
@@ -25432,8 +25464,10 @@ var Game = function () {
             return _this4.shot = false;
           }, 60000 / _weapons.weapons[this.currentWeapon].rpm);
         } else {
+          this.reloading = true;
           setTimeout(function () {
-            return _this4.shot = false;
+            _this4.shot = false;
+            _this4.reloading = false;
           }, _weapons.weapons[this.currentWeapon].reload);
 
           audio.playReload(this.currentWeapon);
@@ -25766,6 +25800,118 @@ exports.playSetting = function () {
 exports.playError = function () {
   error.play();
 };
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function($) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _weapons = __webpack_require__(7);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var HUD = function () {
+  function HUD(game) {
+    var weapon = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'ak47';
+
+    _classCallCheck(this, HUD);
+
+    this.game = game;
+    this.weapon = weapon;
+  }
+
+  _createClass(HUD, [{
+    key: 'init',
+    value: function init() {
+      this.initCrosshair();
+      this.initViewmodel();
+    }
+  }, {
+    key: 'initCrosshair',
+    value: function initCrosshair() {
+      var crosshairCtx = $('#xhair')[0].getContext('2d');
+      crosshairCtx.strokeStyle = '#39ff14';
+      crosshairCtx.lineWidth = 2;
+      crosshairCtx.beginPath();
+      crosshairCtx.moveTo(15, 0);
+      crosshairCtx.lineTo(15, 10);
+      crosshairCtx.stroke();
+      crosshairCtx.beginPath();
+      crosshairCtx.moveTo(15, 20);
+      crosshairCtx.lineTo(15, 30);
+      crosshairCtx.stroke();
+      crosshairCtx.beginPath();
+      crosshairCtx.moveTo(0, 15);
+      crosshairCtx.lineTo(10, 15);
+      crosshairCtx.stroke();
+      crosshairCtx.beginPath();
+      crosshairCtx.moveTo(20, 15);
+      crosshairCtx.lineTo(30, 15);
+      crosshairCtx.stroke();
+    }
+  }, {
+    key: 'initViewmodel',
+    value: function initViewmodel() {
+      var _this = this;
+
+      var frameIndex = 0;
+      var tickCount = 0;
+
+      var viewModelCanvas = $('#player-viewmodel')[0];
+      viewModelCanvas.width = window.innerWidth;
+      viewModelCanvas.height = window.innerHeight;
+
+      var viewModelCtx = viewModelCanvas.getContext('2d');
+
+      var viewModel = _weapons.weapons[this.weapon].viewmodel.shoot;
+
+      var resizeHud = function resizeHud() {
+        console.log('resizing hud');
+        viewModelCanvas.width = window.innerWidth;
+        viewModelCanvas.height = window.innerHeight;
+      };
+
+      window.addEventListener('resize', resizeHud, false);
+
+      var render = function render() {
+        viewModelCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        viewModelCtx.drawImage(viewModel.img, frameIndex * viewModel.width / viewModel.frames, 0, viewModel.width / viewModel.frames, viewModel.height, 0, 0, window.innerWidth, window.innerHeight);
+      };
+
+      var update = function update() {
+        if (_this.game.player.shoot && _this.game.shot && !_this.game.reloading) {
+          frameIndex += frameIndex < viewModel.frames - 1 ? 1 : -frameIndex;
+        } else if (!_this.game.shot) {
+          frameIndex = 0;
+        } else if (_this.game.reloading) {
+          frameIndex = 0;
+          // viewModel = weapons[this.weapon].viewmodel.reload;
+        }
+      };
+
+      var animate = function animate() {
+        render();
+        update();
+        requestAnimationFrame(animate);
+      };
+
+      animate();
+    }
+  }]);
+
+  return HUD;
+}();
+
+exports.default = HUD;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ })
 /******/ ]);
