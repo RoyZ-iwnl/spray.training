@@ -1,14 +1,13 @@
 import { weapons } from './weapons.js';
 
 export default class HUD {
-  constructor(game, weapon = 'ak47') {
-    this.game = game;
+  constructor(weapon = 'ak47') {
     this.weapon = weapon;
+    this.video = document.getElementById('video');
   }
 
   init() {
     this.initCrosshair();
-    this.initViewmodel();
   }
 
   initCrosshair() {
@@ -33,49 +32,17 @@ export default class HUD {
     crosshairCtx.stroke();
   }
 
-  initViewmodel() {
-    let frameIndex = 0;
-    let tickCount = 0;
-    
-    const viewModelCanvas = $('#player-viewmodel')[0];
-    viewModelCanvas.width = window.innerWidth;
-    viewModelCanvas.height = window.innerHeight;
+  updateHud(command) {
+    const playVideo = (src) => {
+      this.video.src = src;
+      this.video.currentTime = 0;
+      this.video.play();
+    };
 
-    const viewModelCtx = viewModelCanvas.getContext('2d');
-
-    let viewModel = weapons[this.weapon].viewmodel.shoot;
-
-
-    const resizeHud = () => {
-      console.log('resizing hud');
-      viewModelCanvas.width = window.innerWidth;
-      viewModelCanvas.height = window.innerHeight;
+    if (command === 'shoot') {
+      playVideo(`img/weapons/${this.weapon}/tap.webm`);
+    } else if (command === 'reload') {
+      playVideo(`img/weapons/${this.weapon}/reload.webm`);
     }
-    
-    window.addEventListener('resize', resizeHud, false);
-
-    const render = () => {
-      viewModelCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-      viewModelCtx.drawImage(viewModel.img, frameIndex * viewModel.width / viewModel.frames, 0, viewModel.width / viewModel.frames, viewModel.height, 0, 0, window.innerWidth, window.innerHeight);
-    };
-
-    const update = () => {
-      if (this.game.player.shoot && this.game.shot && !this.game.reloading) {
-        frameIndex += (frameIndex < viewModel.frames - 1) ? 1 : -frameIndex;
-      } else if (!this.game.shot) {
-        frameIndex = 0;
-      } else if (this.game.reloading) {
-        frameIndex = 0;
-        // viewModel = weapons[this.weapon].viewmodel.reload;
-      }
-    };
-
-    const animate = () => {
-      render();
-      update();
-      requestAnimationFrame(animate);
-    };
-
-    animate();
   }
 }

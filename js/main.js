@@ -30,11 +30,13 @@ sensitivityInput.addEventListener('change', () => {
 $('#main-button').on('click', () => {
   global.SENS = sensitivityInput.value;
   ui.fadeFromTo($('#main-page'), $('#game-page'), 0.5);
-  const game = new Game();
-  game.init();
 
-  const hud = new HUD(game);
+  const hud = new HUD();
   hud.init();
+
+  const game = new Game(hud);
+  game.init();
+  
 
   // const crosshairCtx = $('#xhair')[0].getContext('2d');
   // crosshairCtx.strokeStyle = '#39ff14';

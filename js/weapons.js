@@ -36,13 +36,13 @@ export const weapons = {
     },
     viewmodel: {
       shoot: {
-        img: createImage('img/weapons/ak47/tap/tap_sprite.png'),
+        //img: createImage('img/weapons/ak47/tap/tap_sprite.png'),
         width: 20480,
         height: 720,
         frames: 16,
       },
       reload: {
-        img: createImage('img/weapons/ak47/reload/reload_sprite.png'),
+        //img: createImage('img/weapons/ak47/reload/reload_sprite.png'),
         width: 101120,
         height: 720,
         frames: 79,

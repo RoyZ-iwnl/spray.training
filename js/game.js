@@ -11,7 +11,9 @@ import { weapons } from './weapons.js';
 import * as audio from './audio.js';
 
 export default class Game {
-  constructor() {
+  constructor(hud) {
+    this.hud = hud;
+
     this.cursorXY = {x: 0, y: 0};
     this.cmd = {
       forward: 0,
@@ -56,7 +58,7 @@ export default class Game {
   pointerlock() {
     const moveCallback = (e) => {
       // prevent any abnormal mouse jumping
-      if (Math.abs(e.movementX) <= 300 && Math.abs(e.movementY) <= 100) {
+      if (Math.abs(e.movementX) <= 400 && Math.abs(e.movementY) <= 100) {
         this.cursorXY.x += e.movementX || e.mozMovementX || e.webkitMovementX || 0;
         this.cursorXY.y += e.movementY || e.mozMovementY || e.webkitMovementY || 0;
       }
@@ -281,6 +283,7 @@ export default class Game {
         }, weapons[this.currentWeapon].reload);
 
         audio.playReload(this.currentWeapon);
+        this.hud.updateHud('reload');
       }
 
       setTimeout(() => {locked = false;}, weapons[this.currentWeapon].reload);
@@ -347,15 +350,18 @@ export default class Game {
 
       this.shot = true;
       if (this.ammo !== weapons[this.currentWeapon].magazine-1) {
+        this.hud.updateHud('shoot');
         setTimeout(() => this.shot = false, 60000/weapons[this.currentWeapon].rpm);
       } else {
         this.reloading = true;
+        audio.playReload(this.currentWeapon);
+        this.hud.updateHud('reload');
+
         setTimeout(() => {
           this.shot = false;
           this.reloading = false;
         }, weapons[this.currentWeapon].reload);
 
-        audio.playReload(this.currentWeapon);
 
         if (!settings.noSpread && !settings.infiniteAmmo) {
           const score = 100/(utils.accuracy(this.shots)/100+1);
@@ -392,6 +398,7 @@ export default class Game {
           
           if (this.currentWeapon !== newWeapon) {
             this.currentWeapon = newWeapon;
+            this.hud.weapon = newWeapon;
             audio.playDone();
             this.reset();
           }
