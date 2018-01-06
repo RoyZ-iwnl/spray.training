@@ -231,14 +231,32 @@ export default class Game {
       worldGroup.add(button.mesh);
     });
 
+    this.textureLoader.load(`img/icons/audio-on.svg`, (iconMap) => {
+      const iconMaterial = new THREE.MeshBasicMaterial({transparent: true, map: iconMap, side: THREE.DoubleSide});
+      const iconGeometry = new THREE.PlaneBufferGeometry(3, 3, 32);
+      const iconMesh = new THREE.Mesh(iconGeometry, iconMaterial);
+      iconMesh.position.set(-global.MAP_SIZE / 2, 12.5, 30);
+      iconMesh.rotation.set(0, Math.PI/2, 0);
+      worldGroup.add(iconMesh);
+    });
+
+    this.textureLoader.load(`img/icons/audio-off.svg`, (iconMap) => {
+      const iconMaterial = new THREE.MeshBasicMaterial({transparent: true, map: iconMap, side: THREE.DoubleSide});
+      const iconGeometry = new THREE.PlaneBufferGeometry(3, 3, 32);
+      const iconMesh = new THREE.Mesh(iconGeometry, iconMaterial);
+      iconMesh.position.set(-global.MAP_SIZE / 2, 12.5, 20);
+      iconMesh.rotation.set(0, Math.PI/2, 0);
+      worldGroup.add(iconMesh);
+    });
+
     this.logos = ['reddit', 'github', 'discord', 'steam', 'email'];
     this.logos.forEach((logo, i) => {
-      this.textureLoader.load(`img/icons/${logo}.svg`, (githubMap) => {
-        const githubMaterial = new THREE.MeshBasicMaterial({transparent: true, map: githubMap, side: THREE.DoubleSide});
-        const githubGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
-        const githubMesh = new THREE.Mesh(githubGeometry, githubMaterial);
-        githubMesh.position.set(10* i - (this.logos.length - 1) * 5, 13, -global.MAP_SIZE / 2);
-        worldGroup.add(githubMesh);
+      this.textureLoader.load(`img/icons/${logo}.svg`, (logoMap) => {
+        const logoMaterial = new THREE.MeshBasicMaterial({transparent: true, map: logoMap, side: THREE.DoubleSide});
+        const logoGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
+        const logoMesh = new THREE.Mesh(logoGeometry, logoMaterial);
+        logoMesh.position.set(10* i - (this.logos.length - 1) * 5, 13, -global.MAP_SIZE / 2);
+        worldGroup.add(logoMesh);
       });
     });
 
