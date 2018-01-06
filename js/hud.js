@@ -39,6 +39,14 @@ export default class HUD {
       this.video.play();
     };
 
+    if (command === 'toggle') {
+      if (this.video.style.display === 'block') {
+        this.video.style.display = 'none';
+      } else {
+        this.video.style.display = 'block';
+      }
+    }
+    
     if (command === 'shoot') {
       playVideo(`img/weapons/${this.weapon}/${this.weapon}-tap.webm`);
     } else if (command === 'reload') {

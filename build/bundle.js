@@ -25132,6 +25132,7 @@ var Game = function () {
     this.currentWeapon = 'ak47';
 
     this.buttons = [];
+    this.options = [];
     this.logos = [];
   }
 
@@ -25326,27 +25327,22 @@ var Game = function () {
         worldGroup.add(button.mesh);
       });
 
-      this.textureLoader.load('img/icons/audio-on.svg', function (iconMap) {
-        var iconMaterial = new THREE.MeshBasicMaterial({ transparent: true, map: iconMap, side: THREE.DoubleSide });
-        var iconGeometry = new THREE.PlaneBufferGeometry(3, 3, 32);
-        var iconMesh = new THREE.Mesh(iconGeometry, iconMaterial);
-        iconMesh.position.set(-_global.global.MAP_SIZE / 2, 12.5, 30);
-        iconMesh.rotation.set(0, Math.PI / 2, 0);
-        worldGroup.add(iconMesh);
-      });
-
-      this.textureLoader.load('img/icons/audio-off.svg', function (iconMap) {
-        var iconMaterial = new THREE.MeshBasicMaterial({ transparent: true, map: iconMap, side: THREE.DoubleSide });
-        var iconGeometry = new THREE.PlaneBufferGeometry(3, 3, 32);
-        var iconMesh = new THREE.Mesh(iconGeometry, iconMaterial);
-        iconMesh.position.set(-_global.global.MAP_SIZE / 2, 12.5, 20);
-        iconMesh.rotation.set(0, Math.PI / 2, 0);
-        worldGroup.add(iconMesh);
+      this.options = ['audio-on', 'audio-off', 'viewmodel'];
+      this.options.forEach(function (logo, i) {
+        _this2.textureLoader.load('img/icons/' + logo + '.svg', function (iconMap) {
+          var iconMaterial = new THREE.MeshBasicMaterial({ transparent: true, map: iconMap, side: THREE.DoubleSide });
+          var iconGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
+          var iconMesh = new THREE.Mesh(iconGeometry, iconMaterial);
+          iconMesh.position.set(-_global.global.MAP_SIZE / 2, 12.5, 35 - 5 * i);
+          iconMesh.rotation.set(0, Math.PI / 2, 0);
+          worldGroup.add(iconMesh);
+        });
       });
 
       this.logos = ['reddit', 'github', 'discord', 'steam', 'email'];
       this.logos.forEach(function (logo, i) {
         _this2.textureLoader.load('img/icons/' + logo + '.svg', function (logoMap) {
+          logoMap.minFilter = THREE.LinearFilter;
           var logoMaterial = new THREE.MeshBasicMaterial({ transparent: true, map: logoMap, side: THREE.DoubleSide });
           var logoGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
           var logoMesh = new THREE.Mesh(logoGeometry, logoMaterial);
@@ -25394,7 +25390,9 @@ var Game = function () {
             _this3.reloading = false;
           }, _weapons.weapons[_this3.currentWeapon].reload);
 
-          audio.playReload(_this3.currentWeapon);
+          if (_settings.settings.audio) {
+            audio.playReload(_this3.currentWeapon);
+          }
           _this3.hud.updateHud('reload');
         }
 
@@ -25465,9 +25463,11 @@ var Game = function () {
         var d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
         this.shots.push(d);
 
-        audio.playTap(this.currentWeapon);
-        if (d <= 1) {
-          audio.playHeadshot();
+        if (_settings.settings.audio) {
+          audio.playTap(this.currentWeapon);
+          if (d <= 1) {
+            audio.playHeadshot();
+          }
         }
 
         this.shot = true;
@@ -25478,7 +25478,9 @@ var Game = function () {
           }, 60000 / _weapons.weapons[this.currentWeapon].rpm);
         } else {
           this.reloading = true;
-          audio.playReload(this.currentWeapon);
+          if (_settings.settings.audio) {
+            audio.playReload(this.currentWeapon);
+          }
           this.hud.updateHud('reload');
 
           setTimeout(function () {
@@ -25493,7 +25495,7 @@ var Game = function () {
         this.count = (this.count + 1) % _weapons.weapons[this.currentWeapon].magazine;
         this.sprayCount = (this.sprayCount + 1) % _weapons.weapons[this.currentWeapon].magazine;
 
-        if (this.sprayCount === 0) {
+        if (this.sprayCount === 0 && _settings.settings.audio) {
           audio.playDone();
         }
 
@@ -25501,7 +25503,9 @@ var Game = function () {
           if (Math.abs(projection.x + _this4.MAP_SIZE / 2) <= 0.01 && Math.abs(projection.y - button.position.y) <= 1 && Math.abs(projection.z - button.position.z) <= 1) {
             button.action();
             button.mesh.material.color.setHex(_settings.settings[button.name] ? 0x00ff00 : 0xecf0f1);
-            audio.playSetting();
+            if (_settings.settings.audio) {
+              audio.playSetting();
+            }
           }
         });
 
@@ -25518,7 +25522,9 @@ var Game = function () {
               this.currentWeapon = newWeapon;
               this.hud.weapon = newWeapon;
               this.hud.updateHud('select');
-              audio.playDone();
+              if (_settings.settings.audio) {
+                audio.playDone();
+              }
               this.reset();
             }
           }
@@ -25550,6 +25556,34 @@ var Game = function () {
               $(document).trigger('mouseup');
               this.player.mesh.rotation.set(0, 0, 0);
               this.player.mesh.position.set(-_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE, _global.global.PLAYER_HEIGHT, 0);
+            }
+          }
+        }
+
+        if (Math.abs(projection.x + this.MAP_SIZE / 2) <= 0.01) {
+          if (Math.abs(projection.y - 12.5) <= 2) {
+            var _u2 = (35 - projection.z) / 5;
+            var _x2 = ~~(_u2 + 0.5);
+            if (Math.abs(_u2 - _x2) <= 0.4) {
+              switch (this.options[_x2]) {
+                case 'audio-on':
+                  if (!_settings.settings.audio) {
+                    audio.playDone();
+                  }
+                  _settings.settings.audio = true;
+                  break;
+                case 'audio-off':
+                  if (_settings.settings.audio) {
+                    audio.playDone();
+                  }
+                  _settings.settings.audio = false;
+                  break;
+                case 'viewmodel':
+                  audio.playDone();
+                  this.hud.updateHud('toggle');
+                  _settings.settings.viewmodel = !_settings.settings.viewmodel;
+                  break;
+              }
             }
           }
         }
@@ -25738,7 +25772,8 @@ var settings = exports.settings = {
   ghostHair: true,
   bulletTime: false,
 
-  audio: true
+  audio: true,
+  viewmodel: true
 };
 
 /***/ }),
@@ -25907,6 +25942,14 @@ var HUD = function () {
         _this.video.currentTime = 0;
         _this.video.play();
       };
+
+      if (command === 'toggle') {
+        if (this.video.style.display === 'block') {
+          this.video.style.display = 'none';
+        } else {
+          this.video.style.display = 'block';
+        }
+      }
 
       if (command === 'shoot') {
         playVideo('img/weapons/' + this.weapon + '/' + this.weapon + '-tap.webm');

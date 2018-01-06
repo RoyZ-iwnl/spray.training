@@ -5,4 +5,5 @@ export const settings = {
   bulletTime: false,
 
   audio: true,
+  viewmodel: true,
 };

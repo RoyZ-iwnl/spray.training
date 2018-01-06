@@ -40,6 +40,7 @@ export default class Game {
     this.currentWeapon = 'ak47';
 
     this.buttons = [];
+    this.options = [];
     this.logos = []
   }
 
@@ -231,27 +232,22 @@ export default class Game {
       worldGroup.add(button.mesh);
     });
 
-    this.textureLoader.load(`img/icons/audio-on.svg`, (iconMap) => {
-      const iconMaterial = new THREE.MeshBasicMaterial({transparent: true, map: iconMap, side: THREE.DoubleSide});
-      const iconGeometry = new THREE.PlaneBufferGeometry(3, 3, 32);
-      const iconMesh = new THREE.Mesh(iconGeometry, iconMaterial);
-      iconMesh.position.set(-global.MAP_SIZE / 2, 12.5, 30);
-      iconMesh.rotation.set(0, Math.PI/2, 0);
-      worldGroup.add(iconMesh);
-    });
-
-    this.textureLoader.load(`img/icons/audio-off.svg`, (iconMap) => {
-      const iconMaterial = new THREE.MeshBasicMaterial({transparent: true, map: iconMap, side: THREE.DoubleSide});
-      const iconGeometry = new THREE.PlaneBufferGeometry(3, 3, 32);
-      const iconMesh = new THREE.Mesh(iconGeometry, iconMaterial);
-      iconMesh.position.set(-global.MAP_SIZE / 2, 12.5, 20);
-      iconMesh.rotation.set(0, Math.PI/2, 0);
-      worldGroup.add(iconMesh);
+    this.options = ['audio-on', 'audio-off', 'viewmodel'];
+    this.options.forEach((logo, i) => {
+      this.textureLoader.load(`img/icons/${logo}.svg`, (iconMap) => {
+        const iconMaterial = new THREE.MeshBasicMaterial({transparent: true, map: iconMap, side: THREE.DoubleSide});
+        const iconGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
+        const iconMesh = new THREE.Mesh(iconGeometry, iconMaterial);
+        iconMesh.position.set(-global.MAP_SIZE / 2, 12.5, 35 - 5 * i);
+        iconMesh.rotation.set(0, Math.PI/2, 0);
+        worldGroup.add(iconMesh);
+      });
     });
 
     this.logos = ['reddit', 'github', 'discord', 'steam', 'email'];
     this.logos.forEach((logo, i) => {
       this.textureLoader.load(`img/icons/${logo}.svg`, (logoMap) => {
+        logoMap.minFilter = THREE.LinearFilter;
         const logoMaterial = new THREE.MeshBasicMaterial({transparent: true, map: logoMap, side: THREE.DoubleSide});
         const logoGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
         const logoMesh = new THREE.Mesh(logoGeometry, logoMaterial);
@@ -296,7 +292,9 @@ export default class Game {
           this.reloading = false;
         }, weapons[this.currentWeapon].reload);
 
-        audio.playReload(this.currentWeapon);
+        if (settings.audio) {
+          audio.playReload(this.currentWeapon);
+        }
         this.hud.updateHud('reload');
       }
 
@@ -357,9 +355,11 @@ export default class Game {
       const d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
       this.shots.push(d);
 
-      audio.playTap(this.currentWeapon);
-      if (d <= 1) {
-        audio.playHeadshot();
+      if (settings.audio) {
+        audio.playTap(this.currentWeapon);
+        if (d <= 1) {
+          audio.playHeadshot();
+        }
       }
 
       this.shot = true;
@@ -368,7 +368,9 @@ export default class Game {
         setTimeout(() => this.shot = false, 60000/weapons[this.currentWeapon].rpm);
       } else {
         this.reloading = true;
-        audio.playReload(this.currentWeapon);
+        if (settings.audio) {
+          audio.playReload(this.currentWeapon);
+        }
         this.hud.updateHud('reload');
 
         setTimeout(() => {
@@ -384,7 +386,7 @@ export default class Game {
       this.count = (this.count + 1) % weapons[this.currentWeapon].magazine;
       this.sprayCount = (this.sprayCount + 1) % weapons[this.currentWeapon].magazine;
 
-      if (this.sprayCount === 0) {
+      if (this.sprayCount === 0 && settings.audio) {
         audio.playDone();
       }
 
@@ -392,7 +394,9 @@ export default class Game {
         if (Math.abs(projection.x + this.MAP_SIZE / 2) <= 0.01 && Math.abs(projection.y - button.position.y) <= 1 && Math.abs(projection.z - button.position.z) <= 1) {
           button.action();
           button.mesh.material.color.setHex(settings[button.name] ? 0x00ff00 : 0xecf0f1);
-          audio.playSetting();
+          if (settings.audio) {
+            audio.playSetting();
+          }
         }
       });
 
@@ -409,7 +413,9 @@ export default class Game {
             this.currentWeapon = newWeapon;
             this.hud.weapon = newWeapon;
             this.hud.updateHud('select');
-            audio.playDone();
+            if (settings.audio) {
+              audio.playDone();
+            }
             this.reset();
           }
         }
@@ -441,6 +447,34 @@ export default class Game {
             $(document).trigger('mouseup');
             this.player.mesh.rotation.set(0, 0, 0);
             this.player.mesh.position.set(-global.MAP_SIZE / 2 + global.INITIAL_DISTANCE, global.PLAYER_HEIGHT, 0);
+          }
+        }
+      }
+
+      if (Math.abs(projection.x + this.MAP_SIZE / 2) <= 0.01) {
+        if (Math.abs(projection.y - 12.5) <= 2) {
+          const u = (35 - projection.z) / 5;
+          const x = ~~(u+0.5);
+          if (Math.abs(u - x) <= 0.4) {
+            switch (this.options[x]) {
+              case 'audio-on':
+                if (!settings.audio) {
+                  audio.playDone();
+                }
+                settings.audio = true;
+                break;
+              case 'audio-off':
+                if (settings.audio) {
+                  audio.playDone();
+                }
+                settings.audio = false;
+                break;
+              case 'viewmodel':
+                audio.playDone();
+                this.hud.updateHud('toggle');
+                settings.viewmodel = !settings.viewmodel;
+                break;
+            }
           }
         }
       }
