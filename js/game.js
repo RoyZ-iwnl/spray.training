@@ -32,14 +32,10 @@ export default class Game {
     this.count = 0;
     this.sprayCount = 0;
 
-    this.currentScore = 0;
-    this.highScore = 0;
-
     this.SETTINGS_MIN_Z = -47;
     this.SETTINGS_MAX_Z = -33;
 
     this.shots = [];
-    this.highscore = 0;
 
     this.currentWeapon = 'ak47';
 
@@ -139,8 +135,8 @@ export default class Game {
 
     this.scene.add(line);
 
-    const textGroup = new THREE.Group();
-    this.scene.add(textGroup);
+    const worldGroup = new THREE.Group();
+    this.scene.add(worldGroup);
 
     this.fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {
       ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'].forEach((message, i) => {
@@ -161,7 +157,7 @@ export default class Game {
         text.position.z = -40;
         text.rotation.y = Math.PI / 2;
         text.name = message;
-        textGroup.add(text);
+        worldGroup.add(text);
         // this.scene.add(text);
       });
 
@@ -184,7 +180,7 @@ export default class Game {
         text.position.z = this.MAP_SIZE / 2;
         text.rotation.y = Math.PI;
         text.name = message;
-        textGroup.add(text);
+        worldGroup.add(text);
         // this.scene.add(text);
       });
 
@@ -206,7 +202,7 @@ export default class Game {
         text.position.z = 0;
         text.rotation.y = -Math.PI / 2;
         text.name = message;
-        textGroup.add(text);
+        worldGroup.add(text);
         // this.scene.add(text);
       });
     });
@@ -232,7 +228,7 @@ export default class Game {
 
     this.buttons = [btnBulletTime, btnGhostHair, btnInfiniteAmmo, btnNoSpread, btnReset];
     this.buttons.forEach((button) => {
-      this.scene.add(button.mesh);
+      worldGroup.add(button.mesh);
     });
 
     this.logos = ['reddit', 'github', 'discord', 'steam', 'email'];
@@ -242,10 +238,10 @@ export default class Game {
         const githubGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
         const githubMesh = new THREE.Mesh(githubGeometry, githubMaterial);
         githubMesh.position.set(10* i - (this.logos.length - 1) * 5, 13, -global.MAP_SIZE / 2);
-        this.scene.add(githubMesh);
+        worldGroup.add(githubMesh);
       });
     });
-    
+
     this.player = new Player(this.camera);
     this.scene.add(this.player.mesh);
 
@@ -363,11 +359,6 @@ export default class Game {
         }, weapons[this.currentWeapon].reload);
 
 
-        if (!settings.noSpread && !settings.infiniteAmmo) {
-          const score = 100/(utils.accuracy(this.shots)/100+1);
-          this.highScore = Math.max(score, this.highScore);
-        }
-
         this.shots = [];
       }
 
@@ -395,7 +386,7 @@ export default class Game {
         const w = 4*x + y;
         if (Math.abs(u - x) <= 0.25 && Math.abs(v - y) <= 0.5 && w >= 0 && w <= 14 && x >= 0 && x <= 3 && y >= 0 && y <= 3) {
           const newWeapon = Object.keys(weapons)[w];
-          
+
           if (this.currentWeapon !== newWeapon) {
             this.currentWeapon = newWeapon;
             this.hud.weapon = newWeapon;
@@ -428,7 +419,7 @@ export default class Game {
                 window.open('', '_blank');
                 break;
             }
-            
+
             $(document).trigger('mouseup');
             this.player.mesh.rotation.set(0, 0, 0);
             this.player.mesh.position.set(-global.MAP_SIZE / 2 + global.INITIAL_DISTANCE, global.PLAYER_HEIGHT, 0);

@@ -34,26 +34,6 @@ export const weapons = {
       ],
       audioDelay: [750, 1500],
     },
-    viewmodel: {
-      shoot: {
-        //img: createImage('img/weapons/ak47/tap/tap_sprite.png'),
-        width: 20480,
-        height: 720,
-        frames: 16,
-      },
-      reload: {
-        //img: createImage('img/weapons/ak47/reload/reload_sprite.png'),
-        width: 101120,
-        height: 720,
-        frames: 79,
-      },
-      inspect: {
-        img: null,
-        width: 0,
-        height: 0,
-        frames: 0,
-      }
-    },
     spray: [
       new THREE.Vector3(0, 0, 0),
       new THREE.Vector3(0, 14, 7),
@@ -80,7 +60,7 @@ export const weapons = {
       new THREE.Vector3(0, 419, -61),
       new THREE.Vector3(0, 426, -43),
       new THREE.Vector3(0, 420, -81),
-      new THREE.Vector3(0, 430, -94), 
+      new THREE.Vector3(0, 430, -94),
       new THREE.Vector3(0, 429, -52),
       new THREE.Vector3(0, 423, 13),
       new THREE.Vector3(0, 381, 104),
@@ -480,7 +460,7 @@ export const weapons = {
       new THREE.Vector3(0, 252, -14),
       new THREE.Vector3(0, 293, -41),
       new THREE.Vector3(0, 324, -55),
-      new THREE.Vector3(0, 349, -81), 
+      new THREE.Vector3(0, 349, -81),
       new THREE.Vector3(0, 372, -49),
       new THREE.Vector3(0, 384, -39),
       new THREE.Vector3(0, 383, -66),

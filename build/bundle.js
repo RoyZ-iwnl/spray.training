@@ -13055,26 +13055,6 @@ var weapons = exports.weapons = {
       })],
       audioDelay: [750, 1500]
     },
-    viewmodel: {
-      shoot: {
-        //img: createImage('img/weapons/ak47/tap/tap_sprite.png'),
-        width: 20480,
-        height: 720,
-        frames: 16
-      },
-      reload: {
-        //img: createImage('img/weapons/ak47/reload/reload_sprite.png'),
-        width: 101120,
-        height: 720,
-        frames: 79
-      },
-      inspect: {
-        img: null,
-        width: 0,
-        height: 0,
-        frames: 0
-      }
-    },
     spray: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 14, 7), new THREE.Vector3(0, 51, 0), new THREE.Vector3(0, 109, 5), new THREE.Vector3(0, 170, 7), new THREE.Vector3(0, 235, -18), new THREE.Vector3(0, 290, -34), new THREE.Vector3(0, 329, -60), new THREE.Vector3(0, 358, -27), new THREE.Vector3(0, 350, 57), new THREE.Vector3(0, 355, 101), new THREE.Vector3(0, 377, 75), new THREE.Vector3(0, 389, 106), new THREE.Vector3(0, 372, 158), new THREE.Vector3(0, 382, 164), new THREE.Vector3(0, 385, 84), new THREE.Vector3(0, 399, 49), new THREE.Vector3(0, 420, 18), new THREE.Vector3(0, 417, -36), new THREE.Vector3(0, 399, -102), new THREE.Vector3(0, 394, -61), new THREE.Vector3(0, 400, -73), new THREE.Vector3(0, 419, -61), new THREE.Vector3(0, 426, -43), new THREE.Vector3(0, 420, -81), new THREE.Vector3(0, 430, -94), new THREE.Vector3(0, 429, -52), new THREE.Vector3(0, 423, 13), new THREE.Vector3(0, 381, 104), new THREE.Vector3(0, 381, 132)],
     magazine: 30,
     rpm: 600,
@@ -25130,14 +25110,10 @@ var Game = function () {
     this.count = 0;
     this.sprayCount = 0;
 
-    this.currentScore = 0;
-    this.highScore = 0;
-
     this.SETTINGS_MIN_Z = -47;
     this.SETTINGS_MAX_Z = -33;
 
     this.shots = [];
-    this.highscore = 0;
 
     this.currentWeapon = 'ak47';
 
@@ -25240,8 +25216,8 @@ var Game = function () {
 
       this.scene.add(line);
 
-      var textGroup = new THREE.Group();
-      this.scene.add(textGroup);
+      var worldGroup = new THREE.Group();
+      this.scene.add(worldGroup);
 
       this.fontLoader.load('fonts/helvetiker_regular.typeface.json', function (font) {
         ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'].forEach(function (message, i) {
@@ -25262,7 +25238,7 @@ var Game = function () {
           text.position.z = -40;
           text.rotation.y = Math.PI / 2;
           text.name = message;
-          textGroup.add(text);
+          worldGroup.add(text);
           // this.scene.add(text);
         });
 
@@ -25285,7 +25261,7 @@ var Game = function () {
           text.position.z = _this2.MAP_SIZE / 2;
           text.rotation.y = Math.PI;
           text.name = message;
-          textGroup.add(text);
+          worldGroup.add(text);
           // this.scene.add(text);
         });
 
@@ -25307,7 +25283,7 @@ var Game = function () {
           text.position.z = 0;
           text.rotation.y = -Math.PI / 2;
           text.name = message;
-          textGroup.add(text);
+          worldGroup.add(text);
           // this.scene.add(text);
         });
       });
@@ -25333,7 +25309,7 @@ var Game = function () {
 
       this.buttons = [btnBulletTime, btnGhostHair, btnInfiniteAmmo, btnNoSpread, btnReset];
       this.buttons.forEach(function (button) {
-        _this2.scene.add(button.mesh);
+        worldGroup.add(button.mesh);
       });
 
       this.logos = ['reddit', 'github', 'discord', 'steam', 'email'];
@@ -25343,7 +25319,7 @@ var Game = function () {
           var githubGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
           var githubMesh = new THREE.Mesh(githubGeometry, githubMaterial);
           githubMesh.position.set(10 * i - (_this2.logos.length - 1) * 5, 13, -_global.global.MAP_SIZE / 2);
-          _this2.scene.add(githubMesh);
+          worldGroup.add(githubMesh);
         });
       });
 
@@ -25477,11 +25453,6 @@ var Game = function () {
             _this4.shot = false;
             _this4.reloading = false;
           }, _weapons.weapons[this.currentWeapon].reload);
-
-          if (!_settings.settings.noSpread && !_settings.settings.infiniteAmmo) {
-            var score = 100 / (utils.accuracy(this.shots) / 100 + 1);
-            this.highScore = Math.max(score, this.highScore);
-          }
 
           this.shots = [];
         }
