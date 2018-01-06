@@ -40,9 +40,12 @@ export default class HUD {
     };
 
     if (command === 'shoot') {
-      playVideo(`img/weapons/${this.weapon}/tap.webm`);
+      playVideo(`img/weapons/${this.weapon}/${this.weapon}-tap.webm`);
     } else if (command === 'reload') {
-      playVideo(`img/weapons/${this.weapon}/reload.webm`);
+      playVideo(`img/weapons/${this.weapon}/${this.weapon}-reload.webm`);
+    } else if (command === 'select') {
+      this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
+      this.video.currentTime = 0;
     }
   }
 }

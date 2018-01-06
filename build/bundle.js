@@ -3168,7 +3168,7 @@ var global = exports.global = {
   PLAYER_HEIGHT: 10,
   INITIAL_DISTANCE: 75,
   SPRAY_HEIGHT: 10,
-  SPRAY_SCALE: 0.015,
+  SPRAY_SCALE: 0.0225,
   SENS: 3.5
 };
 
@@ -25142,7 +25142,7 @@ var Game = function () {
     this.currentWeapon = 'ak47';
 
     this.buttons = [];
-    this.links = [];
+    this.logos = [];
   }
 
   _createClass(Game, [{
@@ -25216,6 +25216,7 @@ var Game = function () {
       THREEx.WindowResize(this.renderer, this.camera);
       this.keyboard = new THREEx.KeyboardState();
       this.fontLoader = new THREE.FontLoader();
+      this.textureLoader = new THREE.TextureLoader();
     }
   }, {
     key: 'drawWorld',
@@ -25330,22 +25331,21 @@ var Game = function () {
         _this2.player.mesh.position.set(-_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE, _global.global.PLAYER_HEIGHT, 0);
       });
 
-      // TODO: link buttons
-
-      // const btnGithub = new Button({x: -30, y: 0, z: -global.MAP_SIZE / 2}, 'github', 0xffffff, () => {
-      //   console.log('github');
-      // }, new THREE.Mesh(new THREE.CircleGeometry(5, 32), new THREE.MeshBasicMaterial({color: 0xecf0f1, side: THREE.DoubleSide})));
-
-
       this.buttons = [btnBulletTime, btnGhostHair, btnInfiniteAmmo, btnNoSpread, btnReset];
       this.buttons.forEach(function (button) {
         _this2.scene.add(button.mesh);
       });
 
-      // this.links = [btnGithub];
-      // this.links.forEach((link) => {
-      //   this.scene.add(link.mesh);
-      // })
+      this.logos = ['reddit', 'github', 'discord', 'steam', 'email'];
+      this.logos.forEach(function (logo, i) {
+        _this2.textureLoader.load('img/icons/' + logo + '.svg', function (githubMap) {
+          var githubMaterial = new THREE.MeshBasicMaterial({ transparent: true, map: githubMap, side: THREE.DoubleSide });
+          var githubGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
+          var githubMesh = new THREE.Mesh(githubGeometry, githubMaterial);
+          githubMesh.position.set(10 * i - (_this2.logos.length - 1) * 5, 13, -_global.global.MAP_SIZE / 2);
+          _this2.scene.add(githubMesh);
+        });
+      });
 
       this.player = new _player2.default(this.camera);
       this.scene.add(this.player.mesh);
@@ -25514,8 +25514,39 @@ var Game = function () {
             if (this.currentWeapon !== newWeapon) {
               this.currentWeapon = newWeapon;
               this.hud.weapon = newWeapon;
+              this.hud.updateHud('select');
               audio.playDone();
               this.reset();
+            }
+          }
+        }
+
+        if (Math.abs(projection.z + this.MAP_SIZE / 2) <= 0.01) {
+          if (Math.abs(projection.y - 13) <= 2) {
+            var _u = (projection.x + 20) / 10;
+            var _x = ~~(_u + 0.5);
+            if (Math.abs(_u - _x) <= 0.2) {
+              switch (this.logos[_x]) {
+                case 'reddit':
+                  window.open('https://reddit.com/r/globaloffensive', '_blank');
+                  break;
+                case 'github':
+                  window.open('https://github.com/15/recoil-training', '_blank');
+                  break;
+                case 'discord':
+                  window.open('', '_blank');
+                  break;
+                case 'steam':
+                  window.open('', '_blank');
+                  break;
+                case 'email':
+                  window.open('', '_blank');
+                  break;
+              }
+
+              $(document).trigger('mouseup');
+              this.player.mesh.rotation.set(0, 0, 0);
+              this.player.mesh.position.set(-_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE, _global.global.PLAYER_HEIGHT, 0);
             }
           }
         }
@@ -25875,73 +25906,14 @@ var HUD = function () {
       };
 
       if (command === 'shoot') {
-        playVideo('img/weapons/' + this.weapon + '/tap.webm');
+        playVideo('img/weapons/' + this.weapon + '/' + this.weapon + '-tap.webm');
       } else if (command === 'reload') {
-        playVideo('img/weapons/' + this.weapon + '/reload.webm');
+        playVideo('img/weapons/' + this.weapon + '/' + this.weapon + '-reload.webm');
+      } else if (command === 'select') {
+        this.video.src = 'img/weapons/' + this.weapon + '/' + this.weapon + '-tap.webm';
+        this.video.currentTime = 0;
       }
     }
-
-    // initViewmodel() {
-    // let frameIndex = 0;
-    // let tickCount = 0;
-
-    // const viewModelCanvas = $('#player-viewmodel')[0];
-    // viewModelCanvas.width = window.innerWidth;
-    // viewModelCanvas.height = window.innerHeight;
-
-    // const viewModelCtx = viewModelCanvas.getContext('2d');
-
-    // let viewModel = weapons[this.weapon].viewmodel.shoot;
-
-
-    // const resizeHud = () => {
-    //   console.log('resizing hud');
-    //   viewModelCanvas.width = window.innerWidth;
-    //   viewModelCanvas.height = window.innerHeight;
-    // }
-
-    // window.addEventListener('resize', resizeHud, false);
-
-    // const render = () => {
-    //   viewModelCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    //   viewModelCtx.drawImage(viewModel.img, frameIndex * viewModel.width / viewModel.frames, 0, viewModel.width / viewModel.frames, viewModel.height, 0, 0, window.innerWidth, window.innerHeight);
-    // };
-
-    // const update = () => {
-    //   if (this.game.player.shoot && this.game.shot && !this.game.reloading) {
-    //     frameIndex += (frameIndex < viewModel.frames - 1) ? 1 : -frameIndex;
-    //   } else if (!this.game.shot) {
-    //     frameIndex = 0;
-    //   } else if (this.game.reloading) {
-    //     frameIndex = 0;
-    //     // viewModel = weapons[this.weapon].viewmodel.reload;
-    //   }
-    // };
-
-    // const animate = () => {
-    //   render();
-    //   update();
-    //   requestAnimationFrame(animate);
-    // };
-
-    // animate();
-
-    //   const video = document.getElementById('video');
-
-    //   const update = () => {
-    //     if (this.game.player.shoot && this.game.shot && !this.game.reloading) {
-    //       video.play();
-    //     }
-    //   };
-
-    //   const animate = () => {
-    //     update();
-    //     requestAnimationFrame(animate);
-    //   }
-
-    //   animate();
-    // }
-
   }]);
 
   return HUD;

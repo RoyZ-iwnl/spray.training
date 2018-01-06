@@ -44,7 +44,7 @@ export default class Game {
     this.currentWeapon = 'ak47';
 
     this.buttons = [];
-    this.links = [];
+    this.logos = []
   }
 
   init() {
@@ -112,6 +112,7 @@ export default class Game {
     THREEx.WindowResize(this.renderer, this.camera);
     this.keyboard = new THREEx.KeyboardState();
     this.fontLoader = new THREE.FontLoader();
+    this.textureLoader = new THREE.TextureLoader();
   }
 
   drawWorld() {
@@ -229,23 +230,22 @@ export default class Game {
       this.player.mesh.position.set(-global.MAP_SIZE / 2 + global.INITIAL_DISTANCE, global.PLAYER_HEIGHT, 0);
     });
 
-    // TODO: link buttons
-
-    // const btnGithub = new Button({x: -30, y: 0, z: -global.MAP_SIZE / 2}, 'github', 0xffffff, () => {
-    //   console.log('github');
-    // }, new THREE.Mesh(new THREE.CircleGeometry(5, 32), new THREE.MeshBasicMaterial({color: 0xecf0f1, side: THREE.DoubleSide})));
-
-
     this.buttons = [btnBulletTime, btnGhostHair, btnInfiniteAmmo, btnNoSpread, btnReset];
     this.buttons.forEach((button) => {
       this.scene.add(button.mesh);
     });
 
-    // this.links = [btnGithub];
-    // this.links.forEach((link) => {
-    //   this.scene.add(link.mesh);
-    // })
-
+    this.logos = ['reddit', 'github', 'discord', 'steam', 'email'];
+    this.logos.forEach((logo, i) => {
+      this.textureLoader.load(`img/icons/${logo}.svg`, (githubMap) => {
+        const githubMaterial = new THREE.MeshBasicMaterial({transparent: true, map: githubMap, side: THREE.DoubleSide});
+        const githubGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
+        const githubMesh = new THREE.Mesh(githubGeometry, githubMaterial);
+        githubMesh.position.set(10* i - (this.logos.length - 1) * 5, 13, -global.MAP_SIZE / 2);
+        this.scene.add(githubMesh);
+      });
+    });
+    
     this.player = new Player(this.camera);
     this.scene.add(this.player.mesh);
 
@@ -399,8 +399,39 @@ export default class Game {
           if (this.currentWeapon !== newWeapon) {
             this.currentWeapon = newWeapon;
             this.hud.weapon = newWeapon;
+            this.hud.updateHud('select');
             audio.playDone();
             this.reset();
+          }
+        }
+      }
+
+      if (Math.abs(projection.z + this.MAP_SIZE / 2) <= 0.01) {
+        if (Math.abs(projection.y - 13) <= 2) {
+          const u = (projection.x + 20)/10;
+          const x = ~~(u+0.5);
+          if (Math.abs(u - x) <= 0.2) {
+            switch (this.logos[x]) {
+              case 'reddit':
+                window.open('https://reddit.com/r/globaloffensive', '_blank');
+                break;
+              case 'github':
+                window.open('https://github.com/15/recoil-training', '_blank');
+                break;
+              case 'discord':
+                window.open('', '_blank');
+                break;
+              case 'steam':
+                window.open('', '_blank');
+                break;
+              case 'email':
+                window.open('', '_blank');
+                break;
+            }
+            
+            $(document).trigger('mouseup');
+            this.player.mesh.rotation.set(0, 0, 0);
+            this.player.mesh.position.set(-global.MAP_SIZE / 2 + global.INITIAL_DISTANCE, global.PLAYER_HEIGHT, 0);
           }
         }
       }
