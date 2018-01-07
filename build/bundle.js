@@ -25132,6 +25132,7 @@ var Game = function () {
     this.currentWeapon = 'ak47';
 
     this.buttons = [];
+    this.crosshairs = ['default', 'cross', 'dot'];
     this.options = ['audio-on', 'audio-off', 'viewmodel'];
     this.logos = ['reddit', 'github', 'bitcoin', 'paypal', 'email'];
   }
@@ -25324,12 +25325,23 @@ var Game = function () {
         worldGroup.add(button.mesh);
       });
 
+      this.crosshairs.forEach(function (xhair, i) {
+        _this2.textureLoader.load('img/icons/xhair' + xhair + '.png', function (xhairMap) {
+          var xhairMaterial = new THREE.MeshBasicMaterial({ transparent: true, map: xhairMap, side: THREE.DoubleSide });
+          var xhairGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
+          var xhairMesh = new THREE.Mesh(xhairGeometry, xhairMaterial);
+          xhairMesh.position.set(-_global.global.MAP_SIZE / 2, 15, 35 - 5 * i);
+          xhairMesh.rotation.set(0, Math.PI / 2, 0);
+          worldGroup.add(xhairMesh);
+        });
+      });
+
       this.options.forEach(function (logo, i) {
         _this2.textureLoader.load('img/icons/' + logo + '.svg', function (iconMap) {
           var iconMaterial = new THREE.MeshBasicMaterial({ transparent: true, map: iconMap, side: THREE.DoubleSide });
           var iconGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
           var iconMesh = new THREE.Mesh(iconGeometry, iconMaterial);
-          iconMesh.position.set(-_global.global.MAP_SIZE / 2, 12.5, 35 - 5 * i);
+          iconMesh.position.set(-_global.global.MAP_SIZE / 2, 10, 35 - 5 * i);
           iconMesh.rotation.set(0, Math.PI / 2, 0);
           worldGroup.add(iconMesh);
         });
@@ -25556,7 +25568,7 @@ var Game = function () {
         }
 
         if (Math.abs(projection.x + this.MAP_SIZE / 2) <= 0.01) {
-          if (Math.abs(projection.y - 12.5) <= 2) {
+          if (Math.abs(projection.y - 10) <= 2) {
             var _u2 = (35 - projection.z) / 5;
             var _x2 = ~~(_u2 + 0.5);
             if (Math.abs(_u2 - _x2) <= 0.4) {
@@ -25579,6 +25591,19 @@ var Game = function () {
                   _settings.settings.viewmodel = !_settings.settings.viewmodel;
                   break;
               }
+            }
+          }
+        }
+
+        if (Math.abs(projection.x + this.MAP_SIZE / 2) <= 0.01) {
+          if (Math.abs(projection.y - 15) <= 2) {
+            var _u3 = (35 - projection.z) / 5;
+            var _x3 = ~~(_u3 + 0.5);
+            if (Math.abs(_u3 - _x3) <= 0.4) {
+              if (_settings.settings.audio) {
+                audio.playDone();
+              }
+              this.hud.updateCrosshair(this.crosshairs[_x3]);
             }
           }
         }
@@ -25914,9 +25939,11 @@ var HUD = function () {
 
       switch (type) {
         case 'dot':
+          crosshairCtx.clearRect(0, 0, 30, 30);
           crosshairCtx.fillRect(13, 13, 4, 4);
           break;
         case 'cross':
+          crosshairCtx.clearRect(0, 0, 30, 30);
           crosshairCtx.beginPath();
           crosshairCtx.moveTo(15, 5);
           crosshairCtx.lineTo(15, 25);
@@ -25927,6 +25954,7 @@ var HUD = function () {
           crosshairCtx.stroke();
           break;
         default:
+          crosshairCtx.clearRect(0, 0, 30, 30);
           crosshairCtx.beginPath();
           crosshairCtx.moveTo(15, 0);
           crosshairCtx.lineTo(15, 10);

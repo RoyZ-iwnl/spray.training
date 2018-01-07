@@ -40,6 +40,7 @@ export default class Game {
     this.currentWeapon = 'ak47';
 
     this.buttons = [];
+    this.crosshairs = ['default', 'cross', 'dot'];
     this.options = ['audio-on', 'audio-off', 'viewmodel'];
     this.logos = ['reddit', 'github', 'bitcoin', 'paypal', 'email'];
   }
@@ -229,12 +230,23 @@ export default class Game {
       worldGroup.add(button.mesh);
     });
 
+    this.crosshairs.forEach((xhair, i) => {
+      this.textureLoader.load(`img/icons/xhair${xhair}.png`, (xhairMap) => {
+        const xhairMaterial = new THREE.MeshBasicMaterial({transparent: true, map: xhairMap, side: THREE.DoubleSide});
+        const xhairGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
+        const xhairMesh = new THREE.Mesh(xhairGeometry, xhairMaterial);
+        xhairMesh.position.set(-global.MAP_SIZE / 2, 15, 35 - 5*i);
+        xhairMesh.rotation.set(0, Math.PI/2, 0);
+        worldGroup.add(xhairMesh);
+      });
+    });
+
     this.options.forEach((logo, i) => {
       this.textureLoader.load(`img/icons/${logo}.svg`, (iconMap) => {
         const iconMaterial = new THREE.MeshBasicMaterial({transparent: true, map: iconMap, side: THREE.DoubleSide});
         const iconGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
         const iconMesh = new THREE.Mesh(iconGeometry, iconMaterial);
-        iconMesh.position.set(-global.MAP_SIZE / 2, 12.5, 35 - 5 * i);
+        iconMesh.position.set(-global.MAP_SIZE / 2, 10, 35 - 5 * i);
         iconMesh.rotation.set(0, Math.PI/2, 0);
         worldGroup.add(iconMesh);
       });
@@ -447,7 +459,7 @@ export default class Game {
       }
 
       if (Math.abs(projection.x + this.MAP_SIZE / 2) <= 0.01) {
-        if (Math.abs(projection.y - 12.5) <= 2) {
+        if (Math.abs(projection.y - 10) <= 2) {
           const u = (35 - projection.z) / 5;
           const x = ~~(u+0.5);
           if (Math.abs(u - x) <= 0.4) {
@@ -473,6 +485,20 @@ export default class Game {
           }
         }
       }
+
+      if (Math.abs(projection.x + this.MAP_SIZE / 2) <= 0.01) {
+        if (Math.abs(projection.y - 15) <= 2) {
+          const u = (35 - projection.z) / 5;
+          const x = ~~(u+0.5);
+          if (Math.abs(u - x) <= 0.4) {
+            if (settings.audio) {
+              audio.playDone();
+            }
+            this.hud.updateCrosshair(this.crosshairs[x]);
+          }
+        }
+      }
+
 
       const target = this.scene.getObjectByName('target');
       const targetPosition = weapons[this.currentWeapon].spray[this.sprayCount].clone().multiply(new THREE.Vector3(0, -1, 1).multiplyScalar(global.SPRAY_SCALE)).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0))

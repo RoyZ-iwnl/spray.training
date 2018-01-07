@@ -19,9 +19,11 @@ export default class HUD {
 
     switch (type) {
       case 'dot':
+        crosshairCtx.clearRect(0, 0, 30, 30);
         crosshairCtx.fillRect(13, 13, 4, 4);
         break;
       case 'cross':
+        crosshairCtx.clearRect(0, 0, 30, 30);
         crosshairCtx.beginPath();
         crosshairCtx.moveTo(15, 5);
         crosshairCtx.lineTo(15, 25);
@@ -32,6 +34,7 @@ export default class HUD {
         crosshairCtx.stroke();
         break;
       default:
+        crosshairCtx.clearRect(0, 0, 30, 30);
         crosshairCtx.beginPath();
         crosshairCtx.moveTo(15, 0);
         crosshairCtx.lineTo(15, 10);
