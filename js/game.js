@@ -40,8 +40,8 @@ export default class Game {
     this.currentWeapon = 'ak47';
 
     this.buttons = [];
-    this.options = [];
-    this.logos = []
+    this.options = ['audio-on', 'audio-off', 'viewmodel'];
+    this.logos = ['reddit', 'github', 'bitcoin', 'paypal', 'email'];
   }
 
   init() {
@@ -55,7 +55,7 @@ export default class Game {
   pointerlock() {
     const moveCallback = (e) => {
       // prevent any abnormal mouse jumping
-      if (Math.abs(e.movementX) <= 400 && Math.abs(e.movementY) <= 100) {
+      if (Math.abs(e.movementX) <= 200 && Math.abs(e.movementY) <= 100) {
         this.cursorXY.x += e.movementX || e.mozMovementX || e.webkitMovementX || 0;
         this.cursorXY.y += e.movementY || e.mozMovementY || e.webkitMovementY || 0;
       }
@@ -159,7 +159,6 @@ export default class Game {
         text.rotation.y = Math.PI / 2;
         text.name = message;
         worldGroup.add(text);
-        // this.scene.add(text);
       });
 
       Object.keys(weapons).forEach((k, i) => {
@@ -182,7 +181,6 @@ export default class Game {
         text.rotation.y = Math.PI;
         text.name = message;
         worldGroup.add(text);
-        // this.scene.add(text);
       });
 
       ['s p r a y . t r a i n i n g'].forEach((message, i) => {
@@ -204,7 +202,6 @@ export default class Game {
         text.rotation.y = -Math.PI / 2;
         text.name = message;
         worldGroup.add(text);
-        // this.scene.add(text);
       });
     });
 
@@ -232,7 +229,6 @@ export default class Game {
       worldGroup.add(button.mesh);
     });
 
-    this.options = ['audio-on', 'audio-off', 'viewmodel'];
     this.options.forEach((logo, i) => {
       this.textureLoader.load(`img/icons/${logo}.svg`, (iconMap) => {
         const iconMaterial = new THREE.MeshBasicMaterial({transparent: true, map: iconMap, side: THREE.DoubleSide});
@@ -244,7 +240,6 @@ export default class Game {
       });
     });
 
-    this.logos = ['reddit', 'github', 'discord', 'steam', 'email'];
     this.logos.forEach((logo, i) => {
       this.textureLoader.load(`img/icons/${logo}.svg`, (logoMap) => {
         logoMap.minFilter = THREE.LinearFilter;
@@ -425,7 +420,7 @@ export default class Game {
         if (Math.abs(projection.y - 13) <= 2) {
           const u = (projection.x + 20)/10;
           const x = ~~(u+0.5);
-          if (Math.abs(u - x) <= 0.2) {
+          if (Math.abs(u - x) <= 0.2 && x >= 0 && x < 5) {
             switch (this.logos[x]) {
               case 'reddit':
                 window.open('https://reddit.com/r/globaloffensive', '_blank');
@@ -433,10 +428,10 @@ export default class Game {
               case 'github':
                 window.open('https://github.com/15/recoil-training', '_blank');
                 break;
-              case 'discord':
+              case 'bitcoin':
                 window.open('', '_blank');
                 break;
-              case 'steam':
+              case 'paypal':
                 window.open('', '_blank');
                 break;
               case 'email':

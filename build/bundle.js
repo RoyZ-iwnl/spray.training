@@ -25132,8 +25132,8 @@ var Game = function () {
     this.currentWeapon = 'ak47';
 
     this.buttons = [];
-    this.options = [];
-    this.logos = [];
+    this.options = ['audio-on', 'audio-off', 'viewmodel'];
+    this.logos = ['reddit', 'github', 'bitcoin', 'paypal', 'email'];
   }
 
   _createClass(Game, [{
@@ -25152,7 +25152,7 @@ var Game = function () {
 
       var moveCallback = function moveCallback(e) {
         // prevent any abnormal mouse jumping
-        if (Math.abs(e.movementX) <= 400 && Math.abs(e.movementY) <= 100) {
+        if (Math.abs(e.movementX) <= 200 && Math.abs(e.movementY) <= 100) {
           _this.cursorXY.x += e.movementX || e.mozMovementX || e.webkitMovementX || 0;
           _this.cursorXY.y += e.movementY || e.mozMovementY || e.webkitMovementY || 0;
         }
@@ -25254,7 +25254,6 @@ var Game = function () {
           text.rotation.y = Math.PI / 2;
           text.name = message;
           worldGroup.add(text);
-          // this.scene.add(text);
         });
 
         Object.keys(_weapons.weapons).forEach(function (k, i) {
@@ -25277,7 +25276,6 @@ var Game = function () {
           text.rotation.y = Math.PI;
           text.name = message;
           worldGroup.add(text);
-          // this.scene.add(text);
         });
 
         ['s p r a y . t r a i n i n g'].forEach(function (message, i) {
@@ -25299,7 +25297,6 @@ var Game = function () {
           text.rotation.y = -Math.PI / 2;
           text.name = message;
           worldGroup.add(text);
-          // this.scene.add(text);
         });
       });
 
@@ -25327,7 +25324,6 @@ var Game = function () {
         worldGroup.add(button.mesh);
       });
 
-      this.options = ['audio-on', 'audio-off', 'viewmodel'];
       this.options.forEach(function (logo, i) {
         _this2.textureLoader.load('img/icons/' + logo + '.svg', function (iconMap) {
           var iconMaterial = new THREE.MeshBasicMaterial({ transparent: true, map: iconMap, side: THREE.DoubleSide });
@@ -25339,7 +25335,6 @@ var Game = function () {
         });
       });
 
-      this.logos = ['reddit', 'github', 'discord', 'steam', 'email'];
       this.logos.forEach(function (logo, i) {
         _this2.textureLoader.load('img/icons/' + logo + '.svg', function (logoMap) {
           logoMap.minFilter = THREE.LinearFilter;
@@ -25534,7 +25529,7 @@ var Game = function () {
           if (Math.abs(projection.y - 13) <= 2) {
             var _u = (projection.x + 20) / 10;
             var _x = ~~(_u + 0.5);
-            if (Math.abs(_u - _x) <= 0.2) {
+            if (Math.abs(_u - _x) <= 0.2 && _x >= 0 && _x < 5) {
               switch (this.logos[_x]) {
                 case 'reddit':
                   window.open('https://reddit.com/r/globaloffensive', '_blank');
@@ -25542,10 +25537,10 @@ var Game = function () {
                 case 'github':
                   window.open('https://github.com/15/recoil-training', '_blank');
                   break;
-                case 'discord':
+                case 'bitcoin':
                   window.open('', '_blank');
                   break;
-                case 'steam':
+                case 'paypal':
                   window.open('', '_blank');
                   break;
                 case 'email':
@@ -25907,30 +25902,49 @@ var HUD = function () {
   _createClass(HUD, [{
     key: 'init',
     value: function init() {
-      this.initCrosshair();
+      this.updateCrosshair('cross');
     }
   }, {
-    key: 'initCrosshair',
-    value: function initCrosshair() {
+    key: 'updateCrosshair',
+    value: function updateCrosshair(type) {
       var crosshairCtx = $('#xhair')[0].getContext('2d');
       crosshairCtx.strokeStyle = '#39ff14';
+      crosshairCtx.fillStyle = '#39ff14';
       crosshairCtx.lineWidth = 2;
-      crosshairCtx.beginPath();
-      crosshairCtx.moveTo(15, 0);
-      crosshairCtx.lineTo(15, 10);
-      crosshairCtx.stroke();
-      crosshairCtx.beginPath();
-      crosshairCtx.moveTo(15, 20);
-      crosshairCtx.lineTo(15, 30);
-      crosshairCtx.stroke();
-      crosshairCtx.beginPath();
-      crosshairCtx.moveTo(0, 15);
-      crosshairCtx.lineTo(10, 15);
-      crosshairCtx.stroke();
-      crosshairCtx.beginPath();
-      crosshairCtx.moveTo(20, 15);
-      crosshairCtx.lineTo(30, 15);
-      crosshairCtx.stroke();
+
+      switch (type) {
+        case 'dot':
+          crosshairCtx.fillRect(13, 13, 4, 4);
+          break;
+        case 'cross':
+          crosshairCtx.beginPath();
+          crosshairCtx.moveTo(15, 5);
+          crosshairCtx.lineTo(15, 25);
+          crosshairCtx.stroke();
+          crosshairCtx.beginPath();
+          crosshairCtx.moveTo(5, 15);
+          crosshairCtx.lineTo(25, 15);
+          crosshairCtx.stroke();
+          break;
+        default:
+          crosshairCtx.beginPath();
+          crosshairCtx.moveTo(15, 0);
+          crosshairCtx.lineTo(15, 10);
+          crosshairCtx.stroke();
+          crosshairCtx.beginPath();
+          crosshairCtx.moveTo(15, 20);
+          crosshairCtx.lineTo(15, 30);
+          crosshairCtx.stroke();
+          crosshairCtx.beginPath();
+          crosshairCtx.moveTo(0, 15);
+          crosshairCtx.lineTo(10, 15);
+          crosshairCtx.stroke();
+          crosshairCtx.beginPath();
+          crosshairCtx.moveTo(20, 15);
+          crosshairCtx.lineTo(30, 15);
+          crosshairCtx.stroke();
+          break;
+      }
     }
   }, {
     key: 'updateHud',

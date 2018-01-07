@@ -7,29 +7,49 @@ export default class HUD {
   }
 
   init() {
-    this.initCrosshair();
+    this.updateCrosshair('cross');
   }
 
-  initCrosshair() {
+
+  updateCrosshair(type) {
     const crosshairCtx = $('#xhair')[0].getContext('2d');
     crosshairCtx.strokeStyle = '#39ff14';
+    crosshairCtx.fillStyle = '#39ff14';
     crosshairCtx.lineWidth = 2;
-    crosshairCtx.beginPath();
-    crosshairCtx.moveTo(15, 0);
-    crosshairCtx.lineTo(15, 10);
-    crosshairCtx.stroke();
-    crosshairCtx.beginPath();
-    crosshairCtx.moveTo(15, 20);
-    crosshairCtx.lineTo(15, 30);
-    crosshairCtx.stroke();
-    crosshairCtx.beginPath();
-    crosshairCtx.moveTo(0, 15);
-    crosshairCtx.lineTo(10, 15);
-    crosshairCtx.stroke();
-    crosshairCtx.beginPath();
-    crosshairCtx.moveTo(20, 15);
-    crosshairCtx.lineTo(30, 15);
-    crosshairCtx.stroke();
+
+    switch (type) {
+      case 'dot':
+        crosshairCtx.fillRect(13, 13, 4, 4);
+        break;
+      case 'cross':
+        crosshairCtx.beginPath();
+        crosshairCtx.moveTo(15, 5);
+        crosshairCtx.lineTo(15, 25);
+        crosshairCtx.stroke();
+        crosshairCtx.beginPath();
+        crosshairCtx.moveTo(5, 15);
+        crosshairCtx.lineTo(25, 15);
+        crosshairCtx.stroke();
+        break;
+      default:
+        crosshairCtx.beginPath();
+        crosshairCtx.moveTo(15, 0);
+        crosshairCtx.lineTo(15, 10);
+        crosshairCtx.stroke();
+        crosshairCtx.beginPath();
+        crosshairCtx.moveTo(15, 20);
+        crosshairCtx.lineTo(15, 30);
+        crosshairCtx.stroke();
+        crosshairCtx.beginPath();
+        crosshairCtx.moveTo(0, 15);
+        crosshairCtx.lineTo(10, 15);
+        crosshairCtx.stroke();
+        crosshairCtx.beginPath();
+        crosshairCtx.moveTo(20, 15);
+        crosshairCtx.lineTo(30, 15);
+        crosshairCtx.stroke();
+        break;
+    }
   }
 
   updateHud(command) {
