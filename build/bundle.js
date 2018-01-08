@@ -24860,6 +24860,8 @@ var THREE = _interopRequireWildcard(_three);
 
 var _global = __webpack_require__(1);
 
+var _settings = __webpack_require__(14);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -24886,7 +24888,7 @@ exports.projection = function (player, s) {
 
   direction.add(u);
 
-  if (player.velocity.lengthSq() >= 500) {
+  if (player.velocity.lengthSq() >= 500 && !_settings.settings.noSpread) {
     direction.add(new THREE.Vector3(THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3)));
   }
 
@@ -25200,7 +25202,7 @@ var Game = function () {
       // const vfovRad = 2 * Math.atan2(Math.tan(hfovRad/2), aspect);
       // const vfovDeg = vfovRad * 180 / Math.PI;
       var fov = 74;
-      this.camera = new THREE.PerspectiveCamera(fov, aspect, 1, 1000);
+      this.camera = new THREE.PerspectiveCamera(fov, aspect, 0.1, 1000);
       this.camera.position.set(0, 0, 0);
       this.camera.rotation.y = 0.5 * Math.PI;
 
@@ -25571,7 +25573,7 @@ var Game = function () {
           if (Math.abs(projection.y - 10) <= 2) {
             var _u2 = (35 - projection.z) / 5;
             var _x2 = ~~(_u2 + 0.5);
-            if (Math.abs(_u2 - _x2) <= 0.4) {
+            if (Math.abs(_u2 - _x2) <= 0.4 && _x2 >= 0 && _x2 < 3) {
               switch (this.options[_x2]) {
                 case 'audio-on':
                   if (!_settings.settings.audio) {
@@ -25599,7 +25601,7 @@ var Game = function () {
           if (Math.abs(projection.y - 15) <= 2) {
             var _u3 = (35 - projection.z) / 5;
             var _x3 = ~~(_u3 + 0.5);
-            if (Math.abs(_u3 - _x3) <= 0.4) {
+            if (Math.abs(_u3 - _x3) <= 0.4 && _x3 >= 0 && _x3 < 3) {
               if (_settings.settings.audio) {
                 audio.playDone();
               }
@@ -25927,7 +25929,7 @@ var HUD = function () {
   _createClass(HUD, [{
     key: 'init',
     value: function init() {
-      this.updateCrosshair('cross');
+      this.updateCrosshair();
     }
   }, {
     key: 'updateCrosshair',

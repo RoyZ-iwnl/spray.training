@@ -102,7 +102,7 @@ export default class Game {
     // const vfovRad = 2 * Math.atan2(Math.tan(hfovRad/2), aspect);
     // const vfovDeg = vfovRad * 180 / Math.PI;
     const fov = 74;
-    this.camera = new THREE.PerspectiveCamera(fov, aspect, 1, 1000);
+    this.camera = new THREE.PerspectiveCamera(fov, aspect, 0.1, 1000);
     this.camera.position.set(0, 0, 0);
     this.camera.rotation.y = 0.5 * Math.PI;
 
@@ -462,7 +462,7 @@ export default class Game {
         if (Math.abs(projection.y - 10) <= 2) {
           const u = (35 - projection.z) / 5;
           const x = ~~(u+0.5);
-          if (Math.abs(u - x) <= 0.4) {
+          if (Math.abs(u - x) <= 0.4 && x >= 0 && x < 3) {
             switch (this.options[x]) {
               case 'audio-on':
                 if (!settings.audio) {
@@ -490,7 +490,7 @@ export default class Game {
         if (Math.abs(projection.y - 15) <= 2) {
           const u = (35 - projection.z) / 5;
           const x = ~~(u+0.5);
-          if (Math.abs(u - x) <= 0.4) {
+          if (Math.abs(u - x) <= 0.4 && x >= 0 && x < 3) {
             if (settings.audio) {
               audio.playDone();
             }
@@ -498,7 +498,6 @@ export default class Game {
           }
         }
       }
-
 
       const target = this.scene.getObjectByName('target');
       const targetPosition = weapons[this.currentWeapon].spray[this.sprayCount].clone().multiply(new THREE.Vector3(0, -1, 1).multiplyScalar(global.SPRAY_SCALE)).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0))

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { global } from './global.js';
+import { settings } from './settings.js';
 
 exports.projection = (player, s) => {
   const MAP_SIZE = global.MAP_SIZE;
@@ -23,7 +24,7 @@ exports.projection = (player, s) => {
 
   direction.add(u);
 
-  if (player.velocity.lengthSq() >= 500) {
+  if (player.velocity.lengthSq() >= 500 && !settings.noSpread) {
     direction.add(new THREE.Vector3(THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3)));
   }
 

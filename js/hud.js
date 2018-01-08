@@ -7,7 +7,7 @@ export default class HUD {
   }
 
   init() {
-    this.updateCrosshair('cross');
+    this.updateCrosshair();
   }
 
 
