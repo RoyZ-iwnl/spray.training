@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -13020,7 +13020,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)(module)))
 
 /***/ }),
 /* 3 */
@@ -24860,7 +24860,7 @@ var THREE = _interopRequireWildcard(_three);
 
 var _global = __webpack_require__(1);
 
-var _settings = __webpack_require__(14);
+var _settings = __webpack_require__(8);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -24924,13 +24924,33 @@ exports.rand = function (arr) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var settings = exports.settings = {
+  infiniteAmmo: false,
+  noSpread: false,
+  ghostHair: true,
+  bulletTime: false,
+
+  audio: true,
+  viewmodel: true
+};
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function($) {
 
-var _ui = __webpack_require__(10);
+var _ui = __webpack_require__(11);
 
 var ui = _interopRequireWildcard(_ui);
 
-var _game = __webpack_require__(11);
+var _game = __webpack_require__(12);
 
 var _game2 = _interopRequireDefault(_game);
 
@@ -25000,7 +25020,7 @@ $('#main-button').on('click', function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25030,7 +25050,7 @@ module.exports = function (module) {
 };
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25048,7 +25068,7 @@ exports.fadeFromTo = function (pageOne, pageTwo, t) {
 };
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25070,7 +25090,7 @@ var _gsap = __webpack_require__(4);
 
 var _gsap2 = _interopRequireDefault(_gsap);
 
-var _movement = __webpack_require__(12);
+var _movement = __webpack_require__(13);
 
 var _movement2 = _interopRequireDefault(_movement);
 
@@ -25078,13 +25098,13 @@ var _utils = __webpack_require__(7);
 
 var utils = _interopRequireWildcard(_utils);
 
-var _player = __webpack_require__(13);
+var _player = __webpack_require__(14);
 
 var _player2 = _interopRequireDefault(_player);
 
 var _global = __webpack_require__(1);
 
-var _settings = __webpack_require__(14);
+var _settings = __webpack_require__(8);
 
 var _button = __webpack_require__(15);
 
@@ -25126,9 +25146,6 @@ var Game = function () {
     this.count = 0;
     this.sprayCount = 0;
 
-    this.SETTINGS_MIN_Z = -47;
-    this.SETTINGS_MAX_Z = -33;
-
     this.shots = [];
 
     this.currentWeapon = 'ak47';
@@ -25137,6 +25154,8 @@ var Game = function () {
     this.crosshairs = ['default', 'cross', 'dot'];
     this.options = ['audio-on', 'audio-off', 'viewmodel'];
     this.logos = ['reddit', 'github', 'bitcoin', 'paypal', 'email'];
+
+    this.recoil = new THREE.Vector3(0, 0, 0);
   }
 
   _createClass(Game, [{
@@ -25155,7 +25174,7 @@ var Game = function () {
 
       var moveCallback = function moveCallback(e) {
         // prevent any abnormal mouse jumping
-        if (Math.abs(e.movementX) <= 200 && Math.abs(e.movementY) <= 100) {
+        if (Math.abs(e.movementX) <= window.innerWidth * 1 / 9 && Math.abs(e.movementY) <= window.innerHeight * 1 / 9) {
           _this.cursorXY.x += e.movementX || e.mozMovementX || e.webkitMovementX || 0;
           _this.cursorXY.y += e.movementY || e.mozMovementY || e.webkitMovementY || 0;
         }
@@ -25443,6 +25462,7 @@ var Game = function () {
     value: function update(delta) {
       var _this4 = this;
 
+      console.log(this.cursorXY, window.innerWidth, window.innerHeight);
       this.updateHud();
       this.setCmd();
 
@@ -25552,13 +25572,13 @@ var Game = function () {
                   window.open('https://github.com/15/recoil-training', '_blank');
                   break;
                 case 'bitcoin':
-                  window.open('', '_blank');
+                  window.open('/donate.html', '_blank');
                   break;
                 case 'paypal':
-                  window.open('', '_blank');
+                  window.open('/donate.html', '_blank');
                   break;
                 case 'email':
-                  window.open('', '_blank');
+                  window.open('mailto:help@spray.training', '_blank');
                   break;
               }
 
@@ -25659,7 +25679,7 @@ exports.default = Game;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25745,7 +25765,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 ;
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25777,26 +25797,6 @@ var Player = function Player(camera) {
 };
 
 exports.default = Player;
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var settings = exports.settings = {
-  infiniteAmmo: false,
-  noSpread: false,
-  ghostHair: true,
-  bulletTime: false,
-
-  audio: true,
-  viewmodel: true
-};
 
 /***/ }),
 /* 15 */

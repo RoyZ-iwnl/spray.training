@@ -32,9 +32,6 @@ export default class Game {
     this.count = 0;
     this.sprayCount = 0;
 
-    this.SETTINGS_MIN_Z = -47;
-    this.SETTINGS_MAX_Z = -33;
-
     this.shots = [];
 
     this.currentWeapon = 'ak47';
@@ -43,6 +40,8 @@ export default class Game {
     this.crosshairs = ['default', 'cross', 'dot'];
     this.options = ['audio-on', 'audio-off', 'viewmodel'];
     this.logos = ['reddit', 'github', 'bitcoin', 'paypal', 'email'];
+
+    this.recoil = new THREE.Vector3(0, 0, 0);
   }
 
   init() {
@@ -56,7 +55,7 @@ export default class Game {
   pointerlock() {
     const moveCallback = (e) => {
       // prevent any abnormal mouse jumping
-      if (Math.abs(e.movementX) <= 200 && Math.abs(e.movementY) <= 100) {
+      if (Math.abs(e.movementX) <= window.innerWidth * 1/9 && Math.abs(e.movementY) <= window.innerHeight * 1/9) {
         this.cursorXY.x += e.movementX || e.mozMovementX || e.webkitMovementX || 0;
         this.cursorXY.y += e.movementY || e.mozMovementY || e.webkitMovementY || 0;
       }
@@ -335,6 +334,7 @@ export default class Game {
   }
 
   update(delta) {
+    console.log(this.cursorXY, window.innerWidth, window.innerHeight);
     this.updateHud();
     this.setCmd();
 
@@ -441,13 +441,13 @@ export default class Game {
                 window.open('https://github.com/15/recoil-training', '_blank');
                 break;
               case 'bitcoin':
-                window.open('', '_blank');
+                window.open('/donate.html', '_blank');
                 break;
               case 'paypal':
-                window.open('', '_blank');
+                window.open('/donate.html', '_blank');
                 break;
               case 'email':
-                window.open('', '_blank');
+                window.open('mailto:help@spray.training', '_blank');
                 break;
             }
 
