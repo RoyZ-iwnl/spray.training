@@ -140,7 +140,7 @@ export default class Game {
     this.scene.add(worldGroup);
 
     this.fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {
-      ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'].forEach((message, i) => {
+      [/*'bullet time', */'ghosthair', /*'infinite ammo', */'nospread', 'reset'].forEach((message, i) => {
         const color = 0xecf0f1;
         const material = new THREE.LineBasicMaterial({
           color: color,
@@ -154,7 +154,7 @@ export default class Game {
         shape.fromGeometry(geometry);
         const text = new THREE.Mesh(shape, material);
         text.position.x = -this.MAP_SIZE / 2;
-        text.position.y = 20 - 3.5*i;
+        text.position.y = 16.5 - 3.5*i;
         text.position.z = -40;
         text.rotation.y = Math.PI / 2;
         text.name = message;
@@ -207,24 +207,24 @@ export default class Game {
 
     // command buttons
 
-    const btnBulletTime = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 20, -30), new THREE.Euler(0, Math.PI/2, 0), 'bulletTime', 0xecf0f1, () => {
+    /*const btnBulletTime = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 20, -30), new THREE.Euler(0, Math.PI/2, 0), 'bulletTime', 0xecf0f1, () => {
       settings.bulletTime = !settings.bulletTime;
-    });
+    }); */
     const btnGhostHair = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 16.5, -30), new THREE.Euler(0, Math.PI/2, 0), 'ghostHair', 0x00ff00, () => {
       settings.ghostHair = !settings.ghostHair;
     });
-    const btnInfiniteAmmo = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 13, -30), new THREE.Euler(0, Math.PI/2, 0), 'infiniteAmmo', 0xecf0f1, () => {
+    /* const btnInfiniteAmmo = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 13, -30), new THREE.Euler(0, Math.PI/2, 0), 'infiniteAmmo', 0xecf0f1, () => {
       settings.infiniteAmmo = !settings.infiniteAmmo;
-    });
-    const btnNoSpread = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 9.5, -30), new THREE.Euler(0, Math.PI/2, 0), 'noSpread', 0xecf0f1, () => {
+    }); */
+    const btnNoSpread = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 13, -30), new THREE.Euler(0, Math.PI/2, 0), 'noSpread', 0xecf0f1, () => {
       settings.noSpread = !settings.noSpread;
     });
-    const btnReset = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 6, -30), new THREE.Euler(0, Math.PI/2, 0), 'reset', 0xecf0f1, () => {
+    const btnReset = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 9.5, -30), new THREE.Euler(0, Math.PI/2, 0), 'reset', 0xecf0f1, () => {
       this.reset();
       this.player.mesh.position.set(-global.MAP_SIZE / 2 + global.INITIAL_DISTANCE, global.PLAYER_HEIGHT, 0);
     });
 
-    this.buttons = [btnBulletTime, btnGhostHair, btnInfiniteAmmo, btnNoSpread, btnReset];
+    this.buttons = [/*btnBulletTime, */btnGhostHair, /*btnInfiniteAmmo, */btnNoSpread, btnReset];
     this.buttons.forEach((button) => {
       worldGroup.add(button.mesh);
     });
@@ -384,7 +384,6 @@ export default class Game {
           this.shot = false;
           this.reloading = false;
         }, weapons[this.currentWeapon].reload);
-
 
         this.shots = [];
       }

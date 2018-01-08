@@ -25257,7 +25257,7 @@ var Game = function () {
       this.scene.add(worldGroup);
 
       this.fontLoader.load('fonts/helvetiker_regular.typeface.json', function (font) {
-        ['bullet time', 'ghosthair', 'infinite ammo', 'nospread', 'reset'].forEach(function (message, i) {
+        [/*'bullet time', */'ghosthair', /*'infinite ammo', */'nospread', 'reset'].forEach(function (message, i) {
           var color = 0xecf0f1;
           var material = new THREE.LineBasicMaterial({
             color: color,
@@ -25271,7 +25271,7 @@ var Game = function () {
           shape.fromGeometry(geometry);
           var text = new THREE.Mesh(shape, material);
           text.position.x = -_this2.MAP_SIZE / 2;
-          text.position.y = 20 - 3.5 * i;
+          text.position.y = 16.5 - 3.5 * i;
           text.position.z = -40;
           text.rotation.y = Math.PI / 2;
           text.name = message;
@@ -25324,24 +25324,24 @@ var Game = function () {
 
       // command buttons
 
-      var btnBulletTime = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 20, -30), new THREE.Euler(0, Math.PI / 2, 0), 'bulletTime', 0xecf0f1, function () {
-        _settings.settings.bulletTime = !_settings.settings.bulletTime;
-      });
+      /*const btnBulletTime = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 20, -30), new THREE.Euler(0, Math.PI/2, 0), 'bulletTime', 0xecf0f1, () => {
+        settings.bulletTime = !settings.bulletTime;
+      }); */
       var btnGhostHair = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 16.5, -30), new THREE.Euler(0, Math.PI / 2, 0), 'ghostHair', 0x00ff00, function () {
         _settings.settings.ghostHair = !_settings.settings.ghostHair;
       });
-      var btnInfiniteAmmo = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 13, -30), new THREE.Euler(0, Math.PI / 2, 0), 'infiniteAmmo', 0xecf0f1, function () {
-        _settings.settings.infiniteAmmo = !_settings.settings.infiniteAmmo;
-      });
-      var btnNoSpread = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 9.5, -30), new THREE.Euler(0, Math.PI / 2, 0), 'noSpread', 0xecf0f1, function () {
+      /* const btnInfiniteAmmo = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 13, -30), new THREE.Euler(0, Math.PI/2, 0), 'infiniteAmmo', 0xecf0f1, () => {
+        settings.infiniteAmmo = !settings.infiniteAmmo;
+      }); */
+      var btnNoSpread = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 13, -30), new THREE.Euler(0, Math.PI / 2, 0), 'noSpread', 0xecf0f1, function () {
         _settings.settings.noSpread = !_settings.settings.noSpread;
       });
-      var btnReset = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 6, -30), new THREE.Euler(0, Math.PI / 2, 0), 'reset', 0xecf0f1, function () {
+      var btnReset = new _button2.default(new THREE.Vector3(-_global.global.MAP_SIZE / 2, 9.5, -30), new THREE.Euler(0, Math.PI / 2, 0), 'reset', 0xecf0f1, function () {
         _this2.reset();
         _this2.player.mesh.position.set(-_global.global.MAP_SIZE / 2 + _global.global.INITIAL_DISTANCE, _global.global.PLAYER_HEIGHT, 0);
       });
 
-      this.buttons = [btnBulletTime, btnGhostHair, btnInfiniteAmmo, btnNoSpread, btnReset];
+      this.buttons = [/*btnBulletTime, */btnGhostHair, /*btnInfiniteAmmo, */btnNoSpread, btnReset];
       this.buttons.forEach(function (button) {
         worldGroup.add(button.mesh);
       });
