@@ -14281,7 +14281,7 @@ var _gsScope = typeof module !== "undefined" && module.exports && typeof global 
   	}
   	return time;
   }
-  	//translates the supplied time on the root/global timeline into the corresponding local time inside a particular animation, factoring in all nesting and timeScales
+  		//translates the supplied time on the root/global timeline into the corresponding local time inside a particular animation, factoring in all nesting and timeScales
   function globalToLocal(time, animation) {
   	var scale = 1;
   	time -= localToGlobal(0, animation);
@@ -25569,7 +25569,7 @@ var Game = function () {
                   window.open('https://reddit.com/r/globaloffensive', '_blank');
                   break;
                 case 'github':
-                  window.open('https://github.com/15/recoil-training', '_blank');
+                  window.open('https://github.com/15/spray.training', '_blank');
                   break;
                 case 'bitcoin':
                   window.open('/donate.html', '_blank');

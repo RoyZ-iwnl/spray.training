@@ -437,7 +437,7 @@ export default class Game {
                 window.open('https://reddit.com/r/globaloffensive', '_blank');
                 break;
               case 'github':
-                window.open('https://github.com/15/recoil-training', '_blank');
+                window.open('https://github.com/15/spray.training', '_blank');
                 break;
               case 'bitcoin':
                 window.open('/donate.html', '_blank');

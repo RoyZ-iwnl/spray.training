@@ -1,0 +1,16 @@
+html, body {
+  display: block;
+  height: 100%;
+  width: 100%;
+  margin-left: 300px;
+  margin-right: 300px;
+  font-family: 'Helvetica Neue', 'Source Sans Pro', Arial, sans-serif;
+  font-weight: 300;
+  background-color: #e1e1e1;
+  color: #111;
+}
+
+a {
+  color: #111;
+  text-decoration: none;
+}
