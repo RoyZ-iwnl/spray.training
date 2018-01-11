@@ -25,7 +25,6 @@ const error = new Howl({
 exports.playReload = (name) => {
   // const weapon = weapons[name];
   const audio = weapons[name].audio;
-  audio.reload[0].play();
   audio.audioDelay.forEach((delay, i) => {
     setTimeout(() => {
       audio.reload[i].play();

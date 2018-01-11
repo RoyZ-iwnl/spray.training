@@ -32,7 +32,7 @@ export const weapons = {
           volume: 0.2,
         })
       ],
-      audioDelay: [750, 1500],
+      audioDelay: [0, 750, 1500],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
@@ -103,9 +103,9 @@ export const weapons = {
         new Howl({
           src: ['audio/weapons/m4a1/m4a1_cliphit.wav'],
           volume: 0.2,
-        })
+        }),
       ],
-      audioDelay: [750, 1500],
+      audioDelay: [350, 1200, 2000],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
@@ -378,9 +378,17 @@ export const weapons = {
         new Howl({
           src: ['audio/weapons/famas/famas_cliphit.wav'],
           volume: 0.2,
-        })
+        }),
+        new Howl({
+          src: ['audio/weapons/famas/famas_boltback.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/famas/famas_boltforward.wav'],
+          volume: 0.2,
+        }),
       ],
-      audioDelay: [750, 1500],
+      audioDelay: [500, 1400, 2100, 2750, 2850],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
@@ -446,9 +454,17 @@ export const weapons = {
         new Howl({
           src: ['audio/weapons/aug/aug_cliphit.wav'],
           volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/aug/aug_boltpull.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/aug/aug_boltrelease.wav'],
+          volume: 0.2,
         })
       ],
-      audioDelay: [750, 1500],
+      audioDelay: [650, 1500, 2000, 2600, 2700],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),

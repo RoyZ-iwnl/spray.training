@@ -78,13 +78,13 @@ export default class HUD {
         this.video.src = `img/weapons/${this.weapon}/${this.weapon}-reload.webm`;
         this.video.currentTime = 0;
         this.video.play();
-        this.video.addEventListener('ended', () => {
+        setTimeout(() => {
           this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
           this.video.currentTime = 0;
-        });
+        }, weapons[this.weapon].reload);
       } 
     }
-    
+
     if (command === 'select') {
       this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
       this.video.currentTime = 0;
