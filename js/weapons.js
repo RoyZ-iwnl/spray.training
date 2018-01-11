@@ -538,7 +538,7 @@ export const weapons = {
           volume: 0.2,
         })
       ],
-      audioDelay: [750, 1500, 1750],
+      audioDelay: [550, 1300, 1900, 2200],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
@@ -607,15 +607,15 @@ export const weapons = {
           volume: 0.2,
         }),
         new Howl({
-          src: ['audio/weapons/mp7/mp7_slideforward.wav'],
+          src: ['audio/weapons/mp7/mp7_slideback.wav'],
           volume: 0.2,
         }),
         new Howl({
-          src: ['audio/weapons/mp7/mp7_slideback.wav'],
+          src: ['audio/weapons/mp7/mp7_slideforward.wav'],
           volume: 0.2,
         })
       ],
-      audioDelay: [750, 1500, 1750],
+      audioDelay: [600, 1500, 2100, 2400],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
@@ -680,7 +680,7 @@ export const weapons = {
           volume: 0.2,
         })
       ],
-      audioDelay: [750, 1500, 1750],
+      audioDelay: [750, 1800, 2400, 2500],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
@@ -843,6 +843,10 @@ export const weapons = {
           volume: 0.2,
         }),
         new Howl({
+          src: ['audio/weapons/p90/p90_cliphit.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
           src: ['audio/weapons/p90/p90_boltforward.wav'],
           volume: 0.2,
         }),
@@ -850,12 +854,8 @@ export const weapons = {
           src: ['audio/weapons/p90/p90_boltback.wav'],
           volume: 0.2,
         }),
-        new Howl({
-          src: ['audio/weapons/p90/p90_cliphit.wav'],
-          volume: 0.2,
-        }),
       ],
-      audioDelay: [750, 1500, 1750, 2000],
+      audioDelay: [500, 1500, 2000, 2900, 3100],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
@@ -944,15 +944,15 @@ export const weapons = {
           volume: 0.2,
         }),
         new Howl({
-          src: ['audio/weapons/mp9/mp9_boltforward.wav'],
+          src: ['audio/weapons/mp9/mp9_boltback.wav'],
           volume: 0.2,
         }),
         new Howl({
-          src: ['audio/weapons/mp9/mp9_boltback.wav'],
+          src: ['audio/weapons/mp9/mp9_boltforward.wav'],
           volume: 0.2,
         })
       ],
-      audioDelay: [750, 1500, 1750],
+      audioDelay: [400, 1000, 1600, 1800],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
@@ -1162,7 +1162,7 @@ export const weapons = {
           volume: 0.2,
         })
       ],
-      audioDelay: [750, 1500, 1750],
+      audioDelay: [500, 1500, 2000, 2200],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
