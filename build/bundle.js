@@ -25462,7 +25462,6 @@ var Game = function () {
     value: function update(delta) {
       var _this4 = this;
 
-      console.log(this.cursorXY, window.innerWidth, window.innerHeight);
       this.updateHud();
       this.setCmd();
 
@@ -25924,6 +25923,7 @@ var HUD = function () {
 
     this.weapon = weapon;
     this.video = document.getElementById('video');
+    this.enabled = true;
   }
 
   _createClass(HUD, [{
@@ -25981,25 +25981,35 @@ var HUD = function () {
     value: function updateHud(command) {
       var _this = this;
 
-      var playVideo = function playVideo(src) {
-        _this.video.src = src;
-        _this.video.currentTime = 0;
-        _this.video.play();
-      };
-
       if (command === 'toggle') {
         if (this.video.style.display === 'block') {
           this.video.style.display = 'none';
+          this.enabled = false;
         } else {
           this.video.style.display = 'block';
+          this.enabled = true;
         }
       }
 
-      if (command === 'shoot') {
-        playVideo('img/weapons/' + this.weapon + '/' + this.weapon + '-tap.webm');
-      } else if (command === 'reload') {
-        playVideo('img/weapons/' + this.weapon + '/' + this.weapon + '-reload.webm');
-      } else if (command === 'select') {
+      if (this.enabled) {
+        if (command === 'shoot') {
+          this.video.currentTime = 0;
+          this.video.play();
+          this.video.addEventListener('ended', function () {
+            _this.video.currentTime = 0;
+          });
+        } else if (command === 'reload') {
+          this.video.src = 'img/weapons/' + this.weapon + '/' + this.weapon + '-reload.webm';
+          this.video.currentTime = 0;
+          this.video.play();
+          this.video.addEventListener('ended', function () {
+            _this.video.src = 'img/weapons/' + _this.weapon + '/' + _this.weapon + '-tap.webm';
+            _this.video.currentTime = 0;
+          });
+        }
+      }
+
+      if (command === 'select') {
         this.video.src = 'img/weapons/' + this.weapon + '/' + this.weapon + '-tap.webm';
         this.video.currentTime = 0;
       }

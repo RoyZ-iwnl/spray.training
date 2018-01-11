@@ -334,7 +334,6 @@ export default class Game {
   }
 
   update(delta) {
-    console.log(this.cursorXY, window.innerWidth, window.innerHeight);
     this.updateHud();
     this.setCmd();
 

@@ -4,6 +4,7 @@ export default class HUD {
   constructor(weapon = 'ak47') {
     this.weapon = weapon;
     this.video = document.getElementById('video');
+    this.enabled = true;
   }
 
   init() {
@@ -56,25 +57,35 @@ export default class HUD {
   }
 
   updateHud(command) {
-    const playVideo = (src) => {
-      this.video.src = src;
-      this.video.currentTime = 0;
-      this.video.play();
-    };
-
     if (command === 'toggle') {
       if (this.video.style.display === 'block') {
         this.video.style.display = 'none';
+        this.enabled = false;
       } else {
         this.video.style.display = 'block';
+        this.enabled = true;
       }
     }
     
-    if (command === 'shoot') {
-      playVideo(`img/weapons/${this.weapon}/${this.weapon}-tap.webm`);
-    } else if (command === 'reload') {
-      playVideo(`img/weapons/${this.weapon}/${this.weapon}-reload.webm`);
-    } else if (command === 'select') {
+    if (this.enabled) {
+      if (command === 'shoot') {
+        this.video.currentTime = 0;
+        this.video.play();
+        this.video.addEventListener('ended', () => {
+          this.video.currentTime = 0;
+        });
+      } else if (command === 'reload') {
+        this.video.src = `img/weapons/${this.weapon}/${this.weapon}-reload.webm`;
+        this.video.currentTime = 0;
+        this.video.play();
+        this.video.addEventListener('ended', () => {
+          this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
+          this.video.currentTime = 0;
+        });
+      } 
+    }
+    
+    if (command === 'select') {
       this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
       this.video.currentTime = 0;
     }
