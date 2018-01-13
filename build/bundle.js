@@ -25570,7 +25570,6 @@ var Game = function () {
               this.hud.updateHud('select');
               if (_settings.settings.audio) {
                 audio.playDone();
-                audio.playDraw();
               }
               this.reset();
             }
@@ -25915,8 +25914,6 @@ exports.playSetting = function () {
 exports.playError = function () {
   error.play();
 };
-
-exports.playDraw = function () {};
 
 /***/ }),
 /* 17 */
