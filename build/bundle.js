@@ -13067,7 +13067,7 @@ var weapons = exports.weapons = {
         src: ['audio/weapons/ak47/ak47_boltpull.wav'],
         volume: 0.2
       })],
-      audioDelay: [0, 750, 1500]
+      audioDelay: [400, 1150, 1800]
     },
     spray: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 14, 7), new THREE.Vector3(0, 51, 0), new THREE.Vector3(0, 109, 5), new THREE.Vector3(0, 170, 7), new THREE.Vector3(0, 235, -18), new THREE.Vector3(0, 290, -34), new THREE.Vector3(0, 329, -60), new THREE.Vector3(0, 358, -27), new THREE.Vector3(0, 350, 57), new THREE.Vector3(0, 355, 101), new THREE.Vector3(0, 377, 75), new THREE.Vector3(0, 389, 106), new THREE.Vector3(0, 372, 158), new THREE.Vector3(0, 382, 164), new THREE.Vector3(0, 385, 84), new THREE.Vector3(0, 399, 49), new THREE.Vector3(0, 420, 18), new THREE.Vector3(0, 417, -36), new THREE.Vector3(0, 399, -102), new THREE.Vector3(0, 394, -61), new THREE.Vector3(0, 400, -73), new THREE.Vector3(0, 419, -61), new THREE.Vector3(0, 426, -43), new THREE.Vector3(0, 420, -81), new THREE.Vector3(0, 430, -94), new THREE.Vector3(0, 429, -52), new THREE.Vector3(0, 423, 13), new THREE.Vector3(0, 381, 104), new THREE.Vector3(0, 381, 132)],
     magazine: 30,
@@ -13154,10 +13154,13 @@ var weapons = exports.weapons = {
         src: ['audio/weapons/galilar/galil_clipin.wav'],
         volume: 0.2
       }), new Howl({
+        src: ['audio/weapons/galilar/galil_boltback.wav'],
+        volume: 0.2
+      }), new Howl({
         src: ['audio/weapons/galilar/galil_boltforward.wav'],
         volume: 0.2
       })],
-      audioDelay: [750, 1500]
+      audioDelay: [600, 1250, 2000, 2200]
     },
     spray: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 9, -8), new THREE.Vector3(0, 18, -3), new THREE.Vector3(0, 39, -16), new THREE.Vector3(0, 67, -40), new THREE.Vector3(0, 109, -38), new THREE.Vector3(0, 158, -41), new THREE.Vector3(0, 192, -54), new THREE.Vector3(0, 210, -76), new THREE.Vector3(0, 237, -67), new THREE.Vector3(0, 255, -23), new THREE.Vector3(0, 247, 37), new THREE.Vector3(0, 225, 95), new THREE.Vector3(0, 238, 113), new THREE.Vector3(0, 244, 137), new THREE.Vector3(0, 244, 149), new THREE.Vector3(0, 246, 150), new THREE.Vector3(0, 261, 142), new THREE.Vector3(0, 275, 91), new THREE.Vector3(0, 282, 64), new THREE.Vector3(0, 275, 14), new THREE.Vector3(0, 259, -48), new THREE.Vector3(0, 264, -59), new THREE.Vector3(0, 271, -36), new THREE.Vector3(0, 267, -61), new THREE.Vector3(0, 265, -82), new THREE.Vector3(0, 259, -114), new THREE.Vector3(0, 268, -95), new THREE.Vector3(0, 257, -31), new THREE.Vector3(0, 252, 19), new THREE.Vector3(0, 263, 46), new THREE.Vector3(0, 279, 34), new THREE.Vector3(0, 272, 63), new THREE.Vector3(0, 244, 110), new THREE.Vector3(0, 241, 138)],
     magazine: 35,
@@ -13187,10 +13190,13 @@ var weapons = exports.weapons = {
         src: ['audio/weapons/sg556/sg556_clipin.wav'],
         volume: 0.2
       }), new Howl({
-        src: ['audio/weapons/sg556/sg556_cliphit.wav'],
+        src: ['audio/weapons/sg556/sg556_boltback.wav'],
+        volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/sg556/sg556_boltforward.wav'],
         volume: 0.2
       })],
-      audioDelay: [750, 1500]
+      audioDelay: [600, 1250, 2000, 2200]
     },
     spray: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 15, 7), new THREE.Vector3(0, 47, 34), new THREE.Vector3(0, 96, 50), new THREE.Vector3(0, 154, 64), new THREE.Vector3(0, 218, 79), new THREE.Vector3(0, 288, 93), new THREE.Vector3(0, 317, 133), new THREE.Vector3(0, 351, 105), new THREE.Vector3(0, 376, 121), new THREE.Vector3(0, 391, 153), new THREE.Vector3(0, 401, 162), new THREE.Vector3(0, 410, 151), new THREE.Vector3(0, 423, 166), new THREE.Vector3(0, 444, 162), new THREE.Vector3(0, 434, 190), new THREE.Vector3(0, 398, 230), new THREE.Vector3(0, 382, 265), new THREE.Vector3(0, 376, 281), new THREE.Vector3(0, 383, 200), new THREE.Vector3(0, 372, 87), new THREE.Vector3(0, 371, 1), new THREE.Vector3(0, 390, -34), new THREE.Vector3(0, 408, -63), new THREE.Vector3(0, 421, -75), new THREE.Vector3(0, 415, -118), new THREE.Vector3(0, 408, -174), new THREE.Vector3(0, 423, -161), new THREE.Vector3(0, 433, -134), new THREE.Vector3(0, 423, -56)],
     magazine: 30,
@@ -25564,6 +25570,7 @@ var Game = function () {
               this.hud.updateHud('select');
               if (_settings.settings.audio) {
                 audio.playDone();
+                audio.playDraw();
               }
               this.reset();
             }
@@ -25908,6 +25915,8 @@ exports.playSetting = function () {
 exports.playError = function () {
   error.play();
 };
+
+exports.playDraw = function () {};
 
 /***/ }),
 /* 17 */

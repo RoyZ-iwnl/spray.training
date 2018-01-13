@@ -37,6 +37,10 @@ exports.playTap = (name) => {
   rand(audio.shoot).play();
 };
 
+exports.playDraw = () => {
+  // TODO
+};
+
 exports.playDone = () => {
   done.play();
 };

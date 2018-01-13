@@ -420,6 +420,7 @@ export default class Game {
             this.hud.updateHud('select');
             if (settings.audio) {
               audio.playDone();
+              audio.playDraw();
             }
             this.reset();
           }

@@ -32,7 +32,7 @@ export const weapons = {
           volume: 0.2,
         })
       ],
-      audioDelay: [0, 750, 1500],
+      audioDelay: [400, 1150, 1800],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
@@ -225,11 +225,15 @@ export const weapons = {
           volume: 0.2,
         }),
         new Howl({
+          src: ['audio/weapons/galilar/galil_boltback.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
           src: ['audio/weapons/galilar/galil_boltforward.wav'],
           volume: 0.2,
         })
       ],
-      audioDelay: [750, 1500],
+      audioDelay: [600, 1250, 2000, 2200],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
@@ -303,11 +307,15 @@ export const weapons = {
           volume: 0.2,
         }),
         new Howl({
-          src: ['audio/weapons/sg556/sg556_cliphit.wav'],
+          src: ['audio/weapons/sg556/sg556_boltback.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
+          src: ['audio/weapons/sg556/sg556_boltforward.wav'],
           volume: 0.2,
         })
       ],
-      audioDelay: [750, 1500],
+      audioDelay: [600, 1250, 2000, 2200],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
