@@ -25516,7 +25516,7 @@ var Game = function () {
         var _d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
         // accuracy = sum(d^err);
         var err = 1 / 2;
-        this.shots.push(_d ** err);
+        this.shots.push(Math.pow(_d, err));
 
         this.shot = true;
         if (this.ammo !== _weapons.weapons[this.currentWeapon].magazine - 1) {

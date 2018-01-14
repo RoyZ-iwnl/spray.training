@@ -369,7 +369,7 @@ export default class Game {
       const d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
       // accuracy = sum(d^err);
       const err = 1/2;
-      this.shots.push(d ** err);
+      this.shots.push(Math.pow(d, err));
 
       this.shot = true;
       if (this.ammo !== weapons[this.currentWeapon].magazine-1) {
