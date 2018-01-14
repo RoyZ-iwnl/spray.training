@@ -93,3 +93,16 @@ a {
   font-weight: 800 !important;
   padding: 3px 5px !important;
 }
+
+.icon {
+  padding-left: 10px;
+  padding-right: 10px;
+  display: inline;
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+}
+
+.icon:hover {
+  opacity: 1;
+  filter: alpha(opacity=100);
+}
