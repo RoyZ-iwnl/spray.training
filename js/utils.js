@@ -63,8 +63,8 @@ exports.projection = (player, currentWeapon, s) => {
 
   const t1 = (MAP_SIZE / 2 - position.x) / direction.x;
   const t2 = (-MAP_SIZE / 2 - position.x) / direction.x;
-  const t3 = (-PLAYER_HEIGHT + MAP_HEIGHT) / direction.y;
-  const t4 = (-PLAYER_HEIGHT) / direction.y;
+  const t3 = (-position.y + MAP_HEIGHT) / direction.y;
+  const t4 = (-position.y) / direction.y;
   const t5 = (MAP_SIZE / 2 - position.z) / direction.z;
   const t6 = (-MAP_SIZE / 2 - position.z) / direction.z;
 

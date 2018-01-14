@@ -25014,8 +25014,8 @@ exports.projection = function (player, currentWeapon, s) {
 
   var t1 = (MAP_SIZE / 2 - position.x) / direction.x;
   var t2 = (-MAP_SIZE / 2 - position.x) / direction.x;
-  var t3 = (-PLAYER_HEIGHT + MAP_HEIGHT) / direction.y;
-  var t4 = -PLAYER_HEIGHT / direction.y;
+  var t3 = (-position.y + MAP_HEIGHT) / direction.y;
+  var t4 = -position.y / direction.y;
   var t5 = (MAP_SIZE / 2 - position.z) / direction.z;
   var t6 = (-MAP_SIZE / 2 - position.z) / direction.z;
 
