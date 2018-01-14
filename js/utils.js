@@ -1,20 +1,22 @@
 import * as THREE from 'three';
 import { global } from './global.js';
 import { settings } from './settings.js';
+import { weapons } from './weapons.js';
 
-exports.projection = (player, s) => {
+const accurateMaxSpeedSq = 500;
+
+exports.projection = (player, currentWeapon, s) => {
   const MAP_SIZE = global.MAP_SIZE;
   const MAP_HEIGHT = global.MAP_HEIGHT;
   const PLAYER_HEIGHT = global.PLAYER_HEIGHT;
   const SPRAY_HEIGHT = global.SPRAY_HEIGHT;
   const scale = global.SPRAY_SCALE;
 
-  let position = player.mesh.position.clone();
-  let direction = player.camera.getWorldDirection().clone().normalize();
+  const position = player.mesh.position.clone();
+  const direction = player.camera.getWorldDirection().clone().normalize();
 
-  let spray = s.clone();
+  const spray = s.clone();
   spray.multiplyScalar(scale / global.INITIAL_DISTANCE);
-  // spray.multiplyScalar(scale / (position.distanceTo(new THREE.Vector3(-MAP_SIZE / 2 + 0.01, 5, 0))));
 
   const z = new THREE.Vector3(0, 0, 1);
   const quat = new THREE.Quaternion().setFromEuler(player.mesh.rotation);
@@ -24,8 +26,30 @@ exports.projection = (player, s) => {
 
   direction.add(u);
 
-  if (player.velocity.lengthSq() >= 500 && !settings.noSpread) {
-    direction.add(new THREE.Vector3(THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3), THREE.Math.randFloatSpread(0.3)));
+  const velocitySq = player.velocity.lengthSq();
+  const factorStanding = 1/2000;
+  const factorRunning = Math.pow(velocitySq, 1/2) * 1/20000;
+  const inaccuracyValues = weapons[currentWeapon].inaccuracy;
+  const [inaccuracyStanding, inaccuracyCrouching, inaccuracyRunning] = Object.keys(inaccuracyValues).map((key) => inaccuracyValues[key]);;
+
+  if (!settings.noSpread) {
+    direction.add(
+      new THREE.Vector3(
+        THREE.Math.randFloatSpread(inaccuracyStanding),
+        THREE.Math.randFloatSpread(inaccuracyStanding),
+        THREE.Math.randFloatSpread(inaccuracyStanding)
+      ).multiplyScalar(factorStanding)
+    );
+
+    if (velocitySq >= accurateMaxSpeedSq) {
+      direction.add(
+        new THREE.Vector3(
+          THREE.Math.randFloatSpread(inaccuracyRunning),
+          THREE.Math.randFloatSpread(inaccuracyRunning),
+          THREE.Math.randFloatSpread(inaccuracyRunning)
+        ).multiplyScalar(factorRunning)
+      );
+    }
   }
 
   const t1 = (MAP_SIZE / 2 - position.x) / direction.x;

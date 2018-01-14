@@ -351,7 +351,7 @@ export default class Game {
 
     if (this.player.shoot && !this.shot && !this.reloading) {
       const bulletGeometry = new THREE.Geometry();
-      const projection = utils.projection(this.player, settings.noSpread ? new THREE.Vector3(0, 0, 0) : weapons[this.currentWeapon].spray[this.count]);
+      const projection = utils.projection(this.player, this.currentWeapon, settings.noSpread ? new THREE.Vector3(0, 0, 0) : weapons[this.currentWeapon].spray[this.count]);
       bulletGeometry.vertices.push(projection);
       const bulletMaterial = new THREE.PointsMaterial({color: 0xecf0f1, size: 0.3, sizeAttenuation: true});
       const bullet = new THREE.Points(bulletGeometry, bulletMaterial);
