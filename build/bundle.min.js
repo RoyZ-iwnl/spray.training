@@ -25177,6 +25177,7 @@ var Game = function () {
 
     this.highScore = 0;
     this.currentScore = 0;
+    this.newHighScore = false;
   }
 
   _createClass(Game, [{
@@ -25459,7 +25460,7 @@ var Game = function () {
     value: function update(delta) {
       var _this4 = this;
 
-      this.hud.updateHud(this.player, this.camera, this.currentWeapon, this.ammo, this.highScore, this.currentScore, this.aFrame, this.delta);
+      this.hud.updateHud(this.player, this.camera, this.currentWeapon, this.ammo, this.highScore, this.currentScore, this.newHighScore, this.aFrame, this.delta);
       this.setCmd();
 
       var sensitivity = _global.global.SENS;
@@ -25473,6 +25474,10 @@ var Game = function () {
 
       var dv = (0, _movement2.default)(this.player, this.cmd, delta);
       this.player.mesh.position.add(dv.multiplyScalar(delta));
+
+      if (this.newHighScore) {
+        this.newHighScore = false;
+      }
 
       if (this.player.shoot && !this.shot && !this.reloading) {
         var bulletGeometry = new THREE.Geometry();
@@ -25516,7 +25521,10 @@ var Game = function () {
           }, _weapons.weapons[this.currentWeapon].reload);
 
           this.currentScore = 100 / (utils.accuracy(this.shots) / 100 + 1);
-          this.highScore = Math.max(this.currentScore, this.highScore);
+          if (this.currentScore > this.highScore) {
+            this.highScore = this.currentScore;
+            this.newHighScore = true;
+          }
 
           this.shots = [];
         }
@@ -26017,7 +26025,7 @@ var HUD = function () {
     }
   }, {
     key: 'updateHud',
-    value: function updateHud(player, camera, currentWeapon, ammo, highScore, currentScore, aFrame, delta) {
+    value: function updateHud(player, camera, currentWeapon, ammo, highScore, currentScore, newHighScore, aFrame, delta) {
       $('#player-position').html('pos: ' + player.mesh.position.x.toFixed(2) + ', ' + player.mesh.position.z.toFixed(2));
 
       $('#player-fov').html('fov: ' + (2 * Math.atan2(Math.tan(camera.fov / 2 * Math.PI / 180), 1 / camera.aspect) * 180 / Math.PI).toFixed(1));
@@ -26026,10 +26034,21 @@ var HUD = function () {
 
       $('#player-highscore').html('highest acc: ' + highScore.toFixed(2) + '%');
 
+      $('#player-highscore-new').html('highest acc: ' + highScore.toFixed(2) + '%');
+
       $('#player-score').html('accuracy: ' + currentScore.toFixed(2) + '%');
 
       if (aFrame % _weapons.weapons[currentWeapon].magazine < 3) {
         $('#player-fps').html('fps: ' + (1 / delta).toFixed(0));
+      }
+
+      if (newHighScore) {
+        // flicker high score
+        // $('#player-highscore').css('color', '#ffff00').animate({color: '#ffffff'}, 1000);
+        $('#player-highscore-new').show();
+        setTimeout(function () {
+          $('#player-highscore-new').fadeOut(500);
+        }, 5000);
       }
     }
   }]);

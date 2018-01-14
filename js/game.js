@@ -45,6 +45,7 @@ export default class Game {
 
     this.highScore = 0;
     this.currentScore = 0;
+    this.newHighScore = false;
   }
 
   init() {
@@ -314,7 +315,7 @@ export default class Game {
   }
 
   update(delta) {
-    this.hud.updateHud(this.player, this.camera, this.currentWeapon, this.ammo, this.highScore, this.currentScore, this.aFrame, this.delta);
+    this.hud.updateHud(this.player, this.camera, this.currentWeapon, this.ammo, this.highScore, this.currentScore, this.newHighScore, this.aFrame, this.delta);
     this.setCmd();
 
     const sensitivity = global.SENS;
@@ -328,6 +329,10 @@ export default class Game {
 
     const dv = movement(this.player, this.cmd, delta);
     this.player.mesh.position.add(dv.multiplyScalar(delta));
+
+    if (this.newHighScore) {
+      this.newHighScore = false;
+    }
 
     if (this.player.shoot && !this.shot && !this.reloading) {
       const bulletGeometry = new THREE.Geometry();
@@ -367,7 +372,10 @@ export default class Game {
         }, weapons[this.currentWeapon].reload);
 
         this.currentScore = 100/(utils.accuracy(this.shots)/100 + 1);
-        this.highScore = Math.max(this.currentScore, this.highScore);
+        if (this.currentScore > this.highScore) {
+          this.highScore = this.currentScore;
+          this.newHighScore = true;
+        }
 
         this.shots = [];
       }
