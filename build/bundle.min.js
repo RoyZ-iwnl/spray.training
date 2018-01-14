@@ -24929,7 +24929,7 @@ exports.projection = function (player, s) {
 
 exports.accuracy = function (shots) {
   return shots.reduce(function (acc, shot) {
-    return acc + shot;
+    return acc + Math.min(5, shot);
   }, 0);
 };
 
@@ -26049,11 +26049,11 @@ var HUD = function () {
 
       $('#player-ammo').html(_weapons.weapons[currentWeapon].magazine - ammo + '/' + _weapons.weapons[currentWeapon].magazine);
 
-      $('#player-highscore').html('highest acc: ' + highScore[currentWeapon].toFixed(2) + '%  (' + currentWeapon + ')');
+      $('#player-highscore').html('highest acc: ' + highScore[currentWeapon].toFixed(2) + '%  (' + _weapons.weapons[currentWeapon].name + ')');
 
-      $('#player-highscore-new').html('highest acc: ' + highScore[currentWeapon].toFixed(2) + '% (' + currentWeapon + ')');
+      $('#player-highscore-new').html('highest acc: ' + highScore[currentWeapon].toFixed(2) + '% (' + _weapons.weapons[currentWeapon].name + ')');
 
-      $('#player-score').html('accuracy: ' + currentScore.toFixed(2) + '% (' + currentWeapon + ')');
+      $('#player-score').html('accuracy: ' + currentScore.toFixed(2) + '% (' + _weapons.weapons[currentWeapon].name + ')');
 
       if (aFrame % _weapons.weapons[currentWeapon].magazine < 3) {
         $('#player-fps').html('fps: ' + (1 / delta).toFixed(0));
