@@ -46,7 +46,7 @@ export default function(player, cmd, delta) {
 
     let wishDir = new THREE.Vector3(-cmd.forward, 0, -cmd.right);
     wishDir.normalize();
-    let wishSpeed = wishDir.length() * 50;
+    let wishSpeed = wishDir.length() * ((cmd.crouch || (position.y < global.PLAYER_HEIGHT)) ? 17 : 50);
 
     accelerate(wishDir, wishSpeed, 10);
     velocity.y = 0;

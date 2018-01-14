@@ -28,19 +28,12 @@ exports.projection = (player, currentWeapon, s) => {
 
   const velocitySq = player.velocity.lengthSq();
   const factorStanding = 1/2000;
+  const factorCrouching = 1/2000;
   const factorRunning = Math.pow(velocitySq, 1/2) * 1/20000;
   const inaccuracyValues = weapons[currentWeapon].inaccuracy;
   const [inaccuracyStanding, inaccuracyCrouching, inaccuracyRunning] = Object.keys(inaccuracyValues).map((key) => inaccuracyValues[key]);;
 
   if (!settings.noSpread) {
-    direction.add(
-      new THREE.Vector3(
-        THREE.Math.randFloatSpread(inaccuracyStanding),
-        THREE.Math.randFloatSpread(inaccuracyStanding),
-        THREE.Math.randFloatSpread(inaccuracyStanding)
-      ).multiplyScalar(factorStanding)
-    );
-
     if (velocitySq >= accurateMaxSpeedSq) {
       direction.add(
         new THREE.Vector3(
@@ -48,6 +41,22 @@ exports.projection = (player, currentWeapon, s) => {
           THREE.Math.randFloatSpread(inaccuracyRunning),
           THREE.Math.randFloatSpread(inaccuracyRunning)
         ).multiplyScalar(factorRunning)
+      );
+    } else if (position.y === PLAYER_HEIGHT) {
+      direction.add(
+        new THREE.Vector3(
+          THREE.Math.randFloatSpread(inaccuracyStanding),
+          THREE.Math.randFloatSpread(inaccuracyStanding),
+          THREE.Math.randFloatSpread(inaccuracyStanding)
+        ).multiplyScalar(factorStanding)
+      );
+    } else if (position.y < PLAYER_HEIGHT) {
+      direction.add(
+        new THREE.Vector3(
+          THREE.Math.randFloatSpread(inaccuracyCrouching),
+          THREE.Math.randFloatSpread(inaccuracyCrouching),
+          THREE.Math.randFloatSpread(inaccuracyCrouching)
+        ).multiplyScalar(factorCrouching)
       );
     }
   }

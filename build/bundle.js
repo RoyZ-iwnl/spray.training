@@ -24988,6 +24988,7 @@ exports.projection = function (player, currentWeapon, s) {
 
   var velocitySq = player.velocity.lengthSq();
   var factorStanding = 1 / 2000;
+  var factorCrouching = 1 / 2000;
   var factorRunning = Math.pow(velocitySq, 1 / 2) * 1 / 20000;
   var inaccuracyValues = _weapons.weapons[currentWeapon].inaccuracy;
 
@@ -25002,10 +25003,12 @@ exports.projection = function (player, currentWeapon, s) {
   ;
 
   if (!_settings.settings.noSpread) {
-    direction.add(new THREE.Vector3(THREE.Math.randFloatSpread(inaccuracyStanding), THREE.Math.randFloatSpread(inaccuracyStanding), THREE.Math.randFloatSpread(inaccuracyStanding)).multiplyScalar(factorStanding));
-
     if (velocitySq >= accurateMaxSpeedSq) {
       direction.add(new THREE.Vector3(THREE.Math.randFloatSpread(inaccuracyRunning), THREE.Math.randFloatSpread(inaccuracyRunning), THREE.Math.randFloatSpread(inaccuracyRunning)).multiplyScalar(factorRunning));
+    } else if (position.y === PLAYER_HEIGHT) {
+      direction.add(new THREE.Vector3(THREE.Math.randFloatSpread(inaccuracyStanding), THREE.Math.randFloatSpread(inaccuracyStanding), THREE.Math.randFloatSpread(inaccuracyStanding)).multiplyScalar(factorStanding));
+    } else if (position.y < PLAYER_HEIGHT) {
+      direction.add(new THREE.Vector3(THREE.Math.randFloatSpread(inaccuracyCrouching), THREE.Math.randFloatSpread(inaccuracyCrouching), THREE.Math.randFloatSpread(inaccuracyCrouching)).multiplyScalar(factorCrouching));
     }
   }
 
@@ -25245,7 +25248,8 @@ var Game = function () {
     this.cmd = {
       forward: 0,
       right: 0,
-      jump: false
+      jump: false,
+      crouch: false
     };
 
     this.MAP_SIZE = _global.global.MAP_SIZE;
@@ -25289,6 +25293,8 @@ var Game = function () {
     };
     this.currentScore = 0;
     this.newHighScore = false;
+
+    this.crouch = 0;
   }
 
   _createClass(Game, [{
@@ -25631,10 +25637,12 @@ var Game = function () {
             _this4.reloading = false;
           }, _weapons.weapons[this.currentWeapon].reload);
 
-          this.currentScore = 100 / (utils.accuracy(this.shots) / 100 + 1);
-          if (this.currentScore > this.highScore[this.currentWeapon]) {
-            this.highScore[this.currentWeapon] = this.currentScore;
-            this.newHighScore = true;
+          if (this.count === _weapons.weapons[this.currentWeapon].magazine - 1) {
+            this.currentScore = 100 / (utils.accuracy(this.shots) / 100 + 1);
+            if (this.currentScore > this.highScore[this.currentWeapon]) {
+              this.highScore[this.currentWeapon] = this.currentScore;
+              this.newHighScore = true;
+            }
           }
 
           this.shots = [];
@@ -25759,11 +25767,24 @@ var Game = function () {
         target.material.visible = _settings.settings.ghostHair;
       }
 
+      if (this.cmd.crouch) {
+        if (this.crouch < ~~(10000 * this.delta)) {
+          this.crouch++;
+        }
+      } else {
+        if (this.crouch > 0) {
+          this.crouch--;
+        }
+      }
+
+      this.player.mesh.position.y = _global.global.PLAYER_HEIGHT / 2 * (2 - THREE.Math.smootherstep(this.crouch, 0, 60));
+
       this.cursorXY = { x: 0, y: 0 };
       this.cmd = {
         forward: 0,
         right: 0,
-        jump: false
+        jump: false,
+        crouch: false
       };
     }
   }, {
@@ -25782,6 +25803,7 @@ var Game = function () {
         this.cmd.right++;
       }
       this.cmd.jump = this.keyboard.pressed('space');
+      this.cmd.crouch = this.keyboard.pressed('C'); // ctrl causes unwanted issues, e.g. ctrl + w
     }
   }, {
     key: 'reset',
@@ -25855,7 +25877,7 @@ exports.default = function (player, cmd, delta) {
 
     var wishDir = new THREE.Vector3(-cmd.forward, 0, -cmd.right);
     wishDir.normalize();
-    var wishSpeed = wishDir.length() * 50;
+    var wishSpeed = wishDir.length() * (cmd.crouch || position.y < _global.global.PLAYER_HEIGHT ? 17 : 50);
 
     accelerate(wishDir, wishSpeed, 10);
     velocity.y = 0;

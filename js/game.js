@@ -18,6 +18,7 @@ export default class Game {
       forward: 0,
       right: 0,
       jump: false,
+      crouch: false,
     };
 
     this.MAP_SIZE = global.MAP_SIZE;
@@ -61,6 +62,8 @@ export default class Game {
     };
     this.currentScore = 0;
     this.newHighScore = false;
+
+    this.crouch = 0;
   }
 
   init() {
@@ -386,10 +389,12 @@ export default class Game {
           this.reloading = false;
         }, weapons[this.currentWeapon].reload);
 
-        this.currentScore = 100/(utils.accuracy(this.shots)/100 + 1);
-        if (this.currentScore > this.highScore[this.currentWeapon]) {
-          this.highScore[this.currentWeapon] = this.currentScore;
-          this.newHighScore = true;
+        if (this.count === weapons[this.currentWeapon].magazine - 1) {
+          this.currentScore = 100/(utils.accuracy(this.shots)/100 + 1);
+          if (this.currentScore > this.highScore[this.currentWeapon]) {
+            this.highScore[this.currentWeapon] = this.currentScore;
+            this.newHighScore = true;
+          }
         }
 
         this.shots = [];
@@ -514,11 +519,24 @@ export default class Game {
       target.material.visible = settings.ghostHair;
     }
 
+    if (this.cmd.crouch) {
+      if (this.crouch < ~~(10000 * this.delta)) {
+        this.crouch++;
+      }
+    } else {
+      if (this.crouch > 0) {
+        this.crouch--;
+      }
+    }
+
+    this.player.mesh.position.y = global.PLAYER_HEIGHT / 2 * (2 - THREE.Math.smootherstep(this.crouch, 0, 60));
+
     this.cursorXY = {x: 0, y: 0};
     this.cmd = {
       forward: 0,
       right: 0,
       jump: false,
+      crouch: false,
     };
   }
 
@@ -536,6 +554,7 @@ export default class Game {
       this.cmd.right++;
     }
     this.cmd.jump = this.keyboard.pressed('space');
+    this.cmd.crouch = this.keyboard.pressed('C'); // ctrl causes unwanted issues, e.g. ctrl + w
   }
 
   reset() {
