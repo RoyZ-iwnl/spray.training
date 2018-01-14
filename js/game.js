@@ -439,10 +439,10 @@ export default class Game {
                 window.open('https://github.com/15/spray.training', '_blank');
                 break;
               case 'bitcoin':
-                window.open('/donate.html', '_blank');
+                window.open('/donate', '_blank');
                 break;
               case 'paypal':
-                window.open('/donate.html', '_blank');
+                window.open('/donate', '_blank');
                 break;
               case 'email':
                 window.open('mailto:help@spray.training', '_blank');
