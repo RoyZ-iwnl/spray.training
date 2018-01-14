@@ -25104,10 +25104,6 @@ var THREE = _interopRequireWildcard(_three);
 
 var _howler = __webpack_require__(6);
 
-var _gsap = __webpack_require__(4);
-
-var _gsap2 = _interopRequireDefault(_gsap);
-
 var _movement = __webpack_require__(13);
 
 var _movement2 = _interopRequireDefault(_movement);
@@ -25252,7 +25248,7 @@ var Game = function () {
       this.scene.background = new THREE.Color(0x111111);
       this.renderer = new THREE.WebGLRenderer({ antialias: true });
       this.renderer.setSize(window.innerWidth, window.innerHeight);
-      $('#game-page')[0].append(this.renderer.domElement);
+      document.getElementById('game-page').appendChild(this.renderer.domElement);
 
       var aspect = window.innerWidth / window.innerHeight;
       var fov = 74;

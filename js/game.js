@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { Howl } from 'howler';
-import TweenMax from 'gsap';
 import movement from './movement.js';
 import * as utils from './utils.js';
 import Player from './player.js';
@@ -114,7 +113,7 @@ export default class Game {
     this.scene.background = new THREE.Color(0x111111);
     this.renderer = new THREE.WebGLRenderer({antialias: true});
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    $('#game-page')[0].append(this.renderer.domElement);
+    document.getElementById('game-page').appendChild(this.renderer.domElement);
 
     const aspect = window.innerWidth / window.innerHeight;
     const fov = 74;
