@@ -42,6 +42,9 @@ export default class Game {
     this.logos = ['reddit', 'github', 'bitcoin', 'paypal', 'email'];
 
     this.recoil = new THREE.Vector3(0, 0, 0);
+
+    this.highScore = 0;
+    this.currentScore = 0;
   }
 
   init() {
@@ -71,12 +74,12 @@ export default class Game {
     };
 
     const listener = (event) => {
-      let havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+      const havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
       if (!havePointerLock) {
         return;
       }
 
-      let element = document.body;
+      const element = document.body;
       element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
       element.requestPointerLock();
 
@@ -97,9 +100,6 @@ export default class Game {
     $('#game-page')[0].append(this.renderer.domElement);
 
     const aspect = window.innerWidth / window.innerHeight;
-    // const hfovRad = 2 * Math.atan2(aspect, 4/3);
-    // const vfovRad = 2 * Math.atan2(Math.tan(hfovRad/2), aspect);
-    // const vfovDeg = vfovRad * 180 / Math.PI;
     const fov = 74;
     this.camera = new THREE.PerspectiveCamera(fov, aspect, 0.1, 1000);
     this.camera.position.set(0, 0, 0);
@@ -140,7 +140,7 @@ export default class Game {
     this.scene.add(worldGroup);
 
     this.fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {
-      [/*'bullet time', */'ghosthair', /*'infinite ammo', */'nospread', 'reset'].forEach((message, i) => {
+      ['ghosthair', 'nospread', 'reset'].forEach((message, i) => {
         const color = 0xecf0f1;
         const material = new THREE.LineBasicMaterial({
           color: color,
@@ -205,20 +205,14 @@ export default class Game {
       });
     });
 
-    // command buttons
-
-    /*const btnBulletTime = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 20, -30), new THREE.Euler(0, Math.PI/2, 0), 'bulletTime', 0xecf0f1, () => {
-      settings.bulletTime = !settings.bulletTime;
-    }); */
     const btnGhostHair = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 16.5, -30), new THREE.Euler(0, Math.PI/2, 0), 'ghostHair', 0x00ff00, () => {
       settings.ghostHair = !settings.ghostHair;
     });
-    /* const btnInfiniteAmmo = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 13, -30), new THREE.Euler(0, Math.PI/2, 0), 'infiniteAmmo', 0xecf0f1, () => {
-      settings.infiniteAmmo = !settings.infiniteAmmo;
-    }); */
+
     const btnNoSpread = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 13, -30), new THREE.Euler(0, Math.PI/2, 0), 'noSpread', 0xecf0f1, () => {
       settings.noSpread = !settings.noSpread;
     });
+
     const btnReset = new Button(new THREE.Vector3(-global.MAP_SIZE / 2, 9.5, -30), new THREE.Euler(0, Math.PI/2, 0), 'reset', 0xecf0f1, () => {
       this.reset();
       this.player.mesh.position.set(-global.MAP_SIZE / 2 + global.INITIAL_DISTANCE, global.PLAYER_HEIGHT, 0);
@@ -301,7 +295,7 @@ export default class Game {
         if (settings.audio) {
           audio.playReload(this.currentWeapon);
         }
-        this.hud.updateHud('reload');
+        this.hud.updateViewmodel('reload');
       }
 
       setTimeout(() => {locked = false;}, weapons[this.currentWeapon].reload);
@@ -319,22 +313,8 @@ export default class Game {
     this.renderer.render(this.scene, this.camera);
   }
 
-  updateHud() {
-    $('#player-position').html(`pos: ${this.player.mesh.position.x.toFixed(2)}, ${this.player.mesh.position.z.toFixed(2)}`);
-
-    // $('#player-velocity').html(`speed: ${Math.hypot(this.player.velocity.x, this.player.velocity.z).toFixed(2)}`);
-
-    $('#player-velocity').html(`fov: ${(2*Math.atan2(Math.tan(this.camera.fov/2 * Math.PI/180), 1/this.camera.aspect) * 180 / Math.PI).toFixed(1)}`);
-
-    $('#player-ammo').html(`${weapons[this.currentWeapon].magazine - this.ammo}/${weapons[this.currentWeapon].magazine}`);
-
-    if (this.aFrame % weapons[this.currentWeapon].magazine < 3) {
-      $('#player-fps').html(`fps: ${(1/this.delta).toFixed(0)}`);
-    }
-  }
-
   update(delta) {
-    this.updateHud();
+    this.hud.updateHud(this.player, this.camera, this.currentWeapon, this.ammo, this.highScore, this.currentScore, this.aFrame, this.delta);
     this.setCmd();
 
     const sensitivity = global.SENS;
@@ -358,9 +338,6 @@ export default class Game {
       this.scene.add(bullet);
       setTimeout(() => this.scene.remove(bullet), 3000);
 
-      const d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
-      this.shots.push(d);
-
       if (settings.audio) {
         audio.playTap(this.currentWeapon);
         if (d <= 1) {
@@ -368,21 +345,29 @@ export default class Game {
         }
       }
 
+      const d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
+      // accuracy = sum(d^err);
+      const err = 1/2;
+      this.shots.push(d ** err);
+
       this.shot = true;
       if (this.ammo !== weapons[this.currentWeapon].magazine-1) {
-        this.hud.updateHud('shoot');
+        this.hud.updateViewmodel('shoot');
         setTimeout(() => this.shot = false, 60000/weapons[this.currentWeapon].rpm);
       } else {
         this.reloading = true;
         if (settings.audio) {
           audio.playReload(this.currentWeapon);
         }
-        this.hud.updateHud('reload');
+        this.hud.updateViewmodel('reload');
 
         setTimeout(() => {
           this.shot = false;
           this.reloading = false;
         }, weapons[this.currentWeapon].reload);
+
+        this.currentScore = 100/(utils.accuracy(this.shots)/100 + 1);
+        this.highScore = Math.max(this.currentScore, this.highScore);
 
         this.shots = [];
       }
@@ -417,7 +402,7 @@ export default class Game {
           if (this.currentWeapon !== newWeapon) {
             this.currentWeapon = newWeapon;
             this.hud.weapon = newWeapon;
-            this.hud.updateHud('select');
+            this.hud.updateViewmodel('select');
             if (settings.audio) {
               audio.playDone();
             }
@@ -476,7 +461,7 @@ export default class Game {
                 break;
               case 'viewmodel':
                 audio.playDone();
-                this.hud.updateHud('toggle');
+                this.hud.updateViewmodel('toggle');
                 settings.viewmodel = !settings.viewmodel;
                 break;
             }

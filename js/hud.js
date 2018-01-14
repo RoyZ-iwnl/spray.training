@@ -56,7 +56,7 @@ export default class HUD {
     }
   }
 
-  updateHud(command) {
+  updateViewmodel(command) {
     if (command === 'toggle') {
       if (this.video.style.display === 'block') {
         this.video.style.display = 'none';
@@ -88,6 +88,24 @@ export default class HUD {
     if (command === 'select') {
       this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
       this.video.currentTime = 0;
+    }
+  }
+
+  updateHud(player, camera, currentWeapon, ammo, highScore, currentScore, aFrame, delta) {
+    $('#player-position').html(`pos: ${player.mesh.position.x.toFixed(2)}, ${player.mesh.position.z.toFixed(2)}`);
+
+    $('#player-fov').html(`fov: ${(2*Math.atan2(Math.tan(camera.fov/2 * Math.PI/180), 1/camera.aspect) * 180 / Math.PI).toFixed(1)}`);
+
+    $('#player-ammo').html(`${weapons[currentWeapon].magazine - ammo}/${weapons[currentWeapon].magazine}`);
+
+    
+    $('#player-highscore').html(`highest acc: ${highScore.toFixed(2)}%`);
+
+    $('#player-score').html(`accuracy: ${currentScore.toFixed(2)}%`);
+   
+
+    if (aFrame % weapons[currentWeapon].magazine < 3) {
+      $('#player-fps').html(`fps: ${(1/delta).toFixed(0)}`);
     }
   }
 }
