@@ -25175,7 +25175,23 @@ var Game = function () {
 
     this.recoil = new THREE.Vector3(0, 0, 0);
 
-    this.highScore = 0;
+    this.highScore = {
+      'ak47': 0,
+      'm4a1': 0,
+      'm4a1_silencer': 0,
+      'galilar': 0,
+      'sg556': 0,
+      'famas': 0,
+      'aug': 0,
+      'mac10': 0,
+      'mp7': 0,
+      'ump45': 0,
+      'bizon': 0,
+      'p90': 0,
+      'mp9': 0,
+      'm249': 0,
+      'cz75a': 0
+    };
     this.currentScore = 0;
     this.newHighScore = false;
   }
@@ -25521,8 +25537,8 @@ var Game = function () {
           }, _weapons.weapons[this.currentWeapon].reload);
 
           this.currentScore = 100 / (utils.accuracy(this.shots) / 100 + 1);
-          if (this.currentScore > this.highScore) {
-            this.highScore = this.currentScore;
+          if (this.currentScore > this.highScore[this.currentWeapon]) {
+            this.highScore[this.currentWeapon] = this.currentScore;
             this.newHighScore = true;
           }
 
@@ -25560,6 +25576,7 @@ var Game = function () {
               this.currentWeapon = newWeapon;
               this.hud.weapon = newWeapon;
               this.hud.updateViewmodel('select');
+              this.currentScore = 0;
               if (_settings.settings.audio) {
                 audio.playDone();
               }
@@ -26032,11 +26049,11 @@ var HUD = function () {
 
       $('#player-ammo').html(_weapons.weapons[currentWeapon].magazine - ammo + '/' + _weapons.weapons[currentWeapon].magazine);
 
-      $('#player-highscore').html('highest acc: ' + highScore.toFixed(2) + '%');
+      $('#player-highscore').html('highest acc: ' + highScore[currentWeapon].toFixed(2) + '%  (' + currentWeapon + ')');
 
-      $('#player-highscore-new').html('highest acc: ' + highScore.toFixed(2) + '%');
+      $('#player-highscore-new').html('highest acc: ' + highScore[currentWeapon].toFixed(2) + '% (' + currentWeapon + ')');
 
-      $('#player-score').html('accuracy: ' + currentScore.toFixed(2) + '%');
+      $('#player-score').html('accuracy: ' + currentScore.toFixed(2) + '% (' + currentWeapon + ')');
 
       if (aFrame % _weapons.weapons[currentWeapon].magazine < 3) {
         $('#player-fps').html('fps: ' + (1 / delta).toFixed(0));

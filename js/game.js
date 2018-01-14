@@ -43,7 +43,23 @@ export default class Game {
 
     this.recoil = new THREE.Vector3(0, 0, 0);
 
-    this.highScore = 0;
+    this.highScore = {
+      'ak47': 0,
+      'm4a1': 0,
+      'm4a1_silencer': 0,
+      'galilar': 0,
+      'sg556': 0,
+      'famas': 0,
+      'aug': 0,
+      'mac10': 0,
+      'mp7': 0,
+      'ump45': 0,
+      'bizon': 0,
+      'p90': 0,
+      'mp9': 0,
+      'm249': 0,
+      'cz75a': 0,
+    };
     this.currentScore = 0;
     this.newHighScore = false;
   }
@@ -372,8 +388,8 @@ export default class Game {
         }, weapons[this.currentWeapon].reload);
 
         this.currentScore = 100/(utils.accuracy(this.shots)/100 + 1);
-        if (this.currentScore > this.highScore) {
-          this.highScore = this.currentScore;
+        if (this.currentScore > this.highScore[this.currentWeapon]) {
+          this.highScore[this.currentWeapon] = this.currentScore;
           this.newHighScore = true;
         }
 
@@ -411,6 +427,7 @@ export default class Game {
             this.currentWeapon = newWeapon;
             this.hud.weapon = newWeapon;
             this.hud.updateViewmodel('select');
+            this.currentScore = 0;
             if (settings.audio) {
               audio.playDone();
             }

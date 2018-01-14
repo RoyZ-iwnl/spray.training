@@ -98,11 +98,11 @@ export default class HUD {
 
     $('#player-ammo').html(`${weapons[currentWeapon].magazine - ammo}/${weapons[currentWeapon].magazine}`);
 
-    $('#player-highscore').html(`highest acc: ${highScore.toFixed(2)}%`);
+    $('#player-highscore').html(`highest acc: ${highScore[currentWeapon].toFixed(2)}%  (${currentWeapon})`);
     
-    $('#player-highscore-new').html(`highest acc: ${highScore.toFixed(2)}%`);
+    $('#player-highscore-new').html(`highest acc: ${highScore[currentWeapon].toFixed(2)}% (${currentWeapon})`);
 
-    $('#player-score').html(`accuracy: ${currentScore.toFixed(2)}%`);
+    $('#player-score').html(`accuracy: ${currentScore.toFixed(2)}% (${currentWeapon})`);
 
     if (aFrame % weapons[currentWeapon].magazine < 3) {
       $('#player-fps').html(`fps: ${(1/delta).toFixed(0)}`);
