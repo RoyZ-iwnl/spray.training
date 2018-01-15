@@ -389,7 +389,7 @@ export default class Game {
           this.reloading = false;
         }, weapons[this.currentWeapon].reload);
 
-        if (this.count === weapons[this.currentWeapon].magazine - 1) {
+        if (this.count === weapons[this.currentWeapon].magazine - 1 && !settings.noSpread) {
           this.currentScore = 100/(utils.accuracy(this.shots)/100 + 1);
           if (this.currentScore > this.highScore[this.currentWeapon]) {
             this.highScore[this.currentWeapon] = this.currentScore;
