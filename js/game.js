@@ -488,7 +488,7 @@ export default class Game {
                 window.open('/donate', '_blank');
                 break;
               case 'email':
-                window.open('mailto:help@spray.training', '_blank');
+                window.open('mailto:contact@spray.training', '_blank');
                 break;
             }
 
