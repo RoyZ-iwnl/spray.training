@@ -25520,7 +25520,7 @@ var Game = function () {
 
       var targetGeometry = new THREE.Geometry();
       targetGeometry.vertices.push(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, _global.global.SPRAY_HEIGHT, 0));
-      var targetMaterial = new THREE.PointsMaterial({ color: 0xff0000, size: 0.6, sizeAttenuation: true });
+      var targetMaterial = new THREE.PointsMaterial({ color: 0xff0000, size: 1, sizeAttenuation: true });
       var target = new THREE.Points(targetGeometry, targetMaterial);
       target.name = 'target';
       this.scene.add(target);
@@ -25695,6 +25695,7 @@ var Game = function () {
               this.currentWeapon = newWeapon;
               this.hud.weapon = newWeapon;
               this.hud.updateViewmodel('select');
+              console.log('You are now holding the ' + _weapons.weapons[this.currentWeapon].name + '. Your highest accuracy with this weapon was ' + this.highScore[this.currentWeapon].toFixed(2) + '%.');
               this.currentScore = 0;
               if (_settings.settings.audio) {
                 audio.playDone();
@@ -26082,7 +26083,9 @@ var HUD = function () {
 
     this.weapon = weapon;
     this.video = document.getElementById('video');
+    this.viewmodel = document.getElementById('player-weapon');
     this.enabled = true;
+    this.shootingAnimation = true;
   }
 
   _createClass(HUD, [{
@@ -26138,14 +26141,12 @@ var HUD = function () {
   }, {
     key: 'updateViewmodel',
     value: function updateViewmodel(command) {
-      var _this = this;
-
       if (command === 'toggle') {
-        if (this.video.style.display === 'block') {
-          this.video.style.display = 'none';
+        if (this.viewmodel.style.display === 'block') {
+          this.viewmodel.style.display = 'none';
           this.enabled = false;
         } else {
-          this.video.style.display = 'block';
+          this.viewmodel.style.display = 'block';
           this.enabled = true;
         }
       }
@@ -26153,22 +26154,28 @@ var HUD = function () {
       if (this.enabled) {
         if (command === 'shoot') {
           this.video.pause();
+          if (!this.shootingAnimation) {
+            this.video.src = 'img/weapons/' + this.weapon + '/' + this.weapon + '-tap.webm';
+            this.shootingAnimation = true;
+          }
           this.video.currentTime = 0;
           this.video.play();
-          this.video.addEventListener('ended', function () {
-            _this.video.currentTime = 0;
-          });
+          // this.video.addEventListener('ended', () => {
+          //   this.
+          //   this.video.currentTime = 0;
+          // });
         } else if (command === 'reload') {
+          this.shootingAnimation = false;
           this.video.pause();
           this.video.src = 'img/weapons/' + this.weapon + '/' + this.weapon + '-reload.webm';
           this.video.currentTime = 0;
           this.video.play();
 
-          setTimeout(function () {
-            _this.video.pause();
-            _this.video.src = 'img/weapons/' + _this.weapon + '/' + _this.weapon + '-tap.webm';
-            _this.video.currentTime = 0;
-          }, _weapons.weapons[this.weapon].reload);
+          // setTimeout(() => {
+          //   this.video.pause();
+          //   this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
+          //   this.video.currentTime = 0;
+          // }, weapons[this.weapon].reload);
         }
       }
 

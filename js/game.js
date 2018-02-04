@@ -298,7 +298,7 @@ export default class Game {
 
     const targetGeometry = new THREE.Geometry();
     targetGeometry.vertices.push(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, global.SPRAY_HEIGHT, 0));
-    const targetMaterial = new THREE.PointsMaterial({color: 0xff0000, size: 0.6, sizeAttenuation: true});
+    const targetMaterial = new THREE.PointsMaterial({color: 0xff0000, size: 1, sizeAttenuation: true});
     const target = new THREE.Points(targetGeometry, targetMaterial);
     target.name = 'target';
     this.scene.add(target);
@@ -459,6 +459,7 @@ export default class Game {
             this.currentWeapon = newWeapon;
             this.hud.weapon = newWeapon;
             this.hud.updateViewmodel('select');
+            console.log(`You are now holding the ${weapons[this.currentWeapon].name}. Your highest accuracy with this weapon was ${this.highScore[this.currentWeapon].toFixed(2)}%.`)
             this.currentScore = 0;
             if (settings.audio) {
               audio.playDone();

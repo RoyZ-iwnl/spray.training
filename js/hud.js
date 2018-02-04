@@ -4,7 +4,9 @@ export default class HUD {
   constructor(weapon = 'ak47') {
     this.weapon = weapon;
     this.video = document.getElementById('video');
+    this.viewmodel = document.getElementById('player-weapon');
     this.enabled = true;
+    this.shootingAnimation = true;
   }
 
   init() {
@@ -58,11 +60,11 @@ export default class HUD {
 
   updateViewmodel(command) {
     if (command === 'toggle') {
-      if (this.video.style.display === 'block') {
-        this.video.style.display = 'none';
+      if (this.viewmodel.style.display === 'block') {
+        this.viewmodel.style.display = 'none';
         this.enabled = false;
       } else {
-        this.video.style.display = 'block';
+        this.viewmodel.style.display = 'block';
         this.enabled = true;
       }
     }
@@ -70,22 +72,28 @@ export default class HUD {
     if (this.enabled) {
       if (command === 'shoot') {
         this.video.pause();
+        if (!this.shootingAnimation) {
+          this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
+          this.shootingAnimation = true;
+        }
         this.video.currentTime = 0;
         this.video.play();
-        this.video.addEventListener('ended', () => {
-          this.video.currentTime = 0;
-        });
+        // this.video.addEventListener('ended', () => {
+        //   this.
+        //   this.video.currentTime = 0;
+        // });
       } else if (command === 'reload') {
+        this.shootingAnimation = false;
         this.video.pause();
         this.video.src = `img/weapons/${this.weapon}/${this.weapon}-reload.webm`;
         this.video.currentTime = 0;
         this.video.play();
 
-        setTimeout(() => {
-          this.video.pause();
-          this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
-          this.video.currentTime = 0;
-        }, weapons[this.weapon].reload);
+        // setTimeout(() => {
+        //   this.video.pause();
+        //   this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
+        //   this.video.currentTime = 0;
+        // }, weapons[this.weapon].reload);
       }
     }
 
