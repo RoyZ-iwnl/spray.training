@@ -66,26 +66,31 @@ export default class HUD {
         this.enabled = true;
       }
     }
-    
+
     if (this.enabled) {
       if (command === 'shoot') {
+        this.video.pause();
         this.video.currentTime = 0;
         this.video.play();
         this.video.addEventListener('ended', () => {
           this.video.currentTime = 0;
         });
       } else if (command === 'reload') {
+        this.video.pause();
         this.video.src = `img/weapons/${this.weapon}/${this.weapon}-reload.webm`;
         this.video.currentTime = 0;
         this.video.play();
+
         setTimeout(() => {
+          this.video.pause();
           this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
           this.video.currentTime = 0;
         }, weapons[this.weapon].reload);
-      } 
+      }
     }
 
     if (command === 'select') {
+      this.video.pause();
       this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
       this.video.currentTime = 0;
     }
@@ -99,7 +104,7 @@ export default class HUD {
     $('#player-ammo').html(`${weapons[currentWeapon].magazine - ammo}/${weapons[currentWeapon].magazine}`);
 
     $('#player-highscore').html(`highest acc: ${highScore[currentWeapon].toFixed(2)}%  (${weapons[currentWeapon].name})`);
-    
+
     $('#player-highscore-new').html(`highest acc: ${highScore[currentWeapon].toFixed(2)}% (${weapons[currentWeapon].name})`);
 
     $('#player-score').html(`accuracy: ${currentScore.toFixed(2)}% (${weapons[currentWeapon].name})`);

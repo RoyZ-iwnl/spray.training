@@ -8,6 +8,7 @@ import { settings } from './settings.js';
 import Button from './button.js';
 import { weapons } from './weapons.js';
 import * as audio from './audio.js';
+import { colors } from './colors.js';
 
 export default class Game {
   constructor(hud) {
@@ -64,6 +65,8 @@ export default class Game {
     this.newHighScore = false;
 
     this.crouch = 0;
+
+    this.colorScheme = colors.default;
   }
 
   init() {
@@ -76,16 +79,26 @@ export default class Game {
 
   pointerlock() {
     const moveCallback = (e) => {
+      const factor = 1/9;
       // prevent any abnormal mouse jumping
-      if (Math.abs(e.movementX) <= window.innerWidth * 1/9 && Math.abs(e.movementY) <= window.innerHeight * 1/9) {
-        this.cursorXY.x += e.movementX || e.mozMovementX || e.webkitMovementX || 0;
-        this.cursorXY.y += e.movementY || e.mozMovementY || e.webkitMovementY || 0;
+      if (Math.abs(e.movementX) <= window.innerWidth * factor &&
+          Math.abs(e.movementY) <= window.innerHeight * factor) {
+        this.cursorXY.x += e.movementX ||
+                           e.mozMovementX ||
+                           e.webkitMovementX ||
+                           0;
+        this.cursorXY.y += e.movementY ||
+                           e.mozMovementY ||
+                           e.webkitMovementY ||
+                           0;
       }
     };
 
     const pointerLockChange = (event) => {
       const element = document.body;
-      if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
+      if (document.pointerLockElement       === element ||
+          document.mozPointerLockElement    === element ||
+          document.webkitPointerLockElement === element) {
         document.addEventListener('mousemove', moveCallback, false);
       } else {
         document.removeEventListener('mousemove', moveCallback, false);
@@ -93,13 +106,18 @@ export default class Game {
     };
 
     const listener = (event) => {
-      const havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+      const havePointerLock = 'pointerLockElement'       in document ||
+                              'mozPointerLockElement'    in document ||
+                              'webkitPointerLockElement' in document;
+
       if (!havePointerLock) {
         return;
       }
 
       const element = document.body;
-      element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+      element.requestPointerLock =  element.requestPointerLock ||
+                                    element.mozRequestPointerLock ||
+                                    element.webkitRequestPointerLock;
       element.requestPointerLock();
 
       document.addEventListener(      'pointerlockchange', pointerLockChange, false);
@@ -113,7 +131,7 @@ export default class Game {
 
   init3JS() {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x111111);
+    this.scene.background = new THREE.Color(this.colorScheme.background);
     this.renderer = new THREE.WebGLRenderer({antialias: true});
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('game-page').appendChild(this.renderer.domElement);
@@ -132,7 +150,7 @@ export default class Game {
   }
 
   drawWorld() {
-    const mapMaterial = new THREE.LineDashedMaterial({color: 0xffaa00, dashSize: 2, gapSize: 1, linewidth: 1});
+    const mapMaterial = new THREE.LineDashedMaterial({color: this.colorScheme.map, dashSize: 2, gapSize: 1, linewidth: 1});
     const mapGeometry = new THREE.Geometry().fromBufferGeometry(new THREE.EdgesGeometry(new THREE.BoxGeometry(this.MAP_SIZE, this.MAP_HEIGHT, this.MAP_SIZE)));
     mapGeometry.computeLineDistances();
     const map = new THREE.LineSegments(mapGeometry, mapMaterial);
@@ -345,8 +363,18 @@ export default class Game {
     this.player.camera.rotateX(-this.cursorXY.y * sensitivity * m_pitch * factor * delta);
     this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
 
-    const dv = movement(this.player, this.cmd, delta);
-    this.player.mesh.position.add(dv.multiplyScalar(delta));
+    const dx = movement(this.player, this.cmd, delta);
+    dx.multiplyScalar(delta);
+    this.player.mesh.position.add(dx);
+    this.player.mesh.position.x = THREE.Math.clamp(this.player.mesh.position.x, -this.MAP_SIZE / 2 + 2, this.MAP_SIZE / 2 - 2);
+    this.player.mesh.position.z = THREE.Math.clamp(this.player.mesh.position.z, -this.MAP_SIZE / 2 + 2, this.MAP_SIZE / 2 - 2);
+
+    if (Math.abs(this.player.mesh.position.x) === this.MAP_SIZE / 2) {
+      this.player.velocity.x = 0;
+    }
+    if (Math.abs(this.player.mesh.position.z) === this.MAP_SIZE / 2) {
+      this.player.velocity.z = 0;
+    }
 
     if (this.newHighScore) {
       this.newHighScore = false;
