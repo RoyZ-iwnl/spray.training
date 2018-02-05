@@ -78,10 +78,11 @@ export default class HUD {
         }
         this.video.currentTime = 0;
         this.video.play();
-        // this.video.addEventListener('ended', () => {
-        //   this.
-        //   this.video.currentTime = 0;
-        // });
+        
+        setTimeout(() => {
+          this.video.pause();
+          this.video.currentTime = 0;
+        }, 60000 / weapons[this.weapon].rpm);
       } else if (command === 'reload') {
         this.shootingAnimation = false;
         this.video.pause();

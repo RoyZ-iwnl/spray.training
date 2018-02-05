@@ -39,6 +39,7 @@ export default class Game {
 
     this.buttons = [];
     this.crosshairs = ['default', 'cross', 'dot'];
+    this.resolutions = ['4x3', '16x9', '16x10'];
     this.options = ['audio-on', 'audio-off', 'viewmodel'];
     this.logos = ['reddit', 'github', 'bitcoin', 'paypal', 'email'];
 
@@ -150,7 +151,12 @@ export default class Game {
   }
 
   drawWorld() {
-    const mapMaterial = new THREE.LineDashedMaterial({color: this.colorScheme.map, dashSize: 2, gapSize: 1, linewidth: 1});
+    const mapMaterial = new THREE.LineDashedMaterial({
+      color: this.colorScheme.map,
+      dashSize: 2,
+      gapSize: 1,
+      linewidth: 1
+    });
     const mapGeometry = new THREE.Geometry().fromBufferGeometry(new THREE.EdgesGeometry(new THREE.BoxGeometry(this.MAP_SIZE, this.MAP_HEIGHT, this.MAP_SIZE)));
     mapGeometry.computeLineDistances();
     const map = new THREE.LineSegments(mapGeometry, mapMaterial);
@@ -158,20 +164,36 @@ export default class Game {
 
     this.scene.add(map);
 
-    const lineMaterial = new THREE.LineDashedMaterial({color: 0xecf0f1, dashSize: 0.75, gapSize: 0.75, linewidth: 1});
-    const lineGeometry = new THREE.Geometry();
-    lineGeometry.vertices.push(
-      new THREE.Vector3(-this.MAP_SIZE/2, 0, 8),
-      new THREE.Vector3(-this.MAP_SIZE/2, 0, -8),
+    const crossMaterial = new THREE.LineDashedMaterial({color: 0xbfbfbf, dashSize: 0.75, gapSize: 0.75, linewidth: 1});
+    const crossGeometry = new THREE.Geometry();
+    crossGeometry.vertices.push(
+      new THREE.Vector3(0, 0, 8),
+      new THREE.Vector3(0, 0, -8),
 
-      new THREE.Vector3(-this.MAP_SIZE/2, 8, 0),
-      new THREE.Vector3(-this.MAP_SIZE/2, -8, 0),
+      new THREE.Vector3(0, 8, 0),
+      new THREE.Vector3(0, -8, 0),
     );
-    lineGeometry.computeLineDistances();
-    const line = new THREE.LineSegments(lineGeometry, lineMaterial);
-    line.position.y = this.SPRAY_HEIGHT;
+    crossGeometry.computeLineDistances();
+    const cross = new THREE.LineSegments(crossGeometry, crossMaterial);
+    cross.position.x = -this.MAP_SIZE / 2;
+    cross.position.y = this.SPRAY_HEIGHT;
 
-    this.scene.add(line);
+    this.scene.add(cross);
+
+    const headMaterial = new THREE.LineDashedMaterial({color: 0xbfbfbf, dashSize: Math.PI/6, gapSize: Math.PI/12, linewidth: 1});
+    const headGeometry = new THREE.Geometry();
+
+    for (let i = 0; i < 32; i++) {
+      headGeometry.vertices.push(new THREE.Vector3(0, Math.cos(Math.PI/16 * i), Math.sin(Math.PI/16 * i)))
+      headGeometry.vertices.push(new THREE.Vector3(0, Math.cos(Math.PI/16 * (i+1)), Math.sin(Math.PI/16 * (i+1))));
+    }
+
+    headGeometry.computeLineDistances();
+    const head = new THREE.LineSegments(headGeometry, headMaterial);
+    head.position.x = -this.MAP_SIZE / 2;
+    head.position.y = global.PLAYER_HEIGHT;
+
+    this.scene.add(head);
 
     const worldGroup = new THREE.Group();
     this.scene.add(worldGroup);
@@ -260,12 +282,32 @@ export default class Game {
       worldGroup.add(button.mesh);
     });
 
+    this.resolutions.forEach((res, i) => {
+      this.textureLoader.load(`img/icons/res${res}.png`, (resMap) => {
+        const resMaterial = new THREE.MeshBasicMaterial({
+          transparent: true,
+          map: resMap,
+          side: THREE.DoubleSide
+        });
+        const resGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
+        const resMesh = new THREE.Mesh(resGeometry, resMaterial);
+        resMesh.position.set(-global.MAP_SIZE / 2, 17.5, 35 - 5*i);
+        resMesh.rotation.set(0, Math.PI/2, 0);
+        worldGroup.add(resMesh);
+      });
+    });
+
+
     this.crosshairs.forEach((xhair, i) => {
       this.textureLoader.load(`img/icons/xhair${xhair}.png`, (xhairMap) => {
-        const xhairMaterial = new THREE.MeshBasicMaterial({transparent: true, map: xhairMap, side: THREE.DoubleSide});
+        const xhairMaterial = new THREE.MeshBasicMaterial({
+          transparent: true,
+          map: xhairMap,
+          side: THREE.DoubleSide
+        });
         const xhairGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
         const xhairMesh = new THREE.Mesh(xhairGeometry, xhairMaterial);
-        xhairMesh.position.set(-global.MAP_SIZE / 2, 15, 35 - 5*i);
+        xhairMesh.position.set(-global.MAP_SIZE / 2, 12.5, 35 - 5*i);
         xhairMesh.rotation.set(0, Math.PI/2, 0);
         worldGroup.add(xhairMesh);
       });
@@ -273,10 +315,14 @@ export default class Game {
 
     this.options.forEach((logo, i) => {
       this.textureLoader.load(`img/icons/${logo}.svg`, (iconMap) => {
-        const iconMaterial = new THREE.MeshBasicMaterial({transparent: true, map: iconMap, side: THREE.DoubleSide});
+        const iconMaterial = new THREE.MeshBasicMaterial({
+          transparent: true,
+          map: iconMap,
+          side: THREE.DoubleSide
+        });
         const iconGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
         const iconMesh = new THREE.Mesh(iconGeometry, iconMaterial);
-        iconMesh.position.set(-global.MAP_SIZE / 2, 10, 35 - 5 * i);
+        iconMesh.position.set(-global.MAP_SIZE / 2, 7.5, 35 - 5 * i);
         iconMesh.rotation.set(0, Math.PI/2, 0);
         worldGroup.add(iconMesh);
       });
@@ -285,10 +331,20 @@ export default class Game {
     this.logos.forEach((logo, i) => {
       this.textureLoader.load(`img/icons/${logo}.svg`, (logoMap) => {
         logoMap.minFilter = THREE.LinearFilter;
-        const logoMaterial = new THREE.MeshBasicMaterial({transparent: true, map: logoMap, side: THREE.DoubleSide});
+        const logoMaterial = new THREE.MeshBasicMaterial({
+          transparent: true,
+          map: logoMap,
+          side: THREE.DoubleSide
+        });
         const logoGeometry = new THREE.PlaneBufferGeometry(4, 4, 32);
         const logoMesh = new THREE.Mesh(logoGeometry, logoMaterial);
-        logoMesh.position.set(10* i - (this.logos.length - 1) * 5, 13, -global.MAP_SIZE / 2);
+
+        logoMesh.position.set(
+          10* i - (this.logos.length - 1) * 5,
+          13,
+          -global.MAP_SIZE / 2
+        );
+
         worldGroup.add(logoMesh);
       });
     });
@@ -298,7 +354,11 @@ export default class Game {
 
     const targetGeometry = new THREE.Geometry();
     targetGeometry.vertices.push(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, global.SPRAY_HEIGHT, 0));
-    const targetMaterial = new THREE.PointsMaterial({color: 0xff0000, size: 1, sizeAttenuation: true});
+    const targetMaterial = new THREE.PointsMaterial({
+      color: 0xff0000,
+      size: 1,
+      sizeAttenuation: true
+    });
     const target = new THREE.Points(targetGeometry, targetMaterial);
     target.name = 'target';
     this.scene.add(target);
@@ -382,12 +442,23 @@ export default class Game {
 
     if (this.player.shoot && !this.shot && !this.reloading) {
       const bulletGeometry = new THREE.Geometry();
-      const projection = utils.projection(this.player, this.currentWeapon, settings.noSpread ? new THREE.Vector3(0, 0, 0) : weapons[this.currentWeapon].spray[this.count]);
+      const projection = utils.projection(
+        this.player,
+        this.currentWeapon,
+        settings.noSpread ? new THREE.Vector3(0, 0, 0) : weapons[this.currentWeapon].spray[this.count]
+      );
       bulletGeometry.vertices.push(projection);
-      const bulletMaterial = new THREE.PointsMaterial({color: 0xecf0f1, size: 0.3, sizeAttenuation: true});
+
+      const d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
+      const bulletMaterial = new THREE.PointsMaterial({
+        color: d <= 1 ? 0x19b5fe : 0xecf0f1,
+        size: 0.5,
+        sizeAttenuation: true
+      });
+
       const bullet = new THREE.Points(bulletGeometry, bulletMaterial);
       this.scene.add(bullet);
-      setTimeout(() => this.scene.remove(bullet), 3000);
+      setTimeout(() => this.scene.remove(bullet), 5000);
 
       if (settings.audio) {
         audio.playTap(this.currentWeapon);
@@ -396,10 +467,9 @@ export default class Game {
         }
       }
 
-      const d = projection.distanceToSquared(new THREE.Vector3(-this.MAP_SIZE / 2, this.SPRAY_HEIGHT, 0));
       // accuracy = sum(d^err);
       const err = 1/2;
-      this.shots.push(Math.pow(d, err));
+      this.shots.push(d <= 1 ? 0 : Math.pow(d, err));
 
       this.shot = true;
       if (this.ammo !== weapons[this.currentWeapon].magazine-1) {
@@ -500,7 +570,7 @@ export default class Game {
       }
 
       if (Math.abs(projection.x + this.MAP_SIZE / 2) <= 0.01) {
-        if (Math.abs(projection.y - 10) <= 2) {
+        if (Math.abs(projection.y - 7.5) <= 2) {
           const u = (35 - projection.z) / 5;
           const x = ~~(u+0.5);
           if (Math.abs(u - x) <= 0.4 && x >= 0 && x < 3) {
@@ -528,7 +598,7 @@ export default class Game {
       }
 
       if (Math.abs(projection.x + this.MAP_SIZE / 2) <= 0.01) {
-        if (Math.abs(projection.y - 15) <= 2) {
+        if (Math.abs(projection.y - 12.5) <= 2) {
           const u = (35 - projection.z) / 5;
           const x = ~~(u+0.5);
           if (Math.abs(u - x) <= 0.4 && x >= 0 && x < 3) {
@@ -536,6 +606,29 @@ export default class Game {
               audio.playDone();
             }
             this.hud.updateCrosshair(this.crosshairs[x]);
+          }
+        }
+      }
+
+      if (Math.abs(projection.x + this.MAP_SIZE / 2) <= 0.01) {
+        if (Math.abs(projection.y - 17.5) <= 2) {
+          const u = (35 - projection.z) / 5;
+          const x = ~~(u+0.5);
+          if (Math.abs(u - x) <= 0.4 && x >= 0 && x < 3) {
+            switch (this.resolutions[x]) {
+              case '4x3':
+                this.camera.aspect = 4/3;
+                break;
+              case '16x9':
+                this.camera.aspect = 16/9;
+                break;
+              case '16x10':
+                this.camera.aspect = 16/10;
+                break;
+            }
+            
+            this.camera.fov = 74;
+            this.camera.updateProjectionMatrix();
           }
         }
       }

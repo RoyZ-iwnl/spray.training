@@ -176,7 +176,7 @@ export const weapons = {
           volume: 0.2,
         })
       ],
-      audioDelay: [750, 1500],
+      audioDelay: [350, 1200, 2000],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
