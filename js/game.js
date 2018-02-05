@@ -137,7 +137,7 @@ export default class Game {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('game-page').appendChild(this.renderer.domElement);
 
-    const aspect = window.innerWidth / window.innerHeight;
+    const aspect = window.innerWidth / window.innerHeight; // 16/9;
     const fov = 74;
     this.camera = new THREE.PerspectiveCamera(fov, aspect, 0.1, 1000);
     this.camera.position.set(0, 0, 0);
@@ -468,7 +468,7 @@ export default class Game {
       }
 
       // accuracy = sum(d^err);
-      const err = 1/2;
+      const err = 1;
       this.shots.push(d <= 1 ? 0 : Math.pow(d, err));
 
       this.shot = true;
@@ -488,7 +488,7 @@ export default class Game {
         }, weapons[this.currentWeapon].reload);
 
         if (this.count === weapons[this.currentWeapon].magazine - 1 && !settings.noSpread) {
-          this.currentScore = 100/(utils.accuracy(this.shots)/100 + 1);
+          this.currentScore = utils.score(utils.accuracy(this.shots)); // this.shots |> utils.accuracy |> utils.score;
           if (this.currentScore > this.highScore[this.currentWeapon]) {
             this.highScore[this.currentWeapon] = this.currentScore;
             this.newHighScore = true;
@@ -626,7 +626,7 @@ export default class Game {
                 this.camera.aspect = 16/10;
                 break;
             }
-            
+
             this.camera.fov = 74;
             this.camera.updateProjectionMatrix();
           }

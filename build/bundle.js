@@ -16628,8 +16628,12 @@ exports.projection = function (player, currentWeapon, s) {
 
 exports.accuracy = function (shots) {
   return shots.reduce(function (acc, shot) {
-    return acc + shot;
+    return acc + shot / shots.length;
   }, 0);
+};
+
+exports.score = function (acc) {
+  return 100 / (acc / 20 + 1);
 };
 
 exports.rand = function (arr) {
@@ -25362,7 +25366,7 @@ var Game = function () {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       document.getElementById('game-page').appendChild(this.renderer.domElement);
 
-      var aspect = window.innerWidth / window.innerHeight;
+      var aspect = window.innerWidth / window.innerHeight; // 16/9;
       var fov = 74;
       this.camera = new THREE.PerspectiveCamera(fov, aspect, 0.1, 1000);
       this.camera.position.set(0, 0, 0);
@@ -25693,7 +25697,7 @@ var Game = function () {
         }
 
         // accuracy = sum(d^err);
-        var err = 1 / 2;
+        var err = 1;
         this.shots.push(d <= 1 ? 0 : Math.pow(d, err));
 
         this.shot = true;
@@ -25715,7 +25719,7 @@ var Game = function () {
           }, _weapons.weapons[this.currentWeapon].reload);
 
           if (this.count === _weapons.weapons[this.currentWeapon].magazine - 1 && !_settings.settings.noSpread) {
-            this.currentScore = 100 / (utils.accuracy(this.shots) / 100 + 1);
+            this.currentScore = utils.score(utils.accuracy(this.shots)); // this.shots |> utils.accuracy |> utils.score;
             if (this.currentScore > this.highScore[this.currentWeapon]) {
               this.highScore[this.currentWeapon] = this.currentScore;
               this.newHighScore = true;

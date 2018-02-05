@@ -76,6 +76,8 @@ exports.projection = (player, currentWeapon, s) => {
   return position;
 };
 
-exports.accuracy = (shots) => shots.reduce((acc, shot) => acc + shot, 0);
+exports.accuracy = (shots) => shots.reduce((acc, shot) => acc + shot/shots.length, 0);
+
+exports.score = (acc) => 100 / (acc / 20 + 1);
 
 exports.rand = (arr) => arr[~~(Math.random() * arr.length)];
