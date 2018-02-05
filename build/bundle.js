@@ -25304,6 +25304,11 @@ var Game = function () {
     this.crouch = 0;
 
     this.colorScheme = _colors.colors.default;
+
+    this.beginTime = (performance || Date).now();
+    this.prevTime = this.beginTime;
+    this.frames = 0;
+    this.fps = 0;
   }
 
   _createClass(Game, [{
@@ -25642,7 +25647,7 @@ var Game = function () {
     value: function update(delta) {
       var _this4 = this;
 
-      this.hud.updateHud(this.player, this.camera, this.currentWeapon, this.ammo, this.highScore, this.currentScore, this.newHighScore, this.aFrame, this.delta);
+      this.hud.updateHud(this.player, this.camera, this.currentWeapon, this.ammo, this.highScore, this.currentScore, this.newHighScore, this.aFrame, this.fps);
       this.setCmd();
 
       var sensitivity = _global.global.SENS;
@@ -25891,6 +25896,15 @@ var Game = function () {
         jump: false,
         crouch: false
       };
+
+      this.frames++;
+      var time = (performance || Date).now();
+      var interval = 250;
+      if (time >= this.prevTime + interval) {
+        this.fps = this.frames * 1000 / (time - this.prevTime);
+        this.prevTime = time;
+        this.frames = 0;
+      }
     }
   }, {
     key: 'setCmd',
@@ -26295,7 +26309,7 @@ var HUD = function () {
     }
   }, {
     key: 'updateHud',
-    value: function updateHud(player, camera, currentWeapon, ammo, highScore, currentScore, newHighScore, aFrame, delta) {
+    value: function updateHud(player, camera, currentWeapon, ammo, highScore, currentScore, newHighScore, aFrame, fps) {
       $('#player-position').html('pos: ' + player.mesh.position.x.toFixed(2) + ', ' + player.mesh.position.z.toFixed(2));
 
       $('#player-fov').html('fov: ' + (2 * Math.atan2(Math.tan(camera.fov / 2 * Math.PI / 180), 1 / camera.aspect) * 180 / Math.PI).toFixed(1));
@@ -26309,7 +26323,7 @@ var HUD = function () {
       $('#player-score').html('accuracy: ' + currentScore.toFixed(2) + '% (' + _weapons.weapons[currentWeapon].name + ')');
 
       if (aFrame % _weapons.weapons[currentWeapon].magazine < 3) {
-        $('#player-fps').html('fps: ' + (1 / delta).toFixed(0));
+        $('#player-fps').html('fps: ' + Math.round(fps));
       }
 
       if (newHighScore) {

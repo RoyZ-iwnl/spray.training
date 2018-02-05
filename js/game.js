@@ -68,6 +68,11 @@ export default class Game {
     this.crouch = 0;
 
     this.colorScheme = colors.default;
+
+    this.beginTime = (performance || Date).now();
+    this.prevTime = this.beginTime;
+    this.frames = 0;
+    this.fps = 0;
   }
 
   init() {
@@ -411,7 +416,7 @@ export default class Game {
   }
 
   update(delta) {
-    this.hud.updateHud(this.player, this.camera, this.currentWeapon, this.ammo, this.highScore, this.currentScore, this.newHighScore, this.aFrame, this.delta);
+    this.hud.updateHud(this.player, this.camera, this.currentWeapon, this.ammo, this.highScore, this.currentScore, this.newHighScore, this.aFrame, this.fps);
     this.setCmd();
 
     const sensitivity = global.SENS;
@@ -660,6 +665,15 @@ export default class Game {
       jump: false,
       crouch: false,
     };
+
+    this.frames++;
+    const time = (performance || Date).now();
+    const interval = 250;
+    if (time >= this.prevTime + interval) {
+      this.fps = (this.frames * 1000) / (time - this.prevTime);
+      this.prevTime = time;
+      this.frames = 0;
+    }
   }
 
   setCmd() {

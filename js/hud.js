@@ -105,7 +105,7 @@ export default class HUD {
     }
   }
 
-  updateHud(player, camera, currentWeapon, ammo, highScore, currentScore, newHighScore, aFrame, delta) {
+  updateHud(player, camera, currentWeapon, ammo, highScore, currentScore, newHighScore, aFrame, fps) {
     $('#player-position').html(`pos: ${player.mesh.position.x.toFixed(2)}, ${player.mesh.position.z.toFixed(2)}`);
 
     $('#player-fov').html(`fov: ${(2*Math.atan2(Math.tan(camera.fov/2 * Math.PI/180), 1/camera.aspect) * 180 / Math.PI).toFixed(1)}`);
@@ -119,7 +119,7 @@ export default class HUD {
     $('#player-score').html(`accuracy: ${currentScore.toFixed(2)}% (${weapons[currentWeapon].name})`);
 
     if (aFrame % weapons[currentWeapon].magazine < 3) {
-      $('#player-fps').html(`fps: ${(1/delta).toFixed(0)}`);
+      $('#player-fps').html(`fps: ${Math.round(fps)}`);
     }
 
     if (newHighScore) {
