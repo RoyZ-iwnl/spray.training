@@ -25309,6 +25309,8 @@ var Game = function () {
     this.prevTime = this.beginTime;
     this.frames = 0;
     this.fps = 0;
+
+    this.playerDistance = 75;
   }
 
   _createClass(Game, [{
@@ -25647,7 +25649,7 @@ var Game = function () {
     value: function update(delta) {
       var _this4 = this;
 
-      this.hud.updateHud(this.player, this.camera, this.currentWeapon, this.ammo, this.highScore, this.currentScore, this.newHighScore, this.aFrame, this.fps);
+      this.hud.updateHud(this.player, this.playerDistance, this.camera, this.currentWeapon, this.ammo, this.highScore, this.currentScore, this.newHighScore, this.aFrame, this.fps);
       this.setCmd();
 
       var sensitivity = _global.global.SENS;
@@ -25658,6 +25660,8 @@ var Game = function () {
       this.player.mesh.rotateY(-this.cursorXY.x * sensitivity * m_yaw * factor * delta);
       this.player.camera.rotateX(-this.cursorXY.y * sensitivity * m_pitch * factor * delta);
       this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
+
+      this.playerDistance = Math.hypot(this.player.mesh.position.x + this.MAP_SIZE / 2, this.player.mesh.position.z);
 
       var dx = (0, _movement2.default)(this.player, this.cmd, delta);
       dx.multiplyScalar(delta);
@@ -25854,12 +25858,21 @@ var Game = function () {
               switch (this.resolutions[_x4]) {
                 case '4x3':
                   this.camera.aspect = 4 / 3;
+                  if (_settings.settings.audio) {
+                    audio.playDone();
+                  }
                   break;
                 case '16x9':
                   this.camera.aspect = 16 / 9;
+                  if (_settings.settings.audio) {
+                    audio.playDone();
+                  }
                   break;
                 case '16x10':
                   this.camera.aspect = 16 / 10;
+                  if (_settings.settings.audio) {
+                    audio.playDone();
+                  }
                   break;
               }
 
@@ -25870,7 +25883,8 @@ var Game = function () {
         }
 
         var target = this.scene.getObjectByName('target');
-        var targetPosition = _weapons.weapons[this.currentWeapon].spray[this.sprayCount].clone().multiply(new THREE.Vector3(0, -1, 1).multiplyScalar(_global.global.SPRAY_SCALE)).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0));
+        var targetPosition = _weapons.weapons[this.currentWeapon].spray[this.sprayCount].clone().multiply(new THREE.Vector3(0, -1, 1).multiplyScalar(_global.global.SPRAY_SCALE).multiplyScalar(this.playerDistance / _global.global.INITIAL_DISTANCE) // update ghosthair depending on player distance from target
+        ).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0));
         target.geometry.vertices.pop();
         target.geometry.vertices.push(targetPosition);
         target.geometry.verticesNeedUpdate = true;
@@ -26309,8 +26323,10 @@ var HUD = function () {
     }
   }, {
     key: 'updateHud',
-    value: function updateHud(player, camera, currentWeapon, ammo, highScore, currentScore, newHighScore, aFrame, fps) {
-      $('#player-position').html('pos: ' + player.mesh.position.x.toFixed(2) + ', ' + player.mesh.position.z.toFixed(2));
+    value: function updateHud(player, playerDistance, camera, currentWeapon, ammo, highScore, currentScore, newHighScore, aFrame, fps) {
+      // $('#player-position').html(`pos: ${player.mesh.position.x.toFixed(2)}, ${player.mesh.position.z.toFixed(2)}`);
+
+      $('#player-position').html('dst: ' + playerDistance.toFixed(2));
 
       $('#player-fov').html('fov: ' + (2 * Math.atan2(Math.tan(camera.fov / 2 * Math.PI / 180), 1 / camera.aspect) * 180 / Math.PI).toFixed(1));
 

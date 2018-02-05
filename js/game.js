@@ -73,6 +73,8 @@ export default class Game {
     this.prevTime = this.beginTime;
     this.frames = 0;
     this.fps = 0;
+
+    this.playerDistance = 75;
   }
 
   init() {
@@ -416,7 +418,7 @@ export default class Game {
   }
 
   update(delta) {
-    this.hud.updateHud(this.player, this.camera, this.currentWeapon, this.ammo, this.highScore, this.currentScore, this.newHighScore, this.aFrame, this.fps);
+    this.hud.updateHud(this.player, this.playerDistance, this.camera, this.currentWeapon, this.ammo, this.highScore, this.currentScore, this.newHighScore, this.aFrame, this.fps);
     this.setCmd();
 
     const sensitivity = global.SENS;
@@ -427,6 +429,11 @@ export default class Game {
     this.player.mesh.rotateY(-this.cursorXY.x * sensitivity * m_yaw * factor * delta);
     this.player.camera.rotateX(-this.cursorXY.y * sensitivity * m_pitch * factor * delta);
     this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
+
+    this.playerDistance = Math.hypot(
+      this.player.mesh.position.x + this.MAP_SIZE / 2,
+      this.player.mesh.position.z
+    );
 
     const dx = movement(this.player, this.cmd, delta);
     dx.multiplyScalar(delta);
@@ -623,12 +630,21 @@ export default class Game {
             switch (this.resolutions[x]) {
               case '4x3':
                 this.camera.aspect = 4/3;
+                if (settings.audio) {
+                  audio.playDone();
+                }
                 break;
               case '16x9':
                 this.camera.aspect = 16/9;
+                if (settings.audio) {
+                  audio.playDone();
+                }
                 break;
               case '16x10':
                 this.camera.aspect = 16/10;
+                if (settings.audio) {
+                  audio.playDone();
+                }
                 break;
             }
 
@@ -639,7 +655,20 @@ export default class Game {
       }
 
       const target = this.scene.getObjectByName('target');
-      const targetPosition = weapons[this.currentWeapon].spray[this.sprayCount].clone().multiply(new THREE.Vector3(0, -1, 1).multiplyScalar(global.SPRAY_SCALE)).add(new THREE.Vector3(-this.MAP_SIZE / 2 + 0.01, this.SPRAY_HEIGHT, 0))
+      const targetPosition = weapons[this.currentWeapon]
+                              .spray[this.sprayCount]
+                              .clone()
+                              .multiply(
+                                new THREE.Vector3(0, -1, 1)
+                                  .multiplyScalar(global.SPRAY_SCALE)
+                                  .multiplyScalar(this.playerDistance / global.INITIAL_DISTANCE) // update ghosthair depending on player distance from target
+                              )
+                              .add(
+                                new THREE.Vector3(
+                                  -this.MAP_SIZE / 2 + 0.01,
+                                  this.SPRAY_HEIGHT,
+                                  0)
+                              );
       target.geometry.vertices.pop();
       target.geometry.vertices.push(targetPosition);
       target.geometry.verticesNeedUpdate = true;
