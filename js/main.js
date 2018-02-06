@@ -3,6 +3,16 @@ import Game from './game.js';
 import { global } from './global.js';
 import HUD from './hud.js';
 
+
+// check browser
+
+const isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+const isFirefox = typeof InstallTrigger !== 'undefined';
+const isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+const isIE = false || !!document.documentMode;
+const isEdge = !isIE && !!window.StyleMedia;
+const isChrome = !!window.chrome && !!window.chrome.webstore;
+
 const sensitivitySlider = document.getElementById('sens-slider');
 
 noUiSlider.create(sensitivitySlider, {
@@ -31,31 +41,9 @@ $('#main-button').on('click', () => {
   global.SENS = sensitivityInput.value;
   ui.fadeFromTo($('#main-page'), $('#game-page'), 0.5);
 
-  const hud = new HUD();
+  const hud = new HUD(isChrome);
   hud.init();
 
   const game = new Game(hud);
   game.init();
-  
-
-  // const crosshairCtx = $('#xhair')[0].getContext('2d');
-  // crosshairCtx.strokeStyle = '#39ff14';
-  // crosshairCtx.lineWidth = 2;
-  // crosshairCtx.beginPath();
-  // crosshairCtx.moveTo(15, 0);
-  // crosshairCtx.lineTo(15, 10);
-  // crosshairCtx.stroke();
-  // crosshairCtx.beginPath();
-  // crosshairCtx.moveTo(15, 20);
-  // crosshairCtx.lineTo(15, 30);
-  // crosshairCtx.stroke();
-  // crosshairCtx.beginPath();
-  // crosshairCtx.moveTo(0, 15);
-  // crosshairCtx.lineTo(10, 15);
-  // crosshairCtx.stroke();
-  // crosshairCtx.beginPath();
-  // crosshairCtx.moveTo(20, 15);
-  // crosshairCtx.lineTo(30, 15);
-  // crosshairCtx.stroke();
-
 });

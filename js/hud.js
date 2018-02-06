@@ -1,16 +1,22 @@
 import { weapons } from './weapons.js';
 
 export default class HUD {
-  constructor(weapon = 'ak47') {
+  constructor(isChrome, weapon = 'ak47') {
     this.weapon = weapon;
     this.video = document.getElementById('video');
     this.viewmodel = document.getElementById('player-weapon');
     this.enabled = true;
+    this.chrome = isChrome;
     this.shootingAnimation = true;
   }
 
   init() {
     this.updateCrosshair();
+
+    if (!this.chrome) {
+      this.viewmodel.style.display = 'none';
+      this.enabled = false;
+    }
   }
 
 
@@ -59,49 +65,51 @@ export default class HUD {
   }
 
   updateViewmodel(command) {
-    if (command === 'toggle') {
-      if (this.viewmodel.style.display === 'block') {
-        this.viewmodel.style.display = 'none';
-        this.enabled = false;
-      } else {
-        this.viewmodel.style.display = 'block';
-        this.enabled = true;
-      }
-    }
-
-    if (this.enabled) {
-      if (command === 'shoot') {
-        this.video.pause();
-        if (!this.shootingAnimation) {
-          this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
-          this.shootingAnimation = true;
+    if (this.chrome) {
+      if (command === 'toggle') {
+        if (this.viewmodel.style.display === 'block') {
+          this.viewmodel.style.display = 'none';
+          this.enabled = false;
+        } else {
+          this.viewmodel.style.display = 'block';
+          this.enabled = true;
         }
-        this.video.currentTime = 0;
-        this.video.play();
-        
-        setTimeout(() => {
-          this.video.pause();
-          this.video.currentTime = 0;
-        }, 60000 / weapons[this.weapon].rpm);
-      } else if (command === 'reload') {
-        this.shootingAnimation = false;
-        this.video.pause();
-        this.video.src = `img/weapons/${this.weapon}/${this.weapon}-reload.webm`;
-        this.video.currentTime = 0;
-        this.video.play();
-
-        // setTimeout(() => {
-        //   this.video.pause();
-        //   this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
-        //   this.video.currentTime = 0;
-        // }, weapons[this.weapon].reload);
       }
-    }
 
-    if (command === 'select') {
-      this.video.pause();
-      this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
-      this.video.currentTime = 0;
+      if (this.enabled) {
+        if (command === 'shoot') {
+          this.video.pause();
+          if (!this.shootingAnimation) {
+            this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
+            this.shootingAnimation = true;
+          }
+          this.video.currentTime = 0;
+          this.video.play();
+          
+          setTimeout(() => {
+            this.video.pause();
+            this.video.currentTime = 0;
+          }, 60000 / weapons[this.weapon].rpm);
+        } else if (command === 'reload') {
+          this.shootingAnimation = false;
+          this.video.pause();
+          this.video.src = `img/weapons/${this.weapon}/${this.weapon}-reload.webm`;
+          this.video.currentTime = 0;
+          this.video.play();
+
+          // setTimeout(() => {
+          //   this.video.pause();
+          //   this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
+          //   this.video.currentTime = 0;
+          // }, weapons[this.weapon].reload);
+        }
+      }
+
+      if (command === 'select') {
+        this.video.pause();
+        this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
+        this.video.currentTime = 0;
+      }
     }
   }
 

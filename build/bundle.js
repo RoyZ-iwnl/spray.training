@@ -16685,6 +16685,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
+// check browser
+
+var isOpera = !!window.opr && !!opr.addons || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+var isFirefox = typeof InstallTrigger !== 'undefined';
+var isSafari = /constructor/i.test(window.HTMLElement) || function (p) {
+  return p.toString() === "[object SafariRemoteNotification]";
+}(!window['safari'] || typeof safari !== 'undefined' && safari.pushNotification);
+var isIE = false || !!document.documentMode;
+var isEdge = !isIE && !!window.StyleMedia;
+var isChrome = !!window.chrome && !!window.chrome.webstore;
+
 var sensitivitySlider = document.getElementById('sens-slider');
 
 noUiSlider.create(sensitivitySlider, {
@@ -16712,31 +16723,11 @@ $('#main-button').on('click', function () {
   _global.global.SENS = sensitivityInput.value;
   ui.fadeFromTo($('#main-page'), $('#game-page'), 0.5);
 
-  var hud = new _hud2.default();
+  var hud = new _hud2.default(isChrome);
   hud.init();
 
   var game = new _game2.default(hud);
   game.init();
-
-  // const crosshairCtx = $('#xhair')[0].getContext('2d');
-  // crosshairCtx.strokeStyle = '#39ff14';
-  // crosshairCtx.lineWidth = 2;
-  // crosshairCtx.beginPath();
-  // crosshairCtx.moveTo(15, 0);
-  // crosshairCtx.lineTo(15, 10);
-  // crosshairCtx.stroke();
-  // crosshairCtx.beginPath();
-  // crosshairCtx.moveTo(15, 20);
-  // crosshairCtx.lineTo(15, 30);
-  // crosshairCtx.stroke();
-  // crosshairCtx.beginPath();
-  // crosshairCtx.moveTo(0, 15);
-  // crosshairCtx.lineTo(10, 15);
-  // crosshairCtx.stroke();
-  // crosshairCtx.beginPath();
-  // crosshairCtx.moveTo(20, 15);
-  // crosshairCtx.lineTo(30, 15);
-  // crosshairCtx.stroke();
 });
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
@@ -25626,6 +25617,9 @@ var Game = function () {
           _this3.hud.updateViewmodel('reload');
         }
 
+        if (e.ctrlKey && (e.keyCode === 65 || e.keyCode === 83 || e.keyCode === 68 || e.keyCode === 87)) {
+          e.preventDefault();
+        }
         setTimeout(function () {
           locked = false;
         }, _weapons.weapons[_this3.currentWeapon].reload);
@@ -25828,7 +25822,9 @@ var Game = function () {
                   _settings.settings.audio = false;
                   break;
                 case 'viewmodel':
-                  audio.playDone();
+                  if (_settings.settings.audio) {
+                    audio.playDone();
+                  }
                   this.hud.updateViewmodel('toggle');
                   _settings.settings.viewmodel = !_settings.settings.viewmodel;
                   break;
@@ -25936,7 +25932,7 @@ var Game = function () {
         this.cmd.right++;
       }
       this.cmd.jump = this.keyboard.pressed('space');
-      this.cmd.crouch = this.keyboard.pressed('C'); // ctrl causes unwanted issues, e.g. ctrl + w
+      this.cmd.crouch = this.keyboard.pressed('ctrl'); // ctrl causes unwanted issues, e.g. ctrl + w
     }
   }, {
     key: 'reset',
@@ -26209,8 +26205,8 @@ var _weapons = __webpack_require__(2);
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var HUD = function () {
-  function HUD() {
-    var weapon = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'ak47';
+  function HUD(isChrome) {
+    var weapon = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'ak47';
 
     _classCallCheck(this, HUD);
 
@@ -26218,6 +26214,7 @@ var HUD = function () {
     this.video = document.getElementById('video');
     this.viewmodel = document.getElementById('player-weapon');
     this.enabled = true;
+    this.chrome = isChrome;
     this.shootingAnimation = true;
   }
 
@@ -26225,6 +26222,11 @@ var HUD = function () {
     key: 'init',
     value: function init() {
       this.updateCrosshair();
+
+      if (!this.chrome) {
+        this.viewmodel.style.display = 'none';
+        this.enabled = false;
+      }
     }
   }, {
     key: 'updateCrosshair',
@@ -26276,49 +26278,51 @@ var HUD = function () {
     value: function updateViewmodel(command) {
       var _this = this;
 
-      if (command === 'toggle') {
-        if (this.viewmodel.style.display === 'block') {
-          this.viewmodel.style.display = 'none';
-          this.enabled = false;
-        } else {
-          this.viewmodel.style.display = 'block';
-          this.enabled = true;
-        }
-      }
-
-      if (this.enabled) {
-        if (command === 'shoot') {
-          this.video.pause();
-          if (!this.shootingAnimation) {
-            this.video.src = 'img/weapons/' + this.weapon + '/' + this.weapon + '-tap.webm';
-            this.shootingAnimation = true;
+      if (this.chrome) {
+        if (command === 'toggle') {
+          if (this.viewmodel.style.display === 'block') {
+            this.viewmodel.style.display = 'none';
+            this.enabled = false;
+          } else {
+            this.viewmodel.style.display = 'block';
+            this.enabled = true;
           }
-          this.video.currentTime = 0;
-          this.video.play();
-
-          setTimeout(function () {
-            _this.video.pause();
-            _this.video.currentTime = 0;
-          }, 60000 / _weapons.weapons[this.weapon].rpm);
-        } else if (command === 'reload') {
-          this.shootingAnimation = false;
-          this.video.pause();
-          this.video.src = 'img/weapons/' + this.weapon + '/' + this.weapon + '-reload.webm';
-          this.video.currentTime = 0;
-          this.video.play();
-
-          // setTimeout(() => {
-          //   this.video.pause();
-          //   this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
-          //   this.video.currentTime = 0;
-          // }, weapons[this.weapon].reload);
         }
-      }
 
-      if (command === 'select') {
-        this.video.pause();
-        this.video.src = 'img/weapons/' + this.weapon + '/' + this.weapon + '-tap.webm';
-        this.video.currentTime = 0;
+        if (this.enabled) {
+          if (command === 'shoot') {
+            this.video.pause();
+            if (!this.shootingAnimation) {
+              this.video.src = 'img/weapons/' + this.weapon + '/' + this.weapon + '-tap.webm';
+              this.shootingAnimation = true;
+            }
+            this.video.currentTime = 0;
+            this.video.play();
+
+            setTimeout(function () {
+              _this.video.pause();
+              _this.video.currentTime = 0;
+            }, 60000 / _weapons.weapons[this.weapon].rpm);
+          } else if (command === 'reload') {
+            this.shootingAnimation = false;
+            this.video.pause();
+            this.video.src = 'img/weapons/' + this.weapon + '/' + this.weapon + '-reload.webm';
+            this.video.currentTime = 0;
+            this.video.play();
+
+            // setTimeout(() => {
+            //   this.video.pause();
+            //   this.video.src = `img/weapons/${this.weapon}/${this.weapon}-tap.webm`;
+            //   this.video.currentTime = 0;
+            // }, weapons[this.weapon].reload);
+          }
+        }
+
+        if (command === 'select') {
+          this.video.pause();
+          this.video.src = 'img/weapons/' + this.weapon + '/' + this.weapon + '-tap.webm';
+          this.video.currentTime = 0;
+        }
       }
     }
   }, {

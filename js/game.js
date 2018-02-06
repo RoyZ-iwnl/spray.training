@@ -402,6 +402,14 @@ export default class Game {
         this.hud.updateViewmodel('reload');
       }
 
+      if (e.ctrlKey && (
+        e.keyCode === 65 ||
+        e.keyCode === 83 ||
+        e.keyCode === 68 ||
+        e.keyCode === 87
+      )) { 
+        e.preventDefault(); 
+      }
       setTimeout(() => {locked = false;}, weapons[this.currentWeapon].reload);
     });
   }
@@ -600,7 +608,9 @@ export default class Game {
                 settings.audio = false;
                 break;
               case 'viewmodel':
-                audio.playDone();
+                if (settings.audio) {
+                  audio.playDone();
+                }
                 this.hud.updateViewmodel('toggle');
                 settings.viewmodel = !settings.viewmodel;
                 break;
@@ -719,7 +729,7 @@ export default class Game {
       this.cmd.right++;
     }
     this.cmd.jump = this.keyboard.pressed('space');
-    this.cmd.crouch = this.keyboard.pressed('C'); // ctrl causes unwanted issues, e.g. ctrl + w
+    this.cmd.crouch = this.keyboard.pressed('ctrl'); // ctrl causes unwanted issues, e.g. ctrl + w
   }
 
   reset() {
