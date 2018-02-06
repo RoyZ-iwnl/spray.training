@@ -1,9 +1,15 @@
 import { Howl } from 'howler';
 import { weapons } from './weapons.js';
 import { rand } from './utils.js';
+import { settings } from './settings.js';
 
 const done = new Howl({
   src: ['audio/general/bell1.wav'],
+  volume: 0.2,
+});
+
+const select = new Howl({
+  src: ['audio/general/button14.wav'],
   volume: 0.2,
 });
 
@@ -23,32 +29,50 @@ const error = new Howl({
 });
 
 exports.playReload = (name) => {
-  // const weapon = weapons[name];
-  const audio = weapons[name].audio;
-  audio.audioDelay.forEach((delay, i) => {
-    setTimeout(() => {
-      audio.reload[i].play();
-    }, delay);
-  });
+  if (settings.audio) {
+    // const weapon = weapons[name];
+    const audio = weapons[name].audio;
+    audio.audioDelay.forEach((delay, i) => {
+      setTimeout(() => {
+        audio.reload[i].play();
+      }, delay);
+    });
+  }
 };
 
 exports.playTap = (name) => {
-  const audio = weapons[name].audio;
-  rand(audio.shoot).play();
+  if (settings.audio) {
+    const audio = weapons[name].audio;
+    rand(audio.shoot).play();
+  }
 };
 
 exports.playDone = () => {
-  done.play();
+  if (settings.audio) {
+    done.play();
+  }
+};
+
+exports.playSelect = () => {
+  if (settings.audio) {
+    select.play();
+  }
 };
 
 exports.playHeadshot = () => {
-  headshot.play();
+  if (settings.audio) {
+    headshot.play();
+  }
 };
 
 exports.playSetting = () => {
-  setting.play();
+  if (settings.audio) {
+    setting.play();
+  }
 };
 
 exports.playError = () => {
-  error.play();
+  if (settings.audio) {
+    error.play();
+  }
 };

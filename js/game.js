@@ -396,9 +396,7 @@ export default class Game {
           this.reloading = false;
         }, weapons[this.currentWeapon].reload);
 
-        if (settings.audio) {
-          audio.playReload(this.currentWeapon);
-        }
+        audio.playReload(this.currentWeapon);
         this.hud.updateViewmodel('reload');
       }
 
@@ -480,16 +478,15 @@ export default class Game {
       this.scene.add(bullet);
       setTimeout(() => this.scene.remove(bullet), 5000);
 
-      if (settings.audio) {
-        audio.playTap(this.currentWeapon);
-        if (d <= 1) {
-          audio.playHeadshot();
-        }
+      
+      audio.playTap(this.currentWeapon);
+      if (d <= 1) {
+        audio.playHeadshot();
       }
 
       // accuracy = sum(d^err);
-      const err = 1;
-      this.shots.push(d <= 1 ? 0 : Math.pow(d, err));
+      // const err = 1;
+      this.shots.push(d <= 1 ? 0 : d /* Math.pow(d, err) */);
 
       this.shot = true;
       if (this.ammo !== weapons[this.currentWeapon].magazine-1) {
@@ -497,9 +494,7 @@ export default class Game {
         setTimeout(() => this.shot = false, 60000/weapons[this.currentWeapon].rpm);
       } else {
         this.reloading = true;
-        if (settings.audio) {
-          audio.playReload(this.currentWeapon);
-        }
+        audio.playReload(this.currentWeapon);
         this.hud.updateViewmodel('reload');
 
         setTimeout(() => {
@@ -522,7 +517,7 @@ export default class Game {
       this.count = (this.count + 1) % weapons[this.currentWeapon].magazine;
       this.sprayCount = (this.sprayCount + 1) % weapons[this.currentWeapon].magazine;
 
-      if (this.sprayCount === 0 && settings.audio) {
+      if (this.sprayCount === 0) {
         audio.playDone();
       }
 
@@ -530,9 +525,7 @@ export default class Game {
         if (Math.abs(projection.x + this.MAP_SIZE / 2) <= 0.01 && Math.abs(projection.y - button.position.y) <= 1 && Math.abs(projection.z - button.position.z) <= 1) {
           button.action();
           button.mesh.material.color.setHex(settings[button.name] ? 0x00ff00 : 0xecf0f1);
-          if (settings.audio) {
-            audio.playSetting();
-          }
+          audio.playSetting();
         }
       });
 
@@ -551,9 +544,7 @@ export default class Game {
             this.hud.updateViewmodel('select');
             console.log(`You are now holding the ${weapons[this.currentWeapon].name}. Your highest accuracy with this weapon was ${this.highScore[this.currentWeapon].toFixed(2)}%.`)
             this.currentScore = 0;
-            if (settings.audio) {
-              audio.playDone();
-            }
+            audio.playDone();
             this.reset();
           }
         }
@@ -597,20 +588,16 @@ export default class Game {
             switch (this.options[x]) {
               case 'audio-on':
                 if (!settings.audio) {
-                  audio.playDone();
+                  settings.audio = true;
+                  audio.playSelect();
                 }
-                settings.audio = true;
                 break;
               case 'audio-off':
-                if (settings.audio) {
-                  audio.playDone();
-                }
+                audio.playSelect();
                 settings.audio = false;
                 break;
               case 'viewmodel':
-                if (settings.audio) {
-                  audio.playDone();
-                }
+                audio.playSelect();
                 this.hud.updateViewmodel('toggle');
                 settings.viewmodel = !settings.viewmodel;
                 break;
@@ -624,9 +611,7 @@ export default class Game {
           const u = (35 - projection.z) / 5;
           const x = ~~(u+0.5);
           if (Math.abs(u - x) <= 0.4 && x >= 0 && x < 3) {
-            if (settings.audio) {
-              audio.playDone();
-            }
+            audio.playSelect();
             this.hud.updateCrosshair(this.crosshairs[x]);
           }
         }
@@ -640,21 +625,15 @@ export default class Game {
             switch (this.resolutions[x]) {
               case '4x3':
                 this.camera.aspect = 4/3;
-                if (settings.audio) {
-                  audio.playDone();
-                }
+                audio.playSelect();
                 break;
               case '16x9':
                 this.camera.aspect = 16/9;
-                if (settings.audio) {
-                  audio.playDone();
-                }
+                audio.playSelect();
                 break;
               case '16x10':
                 this.camera.aspect = 16/10;
-                if (settings.audio) {
-                  audio.playDone();
-                }
+                audio.playSelect();
                 break;
             }
 

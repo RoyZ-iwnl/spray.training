@@ -117,7 +117,7 @@ export default class HUD {
     // $('#player-position').html(`pos: ${player.mesh.position.x.toFixed(2)}, ${player.mesh.position.z.toFixed(2)}`);
 
     $('#player-position').html(
-      `dst: ${playerDistance.toFixed(2)}`
+      `dist: ${playerDistance.toFixed(2)}`
     );
 
     $('#player-fov').html(

@@ -3574,13 +3574,13 @@ var weapons = exports.weapons = {
         src: ['audio/weapons/ump45/ump45_clipin.wav'],
         volume: 0.2
       }), new Howl({
-        src: ['audio/weapons/ump45/ump45_boltforward.wav'],
-        volume: 0.2
-      }), new Howl({
         src: ['audio/weapons/ump45/ump45_boltback.wav'],
         volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/ump45/ump45_boltforward.wav'],
+        volume: 0.2
       })],
-      audioDelay: [750, 1800, 2400, 2500]
+      audioDelay: [750, 1800, 2400, 2750]
     },
     spray: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 13, 2), new THREE.Vector3(0, 29, 9), new THREE.Vector3(0, 63, 12), new THREE.Vector3(0, 107, 21), new THREE.Vector3(0, 152, 40), new THREE.Vector3(0, 204, 45), new THREE.Vector3(0, 238, 23), new THREE.Vector3(0, 262, 31), new THREE.Vector3(0, 288, 13), new THREE.Vector3(0, 305, -24), new THREE.Vector3(0, 314, -52), new THREE.Vector3(0, 321, -51), new THREE.Vector3(0, 333, -60), new THREE.Vector3(0, 344, -60), new THREE.Vector3(0, 338, -78), new THREE.Vector3(0, 333, -89), new THREE.Vector3(0, 344, -64), new THREE.Vector3(0, 348, -26), new THREE.Vector3(0, 344, -27), new THREE.Vector3(0, 332, -54), new THREE.Vector3(0, 328, -87), new THREE.Vector3(0, 332, -79), new THREE.Vector3(0, 330, -36), new THREE.Vector3(0, 327, -29)],
     inaccuracy: {
@@ -3609,13 +3609,13 @@ var weapons = exports.weapons = {
         src: ['audio/weapons/bizon/bizon_clipin.wav'],
         volume: 0.2
       }), new Howl({
-        src: ['audio/weapons/bizon/bizon_boltforward.wav'],
-        volume: 0.2
-      }), new Howl({
         src: ['audio/weapons/bizon/bizon_boltback.wav'],
         volume: 0.2
+      }), new Howl({
+        src: ['audio/weapons/bizon/bizon_boltforward.wav'],
+        volume: 0.2
       })],
-      audioDelay: [750, 1500, 1750]
+      audioDelay: [500, 1100, 1700, 2000]
     },
     spray: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 9, 2), new THREE.Vector3(0, 15, 7), new THREE.Vector3(0, 30, 14), new THREE.Vector3(0, 54, 29), new THREE.Vector3(0, 83, 54), new THREE.Vector3(0, 122, 48), new THREE.Vector3(0, 160, 30), new THREE.Vector3(0, 193, 29), new THREE.Vector3(0, 204, -8), new THREE.Vector3(0, 214, -36), new THREE.Vector3(0, 231, -47), new THREE.Vector3(0, 235, -75), new THREE.Vector3(0, 250, -62), new THREE.Vector3(0, 248, -11), new THREE.Vector3(0, 254, -11), new THREE.Vector3(0, 254, -36), new THREE.Vector3(0, 254, -48), new THREE.Vector3(0, 260, -40), new THREE.Vector3(0, 266, -53), new THREE.Vector3(0, 265, -78), new THREE.Vector3(0, 257, -107), new THREE.Vector3(0, 257, -123), new THREE.Vector3(0, 255, -137), new THREE.Vector3(0, 251, -151), new THREE.Vector3(0, 243, -150), new THREE.Vector3(0, 245, -142), new THREE.Vector3(0, 252, -136), new THREE.Vector3(0, 258, -133), new THREE.Vector3(0, 266, -91), new THREE.Vector3(0, 270, -85), new THREE.Vector3(0, 276, -82), new THREE.Vector3(0, 272, -102), new THREE.Vector3(0, 275, -72), new THREE.Vector3(0, 263, -74), new THREE.Vector3(0, 254, -84), new THREE.Vector3(0, 255, -60), new THREE.Vector3(0, 258, -64), new THREE.Vector3(0, 267, -48), new THREE.Vector3(0, 271, -53), new THREE.Vector3(0, 259, -83), new THREE.Vector3(0, 250, -109), new THREE.Vector3(0, 231, -134), new THREE.Vector3(0, 225, -144), new THREE.Vector3(0, 236, -130), new THREE.Vector3(0, 244, -133), new THREE.Vector3(0, 238, -153), new THREE.Vector3(0, 229, -176), new THREE.Vector3(0, 240, -141), new THREE.Vector3(0, 252, -104), new THREE.Vector3(0, 256, -100), new THREE.Vector3(0, 245, -109), new THREE.Vector3(0, 243, -107), new THREE.Vector3(0, 247, -110), new THREE.Vector3(0, 240, -129), new THREE.Vector3(0, 247, -105), new THREE.Vector3(0, 256, -77), new THREE.Vector3(0, 262, -45), new THREE.Vector3(0, 252, 8), new THREE.Vector3(0, 248, 21), new THREE.Vector3(0, 252, 11), new THREE.Vector3(0, 252, -21), new THREE.Vector3(0, 254, -4), new THREE.Vector3(0, 262, 8)],
     inaccuracy: {
@@ -3650,10 +3650,10 @@ var weapons = exports.weapons = {
         src: ['audio/weapons/p90/p90_cliphit.wav'],
         volume: 0.2
       }), new Howl({
-        src: ['audio/weapons/p90/p90_boltforward.wav'],
+        src: ['audio/weapons/p90/p90_boltback.wav'],
         volume: 0.2
       }), new Howl({
-        src: ['audio/weapons/p90/p90_boltback.wav'],
+        src: ['audio/weapons/p90/p90_boltforward.wav'],
         volume: 0.2
       })],
       audioDelay: [500, 1500, 2000, 2900, 3100]
@@ -3718,19 +3718,25 @@ var weapons = exports.weapons = {
         volume: 0.2
       })],
       reload: [new Howl({
+        src: ['audio/weapons/m249/m249_coverup.wav'],
+        volume: 0.2
+      }), new Howl({
         src: ['audio/weapons/m249/m249_boxout.wav'],
         volume: 0.2
       }), new Howl({
         src: ['audio/weapons/m249/m249_boxin.wav'],
         volume: 0.2
       }), new Howl({
+        src: ['audio/weapons/m249/m249_chain.wav'],
+        volume: 0.2
+      }), new Howl({
         src: ['audio/weapons/m249/m249_coverdown.wav'],
         volume: 0.2
       }), new Howl({
-        src: ['audio/weapons/m249/m249_coverup.wav'],
+        src: ['audio/weapons/m249/m249_pump.wav'],
         volume: 0.2
       })],
-      audioDelay: [750, 1500, 1750]
+      audioDelay: [700, 1400, 2400, 2600, 3200, 3900]
     },
     spray: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 10, 9), new THREE.Vector3(0, 35, 24), new THREE.Vector3(0, 75, 48), new THREE.Vector3(0, 124, 84), new THREE.Vector3(0, 174, 118), new THREE.Vector3(0, 228, 99), new THREE.Vector3(0, 274, 51), new THREE.Vector3(0, 309, 2), new THREE.Vector3(0, 336, -45), new THREE.Vector3(0, 357, -67), new THREE.Vector3(0, 384, -83), new THREE.Vector3(0, 404, -46), new THREE.Vector3(0, 423, -47), new THREE.Vector3(0, 439, -62), new THREE.Vector3(0, 455, -73), new THREE.Vector3(0, 463, -94), new THREE.Vector3(0, 455, -92), new THREE.Vector3(0, 450, -85), new THREE.Vector3(0, 452, -51), new THREE.Vector3(0, 445, 12), new THREE.Vector3(0, 450, 21), new THREE.Vector3(0, 457, 41), new THREE.Vector3(0, 457, 79), new THREE.Vector3(0, 456, 112), new THREE.Vector3(0, 446, 126), new THREE.Vector3(0, 443, 102), new THREE.Vector3(0, 438, 37), new THREE.Vector3(0, 442, 16), new THREE.Vector3(0, 446, 23), new THREE.Vector3(0, 446, -5), new THREE.Vector3(0, 436, -58), new THREE.Vector3(0, 441, -67), new THREE.Vector3(0, 452, -47), new THREE.Vector3(0, 452, -11), new THREE.Vector3(0, 453, -26), new THREE.Vector3(0, 458, -18), new THREE.Vector3(0, 457, 23), new THREE.Vector3(0, 462, 49), new THREE.Vector3(0, 471, 29), new THREE.Vector3(0, 478, -4), new THREE.Vector3(0, 487, -32), new THREE.Vector3(0, 478, 1), new THREE.Vector3(0, 472, -19), new THREE.Vector3(0, 459, -66), new THREE.Vector3(0, 459, -87), new THREE.Vector3(0, 468, -74), new THREE.Vector3(0, 479, -70), new THREE.Vector3(0, 485, -53), new THREE.Vector3(0, 475, -3), new THREE.Vector3(0, 467, 31), new THREE.Vector3(0, 445, 5), new THREE.Vector3(0, 438, -10), new THREE.Vector3(0, 443, -36), new THREE.Vector3(0, 453, -57), new THREE.Vector3(0, 457, -30), new THREE.Vector3(0, 460, -35), new THREE.Vector3(0, 457, -74), new THREE.Vector3(0, 449, -117), new THREE.Vector3(0, 443, -110), new THREE.Vector3(0, 444, -82), new THREE.Vector3(0, 447, -94), new THREE.Vector3(0, 453, -110), new THREE.Vector3(0, 462, -110), new THREE.Vector3(0, 471, -94), new THREE.Vector3(0, 434, -30), new THREE.Vector3(0, 394, 23), new THREE.Vector3(0, 346, 67), new THREE.Vector3(0, 322, 104), new THREE.Vector3(0, 317, 135), new THREE.Vector3(0, 333, 110), new THREE.Vector3(0, 351, 56), new THREE.Vector3(0, 366, 2), new THREE.Vector3(0, 386, -45), new THREE.Vector3(0, 404, -72), new THREE.Vector3(0, 424, -89), new THREE.Vector3(0, 423, -46), new THREE.Vector3(0, 426, -48), new THREE.Vector3(0, 436, -62), new THREE.Vector3(0, 450, -73), new THREE.Vector3(0, 458, -94), new THREE.Vector3(0, 464, -95), new THREE.Vector3(0, 468, -89), new THREE.Vector3(0, 472, -55), new THREE.Vector3(0, 447, 15), new THREE.Vector3(0, 441, 20), new THREE.Vector3(0, 446, 38), new THREE.Vector3(0, 446, 77), new THREE.Vector3(0, 447, 110), new THREE.Vector3(0, 452, 126), new THREE.Vector3(0, 459, 106), new THREE.Vector3(0, 456, 41), new THREE.Vector3(0, 444, 17), new THREE.Vector3(0, 437, 25), new THREE.Vector3(0, 434, -4), new THREE.Vector3(0, 425, -56), new THREE.Vector3(0, 431, -66), new THREE.Vector3(0, 444, -46), new THREE.Vector3(0, 459, -14), new THREE.Vector3(0, 471, -27)],
     inaccuracy: {
@@ -3763,10 +3769,10 @@ var weapons = exports.weapons = {
         src: ['audio/weapons/p250/p250_clipin.wav'],
         volume: 0.2
       }), new Howl({
-        src: ['audio/weapons/p250/p250_sliderelease.wav'],
+        src: ['audio/weapons/p250/p250_slideback.wav'],
         volume: 0.2
       }), new Howl({
-        src: ['audio/weapons/p250/p250_slideback.wav'],
+        src: ['audio/weapons/p250/p250_sliderelease.wav'],
         volume: 0.2
       })],
       audioDelay: [500, 1500, 2000, 2200]
@@ -25611,9 +25617,7 @@ var Game = function () {
             _this3.reloading = false;
           }, _weapons.weapons[_this3.currentWeapon].reload);
 
-          if (_settings.settings.audio) {
-            audio.playReload(_this3.currentWeapon);
-          }
+          audio.playReload(_this3.currentWeapon);
           _this3.hud.updateViewmodel('reload');
         }
 
@@ -25692,16 +25696,14 @@ var Game = function () {
           return _this4.scene.remove(bullet);
         }, 5000);
 
-        if (_settings.settings.audio) {
-          audio.playTap(this.currentWeapon);
-          if (d <= 1) {
-            audio.playHeadshot();
-          }
+        audio.playTap(this.currentWeapon);
+        if (d <= 1) {
+          audio.playHeadshot();
         }
 
         // accuracy = sum(d^err);
-        var err = 1;
-        this.shots.push(d <= 1 ? 0 : Math.pow(d, err));
+        // const err = 1;
+        this.shots.push(d <= 1 ? 0 : d /* Math.pow(d, err) */);
 
         this.shot = true;
         if (this.ammo !== _weapons.weapons[this.currentWeapon].magazine - 1) {
@@ -25711,9 +25713,7 @@ var Game = function () {
           }, 60000 / _weapons.weapons[this.currentWeapon].rpm);
         } else {
           this.reloading = true;
-          if (_settings.settings.audio) {
-            audio.playReload(this.currentWeapon);
-          }
+          audio.playReload(this.currentWeapon);
           this.hud.updateViewmodel('reload');
 
           setTimeout(function () {
@@ -25736,7 +25736,7 @@ var Game = function () {
         this.count = (this.count + 1) % _weapons.weapons[this.currentWeapon].magazine;
         this.sprayCount = (this.sprayCount + 1) % _weapons.weapons[this.currentWeapon].magazine;
 
-        if (this.sprayCount === 0 && _settings.settings.audio) {
+        if (this.sprayCount === 0) {
           audio.playDone();
         }
 
@@ -25744,9 +25744,7 @@ var Game = function () {
           if (Math.abs(projection.x + _this4.MAP_SIZE / 2) <= 0.01 && Math.abs(projection.y - button.position.y) <= 1 && Math.abs(projection.z - button.position.z) <= 1) {
             button.action();
             button.mesh.material.color.setHex(_settings.settings[button.name] ? 0x00ff00 : 0xecf0f1);
-            if (_settings.settings.audio) {
-              audio.playSetting();
-            }
+            audio.playSetting();
           }
         });
 
@@ -25765,9 +25763,7 @@ var Game = function () {
               this.hud.updateViewmodel('select');
               console.log('You are now holding the ' + _weapons.weapons[this.currentWeapon].name + '. Your highest accuracy with this weapon was ' + this.highScore[this.currentWeapon].toFixed(2) + '%.');
               this.currentScore = 0;
-              if (_settings.settings.audio) {
-                audio.playDone();
-              }
+              audio.playDone();
               this.reset();
             }
           }
@@ -25811,20 +25807,16 @@ var Game = function () {
               switch (this.options[_x2]) {
                 case 'audio-on':
                   if (!_settings.settings.audio) {
-                    audio.playDone();
+                    _settings.settings.audio = true;
+                    audio.playSelect();
                   }
-                  _settings.settings.audio = true;
                   break;
                 case 'audio-off':
-                  if (_settings.settings.audio) {
-                    audio.playDone();
-                  }
+                  audio.playSelect();
                   _settings.settings.audio = false;
                   break;
                 case 'viewmodel':
-                  if (_settings.settings.audio) {
-                    audio.playDone();
-                  }
+                  audio.playSelect();
                   this.hud.updateViewmodel('toggle');
                   _settings.settings.viewmodel = !_settings.settings.viewmodel;
                   break;
@@ -25838,9 +25830,7 @@ var Game = function () {
             var _u3 = (35 - projection.z) / 5;
             var _x3 = ~~(_u3 + 0.5);
             if (Math.abs(_u3 - _x3) <= 0.4 && _x3 >= 0 && _x3 < 3) {
-              if (_settings.settings.audio) {
-                audio.playDone();
-              }
+              audio.playSelect();
               this.hud.updateCrosshair(this.crosshairs[_x3]);
             }
           }
@@ -25854,21 +25844,15 @@ var Game = function () {
               switch (this.resolutions[_x4]) {
                 case '4x3':
                   this.camera.aspect = 4 / 3;
-                  if (_settings.settings.audio) {
-                    audio.playDone();
-                  }
+                  audio.playSelect();
                   break;
                 case '16x9':
                   this.camera.aspect = 16 / 9;
-                  if (_settings.settings.audio) {
-                    audio.playDone();
-                  }
+                  audio.playSelect();
                   break;
                 case '16x10':
                   this.camera.aspect = 16 / 10;
-                  if (_settings.settings.audio) {
-                    audio.playDone();
-                  }
+                  audio.playSelect();
                   break;
               }
 
@@ -26119,8 +26103,15 @@ var _weapons = __webpack_require__(2);
 
 var _utils = __webpack_require__(6);
 
+var _settings = __webpack_require__(7);
+
 var done = new _howler.Howl({
   src: ['audio/general/bell1.wav'],
+  volume: 0.2
+});
+
+var select = new _howler.Howl({
+  src: ['audio/general/button14.wav'],
   volume: 0.2
 });
 
@@ -26140,34 +26131,52 @@ var error = new _howler.Howl({
 });
 
 exports.playReload = function (name) {
-  // const weapon = weapons[name];
-  var audio = _weapons.weapons[name].audio;
-  audio.audioDelay.forEach(function (delay, i) {
-    setTimeout(function () {
-      audio.reload[i].play();
-    }, delay);
-  });
+  if (_settings.settings.audio) {
+    // const weapon = weapons[name];
+    var audio = _weapons.weapons[name].audio;
+    audio.audioDelay.forEach(function (delay, i) {
+      setTimeout(function () {
+        audio.reload[i].play();
+      }, delay);
+    });
+  }
 };
 
 exports.playTap = function (name) {
-  var audio = _weapons.weapons[name].audio;
-  (0, _utils.rand)(audio.shoot).play();
+  if (_settings.settings.audio) {
+    var audio = _weapons.weapons[name].audio;
+    (0, _utils.rand)(audio.shoot).play();
+  }
 };
 
 exports.playDone = function () {
-  done.play();
+  if (_settings.settings.audio) {
+    done.play();
+  }
+};
+
+exports.playSelect = function () {
+  if (_settings.settings.audio) {
+    select.play();
+  }
 };
 
 exports.playHeadshot = function () {
-  headshot.play();
+  if (_settings.settings.audio) {
+    headshot.play();
+  }
 };
 
 exports.playSetting = function () {
-  setting.play();
+  if (_settings.settings.audio) {
+    setting.play();
+  }
 };
 
 exports.playError = function () {
-  error.play();
+  if (_settings.settings.audio) {
+    error.play();
+  }
 };
 
 /***/ }),
@@ -26330,7 +26339,7 @@ var HUD = function () {
     value: function updateHud(player, playerDistance, camera, currentWeapon, ammo, highScore, currentScore, newHighScore, aFrame, fps) {
       // $('#player-position').html(`pos: ${player.mesh.position.x.toFixed(2)}, ${player.mesh.position.z.toFixed(2)}`);
 
-      $('#player-position').html('dst: ' + playerDistance.toFixed(2));
+      $('#player-position').html('dist: ' + playerDistance.toFixed(2));
 
       $('#player-fov').html('fov: ' + (2 * Math.atan2(Math.tan(camera.fov / 2 * Math.PI / 180), 1 / camera.aspect) * 180 / Math.PI).toFixed(1));
 

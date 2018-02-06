@@ -725,15 +725,15 @@ export const weapons = {
           volume: 0.2,
         }),
         new Howl({
-          src: ['audio/weapons/ump45/ump45_boltforward.wav'],
+          src: ['audio/weapons/ump45/ump45_boltback.wav'],
           volume: 0.2,
         }),
         new Howl({
-          src: ['audio/weapons/ump45/ump45_boltback.wav'],
+          src: ['audio/weapons/ump45/ump45_boltforward.wav'],
           volume: 0.2,
         })
       ],
-      audioDelay: [750, 1800, 2400, 2500],
+      audioDelay: [750, 1800, 2400, 2750],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
@@ -794,15 +794,15 @@ export const weapons = {
           volume: 0.2,
         }),
         new Howl({
-          src: ['audio/weapons/bizon/bizon_boltforward.wav'],
-          volume: 0.2,
-        }),
-        new Howl({
           src: ['audio/weapons/bizon/bizon_boltback.wav'],
           volume: 0.2,
         }),
+        new Howl({
+          src: ['audio/weapons/bizon/bizon_boltforward.wav'],
+          volume: 0.2,
+        }),
       ],
-      audioDelay: [750, 1500, 1750],
+      audioDelay: [500, 1100, 1700, 2000],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
@@ -910,13 +910,13 @@ export const weapons = {
           volume: 0.2,
         }),
         new Howl({
-          src: ['audio/weapons/p90/p90_boltforward.wav'],
-          volume: 0.2,
-        }),
-        new Howl({
           src: ['audio/weapons/p90/p90_boltback.wav'],
           volume: 0.2,
         }),
+        new Howl({
+          src: ['audio/weapons/p90/p90_boltforward.wav'],
+          volume: 0.2,
+        })
       ],
       audioDelay: [500, 1500, 2000, 2900, 3100],
     },
@@ -1075,6 +1075,10 @@ export const weapons = {
       ],
       reload: [
         new Howl({
+          src: ['audio/weapons/m249/m249_coverup.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
           src: ['audio/weapons/m249/m249_boxout.wav'],
           volume: 0.2,
         }),
@@ -1083,15 +1087,19 @@ export const weapons = {
           volume: 0.2,
         }),
         new Howl({
+          src: ['audio/weapons/m249/m249_chain.wav'],
+          volume: 0.2,
+        }),
+        new Howl({
           src: ['audio/weapons/m249/m249_coverdown.wav'],
           volume: 0.2,
         }),
         new Howl({
-          src: ['audio/weapons/m249/m249_coverup.wav'],
+          src: ['audio/weapons/m249/m249_pump.wav'],
           volume: 0.2,
         })
       ],
-      audioDelay: [750, 1500, 1750],
+      audioDelay: [700, 1400, 2400, 2600, 3200, 3900],
     },
     spray: [
       new THREE.Vector3(0, 0, 0),
@@ -1232,11 +1240,11 @@ export const weapons = {
           volume: 0.2,
         }),
         new Howl({
-          src: ['audio/weapons/p250/p250_sliderelease.wav'],
+          src: ['audio/weapons/p250/p250_slideback.wav'],
           volume: 0.2,
         }),
         new Howl({
-          src: ['audio/weapons/p250/p250_slideback.wav'],
+          src: ['audio/weapons/p250/p250_sliderelease.wav'],
           volume: 0.2,
         })
       ],
