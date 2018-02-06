@@ -306,7 +306,7 @@ export default class Game {
 
 
     this.crosshairs.forEach((xhair, i) => {
-      this.textureLoader.load(`img/icons/xhair${xhair}.png`, (xhairMap) => {
+      this.textureLoader.load(`img/icons/${xhair}.png`, (xhairMap) => {
         const xhairMaterial = new THREE.MeshBasicMaterial({
           transparent: true,
           map: xhairMap,
@@ -321,7 +321,7 @@ export default class Game {
     });
 
     this.options.forEach((logo, i) => {
-      this.textureLoader.load(`img/icons/${logo}.svg`, (iconMap) => {
+      this.textureLoader.load(`img/icons/${logo}.png`, (iconMap) => {
         const iconMaterial = new THREE.MeshBasicMaterial({
           transparent: true,
           map: iconMap,
@@ -336,7 +336,7 @@ export default class Game {
     });
 
     this.logos.forEach((logo, i) => {
-      this.textureLoader.load(`img/icons/${logo}.svg`, (logoMap) => {
+      this.textureLoader.load(`img/icons/${logo}.png`, (logoMap) => {
         logoMap.minFilter = THREE.LinearFilter;
         const logoMaterial = new THREE.MeshBasicMaterial({
           transparent: true,

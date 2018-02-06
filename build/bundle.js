@@ -25528,7 +25528,7 @@ var Game = function () {
       });
 
       this.crosshairs.forEach(function (xhair, i) {
-        _this2.textureLoader.load('img/icons/xhair' + xhair + '.png', function (xhairMap) {
+        _this2.textureLoader.load('img/icons/' + xhair + '.png', function (xhairMap) {
           var xhairMaterial = new THREE.MeshBasicMaterial({
             transparent: true,
             map: xhairMap,
@@ -25543,7 +25543,7 @@ var Game = function () {
       });
 
       this.options.forEach(function (logo, i) {
-        _this2.textureLoader.load('img/icons/' + logo + '.svg', function (iconMap) {
+        _this2.textureLoader.load('img/icons/' + logo + '.png', function (iconMap) {
           var iconMaterial = new THREE.MeshBasicMaterial({
             transparent: true,
             map: iconMap,
@@ -25558,7 +25558,7 @@ var Game = function () {
       });
 
       this.logos.forEach(function (logo, i) {
-        _this2.textureLoader.load('img/icons/' + logo + '.svg', function (logoMap) {
+        _this2.textureLoader.load('img/icons/' + logo + '.png', function (logoMap) {
           logoMap.minFilter = THREE.LinearFilter;
           var logoMaterial = new THREE.MeshBasicMaterial({
             transparent: true,
