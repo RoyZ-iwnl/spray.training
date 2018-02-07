@@ -13632,6 +13632,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var settings = exports.settings = {
+  infiniteAmmo: false,
+  noSpread: false,
+  ghostHair: true,
+  bulletTime: false,
+
+  audio: true,
+  viewmodel: true
+};
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var g;
@@ -13656,7 +13676,7 @@ try {
 module.exports = g;
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16541,10 +16561,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     }
   };
 })();
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16558,7 +16578,7 @@ var THREE = _interopRequireWildcard(_three);
 
 var _global = __webpack_require__(1);
 
-var _settings = __webpack_require__(7);
+var _settings = __webpack_require__(4);
 
 var _weapons = __webpack_require__(2);
 
@@ -16644,26 +16664,6 @@ exports.score = function (acc) {
 
 exports.rand = function (arr) {
   return arr[~~(Math.random() * arr.length)];
-};
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var settings = exports.settings = {
-  infiniteAmmo: false,
-  noSpread: false,
-  ghostHair: true,
-  bulletTime: false,
-
-  audio: true,
-  viewmodel: true
 };
 
 /***/ }),
@@ -25186,7 +25186,7 @@ if (_gsScope._gsDefine) {
 
 	_tickerActive = false; //ensures that the first official animation forces a ticker.tick() to update the time when it is instantiated
 })(typeof module !== "undefined" && module.exports && typeof global !== "undefined" ? global : undefined || window, "TweenMax");
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
 /* 12 */
@@ -25205,13 +25205,13 @@ var _three = __webpack_require__(0);
 
 var THREE = _interopRequireWildcard(_three);
 
-var _howler = __webpack_require__(5);
+var _howler = __webpack_require__(6);
 
 var _movement = __webpack_require__(13);
 
 var _movement2 = _interopRequireDefault(_movement);
 
-var _utils = __webpack_require__(6);
+var _utils = __webpack_require__(7);
 
 var utils = _interopRequireWildcard(_utils);
 
@@ -25221,7 +25221,7 @@ var _player2 = _interopRequireDefault(_player);
 
 var _global = __webpack_require__(1);
 
-var _settings = __webpack_require__(7);
+var _settings = __webpack_require__(4);
 
 var _button = __webpack_require__(15);
 
@@ -26097,13 +26097,13 @@ exports.default = Button;
 "use strict";
 
 
-var _howler = __webpack_require__(5);
+var _howler = __webpack_require__(6);
 
 var _weapons = __webpack_require__(2);
 
-var _utils = __webpack_require__(6);
+var _utils = __webpack_require__(7);
 
-var _settings = __webpack_require__(7);
+var _settings = __webpack_require__(4);
 
 var done = new _howler.Howl({
   src: ['audio/general/bell1.wav'],
