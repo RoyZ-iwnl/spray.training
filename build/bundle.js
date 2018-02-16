@@ -25782,10 +25782,10 @@ var Game = function () {
                   window.open('https://github.com/15/spray.training', '_blank');
                   break;
                 case 'bitcoin':
-                  window.open('/donate', '_blank');
+                  window.open('/donate.html', '_blank');
                   break;
                 case 'paypal':
-                  window.open('/donate', '_blank');
+                  window.open('/donate.html', '_blank');
                   break;
                 case 'email':
                   window.open('mailto:contact@spray.training', '_blank');
