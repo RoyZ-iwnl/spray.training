@@ -76,6 +76,14 @@ export default class HUD {
         }
       }
 
+      if (command === 'hide') {
+        this.viewmodel.style.display = 'none';
+      }
+
+      if (command === 'show' && this.enabled) {
+        this.viewmodel.style.display = 'block';
+      }
+
       if (this.enabled) {
         if (command === 'shoot') {
           this.video.pause();

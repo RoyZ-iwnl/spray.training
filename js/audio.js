@@ -28,6 +28,16 @@ const error = new Howl({
   volume: 0.2,
 });
 
+const scope = new Howl({
+  src: ['audio/weapons/aug/aug_zoom_in.wav'],
+  volume: 0.2,
+});
+
+const unscope = new Howl({
+  src: ['audio/weapons/aug/aug_zoom_out.wav'],
+  volume: 0.2,
+});
+
 exports.playReload = (name) => {
   if (settings.audio) {
     // const weapon = weapons[name];
@@ -76,3 +86,15 @@ exports.playError = () => {
     error.play();
   }
 };
+
+exports.playScope = () => {
+  if (settings.audio) {
+    scope.play();
+  }  
+}
+
+exports.playUnscope = () => {
+  if (settings.audio) {
+    unscope.play();
+  }  
+}

@@ -373,11 +373,34 @@ export default class Game {
   }
 
   initControls() {
-    $(document).mouseup(() => {
-      this.player.shoot = false;
-      this.count = 0;
-    }).mousedown(() => {
-      this.player.shoot = true;
+    $(document).mouseup((e) => {
+      switch (e.which) {
+        case 1:
+          this.player.shoot = false;
+          this.count = 0;
+          break;
+      }
+    }).mousedown((e) => {
+      switch (e.which) {
+        case 1:
+          this.player.shoot = true;
+          break;
+        case 3: 
+          if (this.currentWeapon === 'aug' || this.currentWeapon === 'sg556') {
+            if (this.camera.fov === 74) {
+              this.camera.fov = 59;
+              this.hud.updateViewmodel('hide');
+              audio.playScope();
+            } else {
+              this.camera.fov = 74;
+              this.hud.updateViewmodel('show');
+              audio.playUnscope();
+            }
+            this.camera.updateProjectionMatrix();
+          }
+          break;
+      }
+      
     });
 
     let locked = false;

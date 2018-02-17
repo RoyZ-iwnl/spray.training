@@ -25601,11 +25601,33 @@ var Game = function () {
     value: function initControls() {
       var _this3 = this;
 
-      $(document).mouseup(function () {
-        _this3.player.shoot = false;
-        _this3.count = 0;
-      }).mousedown(function () {
-        _this3.player.shoot = true;
+      $(document).mouseup(function (e) {
+        switch (e.which) {
+          case 1:
+            _this3.player.shoot = false;
+            _this3.count = 0;
+            break;
+        }
+      }).mousedown(function (e) {
+        switch (e.which) {
+          case 1:
+            _this3.player.shoot = true;
+            break;
+          case 3:
+            if (_this3.currentWeapon === 'aug' || _this3.currentWeapon === 'sg556') {
+              if (_this3.camera.fov === 74) {
+                _this3.camera.fov = 59;
+                _this3.hud.updateViewmodel('hide');
+                audio.playScope();
+              } else {
+                _this3.camera.fov = 74;
+                _this3.hud.updateViewmodel('show');
+                audio.playUnscope();
+              }
+              _this3.camera.updateProjectionMatrix();
+            }
+            break;
+        }
       });
 
       var locked = false;
@@ -26151,6 +26173,16 @@ var error = new _howler.Howl({
   volume: 0.2
 });
 
+var scope = new _howler.Howl({
+  src: ['audio/weapons/aug/aug_zoom_in.wav'],
+  volume: 0.2
+});
+
+var unscope = new _howler.Howl({
+  src: ['audio/weapons/aug/aug_zoom_out.wav'],
+  volume: 0.2
+});
+
 exports.playReload = function (name) {
   if (_settings.settings.audio) {
     // const weapon = weapons[name];
@@ -26197,6 +26229,18 @@ exports.playSetting = function () {
 exports.playError = function () {
   if (_settings.settings.audio) {
     error.play();
+  }
+};
+
+exports.playScope = function () {
+  if (_settings.settings.audio) {
+    scope.play();
+  }
+};
+
+exports.playUnscope = function () {
+  if (_settings.settings.audio) {
+    unscope.play();
   }
 };
 
@@ -26315,6 +26359,14 @@ var HUD = function () {
             this.viewmodel.style.display = 'block';
             this.enabled = true;
           }
+        }
+
+        if (command === 'hide') {
+          this.viewmodel.style.display = 'none';
+        }
+
+        if (command === 'show' && this.enabled) {
+          this.viewmodel.style.display = 'block';
         }
 
         if (this.enabled) {
