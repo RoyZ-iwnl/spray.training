@@ -25695,7 +25695,7 @@ var Game = function () {
       var m_yaw = 0.022;
       var m_pitch = 0.022;
       var factor = 2.5;
-      var yRot = (this.inverted ? 1 : -1) * this.cursorXY.x * sensitivity * m_yaw * factor * delta;
+      var yRot = -this.cursorXY.x * sensitivity * m_yaw * factor * delta;
       var xRot = (this.inverted ? 1 : -1) * this.cursorXY.y * sensitivity * m_pitch * factor * delta;
 
       this.player.mesh.rotateY(yRot);

@@ -466,7 +466,7 @@ export default class Game {
     const m_yaw = 0.022;
     const m_pitch = 0.022;
     const factor = 2.5;
-    const yRot = (this.inverted ? 1 : -1) * this.cursorXY.x * sensitivity * m_yaw * factor * delta;
+    const yRot = -this.cursorXY.x * sensitivity * m_yaw * factor * delta;
     const xRot = (this.inverted ? 1 : -1) * this.cursorXY.y * sensitivity * m_pitch * factor * delta;
 
     this.player.mesh.rotateY(yRot);
