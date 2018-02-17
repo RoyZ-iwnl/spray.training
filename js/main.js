@@ -16,11 +16,11 @@ const isChrome = !!window.chrome && !!window.chrome.webstore;
 const sensitivitySlider = document.getElementById('sens-slider');
 
 noUiSlider.create(sensitivitySlider, {
-	start: [ 3.5 ],
+	start: [ 1.0 ],
   connect: true,
   tooltips: true,
 	range: {
-    'min': [0.1],
+    'min': [0.0],
 		'max': [8],
 	}
 });
@@ -36,14 +36,20 @@ sensitivityInput.addEventListener('change', () => {
   sensitivitySlider.noUiSlider.set([sensitivityInput.value]);
 });
 
-
 $('#main-button').on('click', () => {
   global.SENS = sensitivityInput.value;
   ui.fadeFromTo($('#main-page'), $('#game-page'), 0.5);
+  
+  const inverted = $('#inverted').is(":checked");
 
-  const hud = new HUD(isChrome);
+  const hud = new HUD({
+    isChrome: isChrome,
+  });
   hud.init();
 
-  const game = new Game(hud);
+  const game = new Game({
+    hud: hud,
+    inverted: inverted,
+  });
   game.init();
 });

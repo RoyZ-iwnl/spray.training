@@ -16705,11 +16705,11 @@ var isChrome = !!window.chrome && !!window.chrome.webstore;
 var sensitivitySlider = document.getElementById('sens-slider');
 
 noUiSlider.create(sensitivitySlider, {
-  start: [3.5],
+  start: [1.0],
   connect: true,
   tooltips: true,
   range: {
-    'min': [0.1],
+    'min': [0.0],
     'max': [8]
   }
 });
@@ -16729,10 +16729,17 @@ $('#main-button').on('click', function () {
   _global.global.SENS = sensitivityInput.value;
   ui.fadeFromTo($('#main-page'), $('#game-page'), 0.5);
 
-  var hud = new _hud2.default(isChrome);
+  var inverted = $('#inverted').is(":checked");
+
+  var hud = new _hud2.default({
+    isChrome: isChrome
+  });
   hud.init();
 
-  var game = new _game2.default(hud);
+  var game = new _game2.default({
+    hud: hud,
+    inverted: inverted
+  });
   game.init();
 });
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
@@ -17540,7 +17547,7 @@ var _gsScope = typeof module !== "undefined" && module.exports && typeof global 
   	}
   	return time;
   }
-  		//translates the supplied time on the root/global timeline into the corresponding local time inside a particular animation, factoring in all nesting and timeScales
+  	//translates the supplied time on the root/global timeline into the corresponding local time inside a particular animation, factoring in all nesting and timeScales
   function globalToLocal(time, animation) {
   	var scale = 1;
   	time -= localToGlobal(0, animation);
@@ -25242,10 +25249,11 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Game = function () {
-  function Game(hud) {
+  function Game(data) {
     _classCallCheck(this, Game);
 
-    this.hud = hud;
+    this.hud = data.hud;
+    this.inverted = data.inverted;
 
     this.cursorXY = { x: 0, y: 0 };
     this.cmd = {
@@ -25647,16 +25655,29 @@ var Game = function () {
     value: function update(delta) {
       var _this4 = this;
 
-      this.hud.updateHud(this.player, this.playerDistance, this.camera, this.currentWeapon, this.ammo, this.highScore, this.currentScore, this.newHighScore, this.aFrame, this.fps);
+      this.hud.updateHud({
+        player: this.player,
+        playerDistance: this.playerDistance,
+        camera: this.camera,
+        currentWeapon: this.currentWeapon,
+        ammo: this.ammo,
+        highScore: this.highScore,
+        currentScore: this.currentScore,
+        newHighScore: this.newHighScore,
+        aFrame: this.aFrame,
+        fps: this.fps
+      });
       this.setCmd();
 
       var sensitivity = _global.global.SENS;
       var m_yaw = 0.022;
       var m_pitch = 0.022;
       var factor = 2.5;
+      var yRot = (this.inverted ? 1 : -1) * this.cursorXY.x * sensitivity * m_yaw * factor * delta;
+      var xRot = (this.inverted ? 1 : -1) * this.cursorXY.y * sensitivity * m_pitch * factor * delta;
 
-      this.player.mesh.rotateY(-this.cursorXY.x * sensitivity * m_yaw * factor * delta);
-      this.player.camera.rotateX(-this.cursorXY.y * sensitivity * m_pitch * factor * delta);
+      this.player.mesh.rotateY(yRot);
+      this.player.camera.rotateX(xRot);
       this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
 
       this.playerDistance = Math.hypot(this.player.mesh.position.x + this.MAP_SIZE / 2, this.player.mesh.position.z);
@@ -25776,7 +25797,7 @@ var Game = function () {
             if (Math.abs(_u - _x) <= 0.2 && _x >= 0 && _x < 5) {
               switch (this.logos[_x]) {
                 case 'reddit':
-                  window.open('https://reddit.com/r/globaloffensive', '_blank');
+                  window.open('https://www.reddit.com/r/GlobalOffensive/comments/7xz3to/spraytraining_a_website_i_made_for_practicing/', '_blank');
                   break;
                 case 'github':
                   window.open('https://github.com/15/spray.training', '_blank');
@@ -26214,16 +26235,14 @@ var _weapons = __webpack_require__(2);
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var HUD = function () {
-  function HUD(isChrome) {
-    var weapon = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'ak47';
-
+  function HUD(data) {
     _classCallCheck(this, HUD);
 
-    this.weapon = weapon;
+    this.weapon = 'ak47';
     this.video = document.getElementById('video');
     this.viewmodel = document.getElementById('player-weapon');
     this.enabled = true;
-    this.chrome = isChrome;
+    this.chrome = data.isChrome;
     this.shootingAnimation = true;
   }
 
@@ -26336,26 +26355,26 @@ var HUD = function () {
     }
   }, {
     key: 'updateHud',
-    value: function updateHud(player, playerDistance, camera, currentWeapon, ammo, highScore, currentScore, newHighScore, aFrame, fps) {
+    value: function updateHud(data) {
       // $('#player-position').html(`pos: ${player.mesh.position.x.toFixed(2)}, ${player.mesh.position.z.toFixed(2)}`);
 
-      $('#player-position').html('dist: ' + playerDistance.toFixed(2));
+      $('#player-position').html('dist: ' + data.playerDistance.toFixed(2));
 
-      $('#player-fov').html('fov: ' + (2 * Math.atan2(Math.tan(camera.fov / 2 * Math.PI / 180), 1 / camera.aspect) * 180 / Math.PI).toFixed(1));
+      $('#player-fov').html('fov: ' + (2 * Math.atan2(Math.tan(data.camera.fov / 2 * Math.PI / 180), 1 / data.camera.aspect) * 180 / Math.PI).toFixed(1));
 
-      $('#player-ammo').html(_weapons.weapons[currentWeapon].magazine - ammo + '/' + _weapons.weapons[currentWeapon].magazine);
+      $('#player-ammo').html(_weapons.weapons[data.currentWeapon].magazine - data.ammo + '/' + _weapons.weapons[data.currentWeapon].magazine);
 
-      $('#player-highscore').html('highest acc: ' + highScore[currentWeapon].toFixed(2) + '%  (' + _weapons.weapons[currentWeapon].name + ')');
+      $('#player-highscore').html('highest acc: ' + data.highScore[data.currentWeapon].toFixed(2) + '%  (' + _weapons.weapons[data.currentWeapon].name + ')');
 
-      $('#player-highscore-new').html('highest acc: ' + highScore[currentWeapon].toFixed(2) + '% (' + _weapons.weapons[currentWeapon].name + ')');
+      $('#player-highscore-new').html('highest acc: ' + data.highScore[data.currentWeapon].toFixed(2) + '% (' + _weapons.weapons[data.currentWeapon].name + ')');
 
-      $('#player-score').html('accuracy: ' + currentScore.toFixed(2) + '% (' + _weapons.weapons[currentWeapon].name + ')');
+      $('#player-score').html('accuracy: ' + data.currentScore.toFixed(2) + '% (' + _weapons.weapons[data.currentWeapon].name + ')');
 
-      if (aFrame % _weapons.weapons[currentWeapon].magazine < 3) {
-        $('#player-fps').html('fps: ' + Math.round(fps));
+      if (data.aFrame % _weapons.weapons[data.currentWeapon].magazine < 3) {
+        $('#player-fps').html('fps: ' + Math.round(data.fps));
       }
 
-      if (newHighScore) {
+      if (data.newHighScore) {
         // flicker high score
         // $('#player-highscore').css('color', '#ffff00').animate({color: '#ffffff'}, 1000);
         $('#player-highscore-new').show();

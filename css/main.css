@@ -128,3 +128,25 @@ a {
   left: 50%;
   margin-left: -32px;
 }
+
+#inverted {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+
+  border: 2px solid #999;
+  transition: 0.2s all linear;
+  outline: none;
+  margin-right: 5px;
+
+  position: relative;
+  top: 4px;
+}
+
+#inverted:checked {
+  border: 6px solid black;
+}

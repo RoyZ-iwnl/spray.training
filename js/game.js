@@ -11,8 +11,9 @@ import * as audio from './audio.js';
 import { colors } from './colors.js';
 
 export default class Game {
-  constructor(hud) {
-    this.hud = hud;
+  constructor(data) {
+    this.hud = data.hud;
+    this.inverted = data.inverted;
 
     this.cursorXY = {x: 0, y: 0};
     this.cmd = {
@@ -424,16 +425,29 @@ export default class Game {
   }
 
   update(delta) {
-    this.hud.updateHud(this.player, this.playerDistance, this.camera, this.currentWeapon, this.ammo, this.highScore, this.currentScore, this.newHighScore, this.aFrame, this.fps);
+    this.hud.updateHud({
+      player: this.player,
+      playerDistance: this.playerDistance,
+      camera: this.camera,
+      currentWeapon: this.currentWeapon, 
+      ammo: this.ammo, 
+      highScore: this.highScore,
+      currentScore: this.currentScore,
+      newHighScore: this.newHighScore,
+      aFrame: this.aFrame,
+      fps: this.fps
+    });
     this.setCmd();
 
     const sensitivity = global.SENS;
     const m_yaw = 0.022;
     const m_pitch = 0.022;
     const factor = 2.5;
+    const yRot = (this.inverted ? 1 : -1) * this.cursorXY.x * sensitivity * m_yaw * factor * delta;
+    const xRot = (this.inverted ? 1 : -1) * this.cursorXY.y * sensitivity * m_pitch * factor * delta;
 
-    this.player.mesh.rotateY(-this.cursorXY.x * sensitivity * m_yaw * factor * delta);
-    this.player.camera.rotateX(-this.cursorXY.y * sensitivity * m_pitch * factor * delta);
+    this.player.mesh.rotateY(yRot);
+    this.player.camera.rotateX(xRot);
     this.player.camera.rotation.y = Math.max(0, this.player.camera.rotation.y);
 
     this.playerDistance = Math.hypot(
@@ -557,7 +571,7 @@ export default class Game {
           if (Math.abs(u - x) <= 0.2 && x >= 0 && x < 5) {
             switch (this.logos[x]) {
               case 'reddit':
-                window.open('https://reddit.com/r/globaloffensive', '_blank');
+                window.open('https://www.reddit.com/r/GlobalOffensive/comments/7xz3to/spraytraining_a_website_i_made_for_practicing/', '_blank');
                 break;
               case 'github':
                 window.open('https://github.com/15/spray.training', '_blank');

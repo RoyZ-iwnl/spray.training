@@ -1,12 +1,12 @@
 import { weapons } from './weapons.js';
 
 export default class HUD {
-  constructor(isChrome, weapon = 'ak47') {
-    this.weapon = weapon;
+  constructor(data) {
+    this.weapon = 'ak47';
     this.video = document.getElementById('video');
     this.viewmodel = document.getElementById('player-weapon');
     this.enabled = true;
-    this.chrome = isChrome;
+    this.chrome = data.isChrome;
     this.shootingAnimation = true;
   }
 
@@ -113,41 +113,41 @@ export default class HUD {
     }
   }
 
-  updateHud(player, playerDistance, camera, currentWeapon, ammo, highScore, currentScore, newHighScore, aFrame, fps) {
+  updateHud(data) {
     // $('#player-position').html(`pos: ${player.mesh.position.x.toFixed(2)}, ${player.mesh.position.z.toFixed(2)}`);
 
     $('#player-position').html(
-      `dist: ${playerDistance.toFixed(2)}`
+      `dist: ${data.playerDistance.toFixed(2)}`
     );
 
     $('#player-fov').html(
       `fov: ${(2*Math.atan2(
-        Math.tan(camera.fov/2 * Math.PI/180),
-        1/camera.aspect
+        Math.tan(data.camera.fov/2 * Math.PI/180),
+        1/data.camera.aspect
       ) * 180 / Math.PI).toFixed(1)}`
     );
 
     $('#player-ammo').html(
-      `${weapons[currentWeapon].magazine - ammo}/${weapons[currentWeapon].magazine}`
+      `${weapons[data.currentWeapon].magazine - data.ammo}/${weapons[data.currentWeapon].magazine}`
     );
 
     $('#player-highscore').html(
-      `highest acc: ${highScore[currentWeapon].toFixed(2)}%  (${weapons[currentWeapon].name})`
+      `highest acc: ${data.highScore[data.currentWeapon].toFixed(2)}%  (${weapons[data.currentWeapon].name})`
     );
 
     $('#player-highscore-new').html(
-      `highest acc: ${highScore[currentWeapon].toFixed(2)}% (${weapons[currentWeapon].name})`
+      `highest acc: ${data.highScore[data.currentWeapon].toFixed(2)}% (${weapons[data.currentWeapon].name})`
     );
 
     $('#player-score').html(
-      `accuracy: ${currentScore.toFixed(2)}% (${weapons[currentWeapon].name})`
+      `accuracy: ${data.currentScore.toFixed(2)}% (${weapons[data.currentWeapon].name})`
     );
 
-    if (aFrame % weapons[currentWeapon].magazine < 3) {
-      $('#player-fps').html(`fps: ${Math.round(fps)}`);
+    if (data.aFrame % weapons[data.currentWeapon].magazine < 3) {
+      $('#player-fps').html(`fps: ${Math.round(data.fps)}`);
     }
 
-    if (newHighScore) {
+    if (data.newHighScore) {
       // flicker high score
       // $('#player-highscore').css('color', '#ffff00').animate({color: '#ffffff'}, 1000);
       $('#player-highscore-new').show();
